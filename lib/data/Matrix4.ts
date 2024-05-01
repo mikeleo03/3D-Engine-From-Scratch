@@ -1,11 +1,14 @@
-class Matrix4 {
+import { Quaternion } from "./Quaternion";
+import { Vector3 } from "./Vector";
+
+export class Matrix4 {
     private data: number[][] = [
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0]
     ];
-    
+
     constructor(data: number[][] | null = null) {
         if (data) {
             if (data.length !== 4) {
@@ -22,7 +25,7 @@ class Matrix4 {
         }
     }
 
-    static identity(): Matrix4{
+    static identity(): Matrix4 {
         return new Matrix4([
             [1, 0, 0, 0],
             [0, 1, 0, 0],

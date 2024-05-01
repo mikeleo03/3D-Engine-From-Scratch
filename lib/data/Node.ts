@@ -1,4 +1,7 @@
-class SceneNode {
+import { Matrix4 } from "./Matrix4";
+import { Vector3 } from "./Vector";
+
+export class SceneNode {
     private _position: Vector3 = new Vector3();
     private _rotation: Vector3 = new Vector3();
     private _scale: Vector3 = new Vector3(1, 1, 1);

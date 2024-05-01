@@ -1,4 +1,7 @@
-class Quaternion {
+import { Matrix4 } from "./Matrix4";
+import { Vector3 } from "./Vector";
+
+export class Quaternion {
     private _x: number;
     private _y: number;
     private _z: number;
