@@ -1,7 +1,7 @@
 import { BufferAttribute } from "../data/BufferAttribute";
 import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType } from "./gltypes";
 
-export class GLManager {
+export class GLContainer {
     private canvas: HTMLCanvasElement;
     private gl: WebGLRenderingContext;
     private programInfo: ProgramInfo;
