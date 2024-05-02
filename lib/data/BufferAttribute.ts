@@ -187,7 +187,7 @@ export class BufferAttribute {
     }
 
 
-    set(index: number, data: number[]) {
+    set(index: number, data: number[]): void {
         if (data.length !== this._size) {
             throw new Error(`Data size mismatch. Expected ${this._size}, got ${data.length}`);
         }
@@ -210,7 +210,7 @@ export class BufferAttribute {
     }
 
 
-    get(index: number, size?: number) {
+    get(index: number, size?: number): number[] {
         const dataSize = size || this._size;
         const stride = this._stride;
         const offset = this._offset;

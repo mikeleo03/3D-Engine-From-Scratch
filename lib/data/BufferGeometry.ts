@@ -1,5 +1,5 @@
 import { BufferAttribute } from "./BufferAttribute";
-import { Vector3 } from "./Vector";
+import { Vector3 } from "./math/Vector";
 
 export enum PrimitiveAttribute {
     POSITION = 'position',
@@ -30,7 +30,7 @@ export class BufferGeometry {
     }
 
 
-    setIndices(indices: BufferAttribute) {
+    setIndices(indices: BufferAttribute): void {
         const position = this.getAttribute(PrimitiveAttribute.POSITION);
 
         if (indices.size !== this.INDEX_SIZE) {
@@ -45,12 +45,12 @@ export class BufferGeometry {
     }
 
 
-    removeIndices() {
+    removeIndices(): void {
         this._indices = undefined;
     }
 
 
-    setAttribute(name: string, attribute: BufferAttribute) {
+    setAttribute(name: string, attribute: BufferAttribute): void {
         if (name === PrimitiveAttribute.POSITION) {
             if (this.indices && attribute.count !== this.indices.count) {
                 throw new Error("Position attribute count must be the same as indices count");
@@ -65,17 +65,17 @@ export class BufferGeometry {
     }
 
 
-    getAttribute(name: string) {
+    getAttribute(name: string): BufferAttribute | null{
         return this._attributes[name];
     }
 
 
-    deleteAttribute(name: string) {
+    deleteAttribute(name: string): void {
         delete this._attributes[name];
     }
 
 
-    protected calculateNormals(forceNewAttribute = false) {
+    protected calculateNormals(forceNewAttribute = false): void {
         const position = this.getAttribute(PrimitiveAttribute.POSITION);
         const indices = this.indices;
 

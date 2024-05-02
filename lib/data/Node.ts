@@ -1,5 +1,5 @@
-import { Matrix4 } from "./Matrix4";
-import { Vector3 } from "./Vector";
+import { Matrix4 } from "./math/Matrix4";
+import { Vector3 } from "./math/Vector";
 
 export class SceneNode {
     private _position: Vector3 = new Vector3();
