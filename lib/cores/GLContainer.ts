@@ -41,6 +41,10 @@ export class GLContainer {
         return this.gl;
     }
 
+    get canvasElement(): HTMLCanvasElement {
+        return this.canvas;
+    }
+
     private initGL(canvas: HTMLCanvasElement = this.canvas): WebGLRenderingContext {
         const gl = canvas.getContext("webgl");
 
