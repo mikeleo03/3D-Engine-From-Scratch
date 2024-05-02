@@ -33,7 +33,7 @@ export class GLContainer {
         // TODO: set uniforms here
     }
 
-    get shaderProgram(): WebGLProgram {
+    private get shaderProgram(): WebGLProgram {
         return this.programInfo.program;
     }
 
