@@ -4,7 +4,7 @@ import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSing
 export class GLManager {
     private canvas: HTMLCanvasElement;
     private gl: WebGLRenderingContext;
-    private shaderProgram: WebGLProgram;
+    private programInfo: ProgramInfo;
 
     constructor(
         canvas: HTMLCanvasElement
@@ -15,7 +15,30 @@ export class GLManager {
         this.adjustCanvas();
         this.observeCanvas();
 
-        this.shaderProgram = this.initProgram();
+        const shaderProgram = this.initProgram();
+
+        this.programInfo = {
+            program: shaderProgram,
+            uniformSetters: {},  // TODO: add uniformSetters here
+            attributeSetters: this.createAttributeSetters(),
+        };
+
+        this.setAttributes(
+            this.programInfo, 
+            {
+                // TODO: add attributes here
+            }
+        );
+
+        // TODO: set uniforms here
+    }
+
+    get shaderProgram(): WebGLProgram {
+        return this.programInfo.program;
+    }
+
+    get glContext(): WebGLRenderingContext {
+        return this.gl;
     }
 
     private initGL(canvas: HTMLCanvasElement = this.canvas): WebGLRenderingContext {
@@ -92,6 +115,7 @@ export class GLManager {
     }
 
     private getVertexShader(): WebGLShader {
+        // TODO: modify this source code
         const vertexSource = `
             attribute vec2 a_position;
             void main() {
@@ -103,6 +127,7 @@ export class GLManager {
     }
 
     private getFragmentShader(): WebGLShader {
+        // TODO: modify this source code
         const fragmentSource = `
             void main() {
                 gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
@@ -150,6 +175,7 @@ export class GLManager {
     private createAttributeSetters(): AttributeMapSetters {
         const attribSetters: AttributeMapSetters = {};
         const numAttribs = this.gl.getProgramParameter(this.shaderProgram, this.gl.ACTIVE_ATTRIBUTES);
+
         for (let i = 0; i < numAttribs; i++) {
             const info = this.gl.getActiveAttrib(this.shaderProgram, i);
             if (!info) continue;
@@ -173,6 +199,6 @@ export class GLManager {
             this.setAttribute(programInfo, attributeName, attributes[attributeName]);
     }
 
-
+    // TODO: add set uniform methods
 
 }

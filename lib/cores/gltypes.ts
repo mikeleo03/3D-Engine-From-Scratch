@@ -35,7 +35,7 @@ export type AttributeDataType = [AttributeSingleDataType] | number[];
 export type AttributeSetters = (...v: AttributeDataType) => void;
 export type AttributeMapSetters = {[key: string]: AttributeSetters};
 
-export type UniformSetters = (...v: number[]) => void;
+export type UniformSetters = (...v: number[]) => void;  // TODO: fix this type if needed
 export type UniformMapSetters = { [key: string]: UniformSetters };
 
 export type ProgramInfo = {
