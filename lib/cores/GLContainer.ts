@@ -1,6 +1,8 @@
 import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
 import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType } from "./gltypes";
 
+type TypedArray = Float64Array | Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
+
 export class GLContainer {
     private canvas: HTMLCanvasElement;
     private gl: WebGLRenderingContext;
@@ -163,7 +165,7 @@ export class GLContainer {
             if (v instanceof MeshBufferAttribute) {
                 if (v.isDirty) {
                     // Data Changed Time (note that buffer is already binded)
-                    this.gl.bufferData(this.gl.ARRAY_BUFFER, v.data, this.gl.STATIC_DRAW);
+                    this.gl.bufferData(this.gl.ARRAY_BUFFER, v.data as TypedArray, this.gl.STATIC_DRAW);
                     v.consume();
                 }
                 this.gl.enableVertexAttribArray(loc);

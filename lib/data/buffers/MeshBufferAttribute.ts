@@ -81,6 +81,7 @@ export class MeshBufferAttribute {
         // NOTE: This creates a new array every time it's called.
         return this.accessor.getData(this._converter);
     }
+    get dtype() { return this._accessor.componentType; }
     get size() {
         return this._size;
     }
