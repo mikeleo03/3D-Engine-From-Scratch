@@ -10,10 +10,10 @@ export type AccessorType = {
     "min": number[]
 };
 
-export const MeshPrimitiveAttribute = {
-    POSITION: "POSITION",
-    NORMAL: "NORMAL"
-};
+export enum MeshPrimitiveAttribute {
+    POSITION = "POSITION",
+    NORMAL = "NORMAL"
+}
 
 export type MeshPrimitiveType = {
     attributes: {
@@ -24,10 +24,10 @@ export type MeshPrimitiveType = {
 
 export type MeshType = { "primitives": MeshPrimitiveType[] };
 
-export const CameraView = {
-    PERSPECTIVE: "perspective",
-    ORTHOGRAPHIC: "orthographic"
-};
+export enum CameraView {
+    PERSPECTIVE = "perspective",
+    ORTHOGRAPHIC = "orthographic"
+}
 
 export type CameraType = {
     "type": "perspective",

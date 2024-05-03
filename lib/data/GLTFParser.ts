@@ -4,9 +4,10 @@ export class GLTFParser {
     constructor() {
     }
 
-    parse(file: File): GLTFState {
-    }
+    // TODO: Implement the following methods
+    // parse(file: File): GLTFState {
+    // }
 
-    write(state: GLTFState): File {
-    }
+    // write(state: GLTFState): File {
+    // }
 }
