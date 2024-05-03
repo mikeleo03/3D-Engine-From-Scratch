@@ -1,8 +1,8 @@
 import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
 
-export const ShaderType = {
-    VERTEX: WebGLRenderingContext.VERTEX_SHADER,
-    FRAGMENT: WebGLRenderingContext.FRAGMENT_SHADER,
+export enum ShaderType {
+    VERTEX = WebGLRenderingContext.VERTEX_SHADER,
+    FRAGMENT = WebGLRenderingContext.FRAGMENT_SHADER,
 };
 
 export const WebGLType = {
@@ -30,9 +30,43 @@ export const WebGLType = {
     SAMPLER_CUBE: WebGLRenderingContext.SAMPLER_CUBE,
 }
 
-export const BufferViewTarget = {
-    ARRAY_BUFFER: WebGLRenderingContext.ARRAY_BUFFER,
-    ELEMENT_ARRAY_BUFFER: WebGLRenderingContext.ELEMENT_ARRAY_BUFFER,
+export function getByteCountForWebGLType(type: number): number {
+    switch (type) {
+        case WebGLType.UNSIGNED_BYTE:
+        case WebGLType.BYTE:
+        case WebGLType.BOOL:
+            return 1;
+        case WebGLType.UNSIGNED_SHORT:
+        case WebGLType.SHORT:
+        case WebGLType.FLOAT_VEC2:
+        case WebGLType.BOOL_VEC2:
+            return 2;
+        case WebGLType.UNSIGNED_INT:
+        case WebGLType.INT:
+        case WebGLType.FLOAT:
+        case WebGLType.FLOAT_VEC3:
+        case WebGLType.BOOL_VEC3:
+            return 4;
+        case WebGLType.INT_VEC2:
+        case WebGLType.FLOAT_VEC4:
+        case WebGLType.BOOL_VEC4:
+            return 4 * 2;
+        case WebGLType.INT_VEC3:
+            return 4 * 3;
+        case WebGLType.INT_VEC4:
+            return 4 * 4;
+        case WebGLType.FLOAT_MAT2:
+            return 4 * 2 * 2;
+        case WebGLType.FLOAT_MAT3:
+            return 4 * 3 * 3;
+        case WebGLType.FLOAT_MAT4:
+            return 4 * 4 * 4;
+        case WebGLType.SAMPLER_2D:
+        case WebGLType.SAMPLER_CUBE:
+            return -1; // It depends on texture format and size
+        default:
+            return 0; // Unknown type
+    }
 }
 
 export type AttributeSingleDataType = MeshBufferAttribute | Float32Array | number[];

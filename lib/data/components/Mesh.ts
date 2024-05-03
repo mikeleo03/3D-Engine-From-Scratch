@@ -1,5 +1,7 @@
 import { Accessor } from "../buffers/Accessor";
-import { MeshBufferGeometry } from "../buffers/MeshBufferGeometry";
+import { MeshBufferAttribute } from "../buffers/MeshBufferAttribute";
+import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "../buffers/MeshBufferGeometry";
+import { Float32ArrayConverter, Float64ArrayConverter, Uint32ArrayConverter } from "../buffers/typedarrayconverters";
 import { MeshPrimitiveType, MeshType } from "../types/gltftypes";
 import { NodeComponent } from "./NodeComponent";
 
@@ -40,7 +42,26 @@ export class Mesh extends NodeComponent {
             const normal = primitive.attributes.NORMAL !== undefined ? accessors[primitive.attributes.NORMAL] : undefined;
             const indices = primitive.indices !== undefined ? accessors[primitive.indices] : undefined;
 
-            return new MeshBufferGeometry(position, normal, indices);
+            const attribute: MeshBufferGeometryAttributes = {
+                POSITION: position ? new MeshBufferAttribute(
+                    position, 
+                    MeshBufferGeometry.POSITION_SIZE,
+                    new Float64ArrayConverter(),
+                ) : undefined,
+                NORMAL: normal ? new MeshBufferAttribute(
+                    normal,
+                    MeshBufferGeometry.NORMAL_SIZE,
+                    new Float64ArrayConverter(),
+                ) : undefined,
+            };
+
+            return new MeshBufferGeometry(
+                attribute, 
+                indices ? new MeshBufferAttribute(
+                    indices,
+                    MeshBufferGeometry.INDEX_SIZE,
+                    new Uint32ArrayConverter(),
+                ) : undefined);
         });
 
         return new Mesh(geometries);

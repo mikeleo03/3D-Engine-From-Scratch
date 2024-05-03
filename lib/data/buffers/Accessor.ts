@@ -1,5 +1,8 @@
+import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
 import { AccessorType } from "../types/gltftypes";
 import { BufferView } from "./BufferView";
+import { TypedArrayConverter } from "./typedarrayconverters";
+import { get } from "http";
 
 export class Accessor {
     private _bufferView: BufferView;
@@ -46,6 +49,55 @@ export class Accessor {
 
     get min(): number[] {
         return this._min;
+    }
+
+    setData(data: Uint8Array, countOffset: number = 0): void {
+
+        const singleByteCount = this.getSingleByteCount();
+        
+        if (data.length % singleByteCount !== 0) {
+            throw new Error(`Data size is not a multiple of the byte count for the component type`);
+        }
+
+        const count = data.length / singleByteCount;
+        
+        if (countOffset < 0) {
+            throw new Error(`Offset must be greater than or equal to zero.`);
+        }
+
+        if (count + countOffset > this._count) {
+            throw new Error(`Data size is too large for current accessor count`);
+        }
+
+        if (data.length < (count + countOffset) * getByteCountForWebGLType(this._componentType)) {
+            throw new Error(`Data size is too small for current accessor count`);
+        }
+        
+
+        this.bufferView.setData(data, this._byteOffset + countOffset * getByteCountForWebGLType(this._componentType));
+    }
+
+    getData(converter?: TypedArrayConverter): ArrayLike<number> {
+        // Note: this will create new array every time it's called
+        const data = new Uint8Array(
+            this._bufferView.buffer.data, 
+            this._byteOffset, 
+            this._count * getByteCountForWebGLType(this._componentType)
+        );
+
+        if (!converter) {
+            return data;
+        }
+
+        return converter.from(data);
+    }
+
+    getByteCount(): number {
+        return this._count * getByteCountForWebGLType(this._componentType);
+    }
+
+    getSingleByteCount(): number {
+        return getByteCountForWebGLType(this._componentType);
     }
 
     static fromRaw(raw: AccessorType, bufferViews: BufferView[]): Accessor {

@@ -9,7 +9,10 @@ export class GLTFBuffer implements ArrayBuffer {
         this._data = data;
     }
 
-    get data() { return this._data; }
+    get data() { 
+        // Note: this will return original array, be careful with mutation
+        return this._data; 
+    }
 
     get size() { return this._data.length; }
 
@@ -17,8 +20,16 @@ export class GLTFBuffer implements ArrayBuffer {
 
     get dtype() { return Uint8Array; }
 
-    set data(data: Uint8Array) {
-        this._data = data;
+    setData(data: Uint8Array, byteOffset: number = 0): void {
+        if (byteOffset < 0) {
+            throw new Error(`Offset must be greater than or equal to zero.`);
+        }
+
+        if (data.byteLength + byteOffset > this._data.byteLength) {
+            throw new Error(`Data size is too large for current buffer`);
+        }
+
+        this._data.set(data, byteOffset);
     }
 
     static fromRaw(raw: BufferType): GLTFBuffer {

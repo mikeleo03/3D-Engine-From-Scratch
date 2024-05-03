@@ -1,17 +1,14 @@
+import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
 import { Accessor } from "./Accessor";
-
-type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
-
+import { TypedArrayConverter } from "./typedarrayconverters";
 
 export class MeshBufferAttribute {
-    private _data: TypedArray;
+    private _accessor: Accessor;
     private _size: number;
-    private _dtype: number;
+    private _converter: TypedArrayConverter;
     private _normalize = false;
     private _stride = 0;
     private _offset = 0;
-    private _accessor: Accessor;
-
 
     private _isDirty = true; // kita copy atribut minimal sekali di awal terlebih dahulu
 
@@ -25,8 +22,9 @@ export class MeshBufferAttribute {
      */
     constructor(
         accessor: Accessor,
+        size: number,
+        conveter: TypedArrayConverter,
         options: {
-            dtype?: number,
             normalize?: boolean,
             stride?: number,
             offset?: number,
@@ -39,6 +37,7 @@ export class MeshBufferAttribute {
         }
 
         const offset = options.offset ?? 0;
+        const data = accessor.getData(conveter);
 
         if (size < 1) {
             throw new Error(`Size must be greater than zero.`);
@@ -68,29 +67,48 @@ export class MeshBufferAttribute {
             }
         }
 
-        this._data = data;
+
+        this._accessor = accessor;
         this._size = size;
-        this._dtype = options.dtype || WebGLRenderingContext.FLOAT;
+        this._converter = conveter;
         this._normalize = options.normalize || false;
-        this._stride = options.stride || size;
-        this._offset = offset;
+        this._stride = options.stride || this._size;
+        this._offset = options.offset || 0;
     }
 
     get accessor() { return this._accessor; }
-    get data() { return this._data; }
-    get size() { return this._size; }
-    get dtype() { return this._dtype; }
+    get data() {
+        // NOTE: This creates a new array every time it's called.
+        return this.accessor.getData(this._converter);
+    }
+    get size() {
+        return this._size;
+    }
     get normalize() { return this._normalize; }
     get stride() { return this._stride; }
     get offset() { return this._offset; }
     get isDirty() { return this._isDirty; }
 
+    getSingleElementByteCount() {
+        return this._accessor.getSingleByteCount();
+    }
+
     // Should toggle isDirty flag to true.
-    set data(data: TypedArray) {
-        this._data = data;
+    setData(buffer: ArrayBufferLike) {
+        const bytes = this._converter.tobytes(buffer);
+        const arrays = this._converter.from(bytes);
+
+        if (arrays.length !== this._accessor.count - this._offset) {
+            throw new Error(`Data size does not match accessor count and offset.`);
+        }
+
+        this._accessor.setData(bytes, this._offset);
+
         this._isDirty = true;
     }
     set size(size: number) {
+        const data = this.data;
+
         if (size < 1) {
             throw new Error(`Size must be greater than zero.`);
         }
@@ -99,7 +117,7 @@ export class MeshBufferAttribute {
             throw new Error(`Stride must be greater than or equal to size.`);
         }
 
-        if (this._offset + size > this._data.length) {
+        if (this._offset + size > data.length) {
             throw new Error(`Size is too large for current offset and data length.`);
         }
 
@@ -110,10 +128,6 @@ export class MeshBufferAttribute {
             this._stride = this._size;
         }
     }
-    set dtype(dtype: number) {
-        this._dtype = dtype;
-        this._isDirty = true;
-    }
     set normalize(normalize: boolean) {
         this._normalize = normalize;
         this._isDirty = true;
@@ -123,11 +137,13 @@ export class MeshBufferAttribute {
             throw new Error(`Stride must be greater than or equal to size.`);
         }
 
-        if (stride + this._offset > this._data.length) {
+        const data = this.data;
+
+        if (stride + this._offset > data.length) {
             throw new Error(`Stride is too large for current offset and data length.`);
         }
 
-        const lengthWithStride = this._data.length - this._offset - this._size;
+        const lengthWithStride = data.length - this._offset - this._size;
 
         if (lengthWithStride < 0 && lengthWithStride != -this._size) {
             throw new Error(`Data length does not match size and offset.`);
@@ -141,11 +157,13 @@ export class MeshBufferAttribute {
         this._isDirty = true;
     }
     set offset(offset: number) {
+        const data = this.data;
+
         if (offset < 0) {
             throw new Error(`Offset must be greater than or equal to zero.`);
         }
 
-        if (offset + this.stride > this._data.length) {
+        if (offset + this.stride > data.length) {
             throw new Error(`Offset is too large for current stride.`);
         }
 
@@ -169,8 +187,10 @@ export class MeshBufferAttribute {
      * Jumlah elemen dalam buffer
      */
     get count(): number {
+        const data = this.data;
+
         // account for stride, take note that no padding at the end of the buffer
-        const lengthWithStride = this._data.length - this._offset - this._size;
+        const lengthWithStride = data.length - this._offset - this._size;
 
         if (lengthWithStride < 0) {
             return 0;
@@ -184,11 +204,13 @@ export class MeshBufferAttribute {
      * Panjang dari buffer (data.length = elemen * size).
      */
     get length(): number {
-        return this._data.length;
+        return this.data.length;
     }
 
 
-    set(index: number, data: number[]): void {
+    set(index: number, bufer: ArrayBufferLike): void {
+        const data = this._converter.from(this._converter.tobytes(bufer));
+
         if (data.length !== this._size) {
             throw new Error(`Data size mismatch. Expected ${this._size}, got ${data.length}`);
         }
@@ -198,15 +220,21 @@ export class MeshBufferAttribute {
         const stride = this._stride;
         const offset = this._offset;
         const dataSize = data.length;
+        const currentData = this.data;
 
         const baseOffset = offset + (index * stride);
 
-        if (baseOffset + dataSize > this._data.length) {
-            throw new Error(`Index out of range. Buffer size is ${this._data.length}, got ${baseOffset + dataSize}`);
+        if (baseOffset + dataSize > currentData.length) {
+            throw new Error(`Index out of range. Buffer size is ${currentData.length}, got ${baseOffset + dataSize}`);
         }
 
+        const bytes = this._converter.tobytes(bufer);
+        const singleByteCount = this.getSingleElementByteCount();
+
         for (let i = 0; i < dataSize; i++) {
-            this._data[baseOffset + i] = data[i];
+            // todo: fix byte conversion error
+            const newElementArray = new Uint8Array(bytes, i, this._size * singleByteCount);
+            this._accessor.setData(newElementArray, baseOffset + i);
         }
     }
 
@@ -216,22 +244,23 @@ export class MeshBufferAttribute {
         const stride = this._stride;
         const offset = this._offset;
         const baseIndex = index * stride + offset;
+        const data = this.data;
 
-        const data: number[] = [];
+        const result: number[] = [];
 
         for (let i = 0; i < dataSize; i++) {
             const bufferIndex = baseIndex + i;
 
             // Make sure bufferIndex is within the bounds of the data
-            if (bufferIndex >= 0 && bufferIndex < this._data.length) {
-                data.push(this._data[bufferIndex]);
+            if (bufferIndex >= 0 && bufferIndex < data.length) {
+                result.push(data[bufferIndex]);
             } else {
                 // Handle out-of-bounds access
-                throw new Error(`Index out of range. Buffer size is ${this._data.length}, got ${bufferIndex}`);
+                throw new Error(`Index out of range. Buffer size is ${data.length}, got ${bufferIndex}`);
             }
         }
 
-        return data;
+        return result;
     }
 }
 

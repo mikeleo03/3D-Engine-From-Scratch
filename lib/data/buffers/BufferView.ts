@@ -22,7 +22,22 @@ export class BufferView implements ArrayBufferView {
 
     get target() { return this._target; }
 
-    get data() { return new Uint8Array(this._buffer, this._byteOffset, this._byteLength); }
+    get data(): Uint8Array { 
+        // Note: this will create new array every time it's called
+        return new Uint8Array(this._buffer.data, this._byteOffset, this._byteLength); 
+    }
+
+    setData(data: Uint8Array, byteOffset: number = 0): void {
+        if (byteOffset < 0) {
+            throw new Error(`Offset must be greater than or equal to zero.`);
+        }
+
+        if (data.byteLength + byteOffset > this._byteLength) {
+            throw new Error(`Data size is too large for current buffer view`);
+        }
+
+        this._buffer.setData(data, this._byteOffset + byteOffset);
+    }
 
     static fromRaw(raw: BufferViewType, buffers: GLTFBuffer[]): BufferView {
         return new BufferView(

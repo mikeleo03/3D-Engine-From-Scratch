@@ -1,14 +1,17 @@
 import { MeshBufferAttribute } from "./MeshBufferAttribute";
 import { Vector3 } from "../math/Vector";
 import { MeshPrimitiveAttribute } from "../types/gltftypes";
+import { Accessor } from "./Accessor";
+import { GLTFBuffer } from "./GLTFBuffer";
+import { Uint32ArrayConverter } from "./typedarrayconverters";
 
 export type MeshBufferGeometryAttributes = {
     [name in MeshPrimitiveAttribute]?: MeshBufferAttribute;
 };
 export class MeshBufferGeometry {
-    public readonly POSITION_SIZE: number = 3;
-    public readonly NORMAL_SIZE: number = 3;
-    public readonly INDEX_SIZE: number = 1;
+    public static readonly POSITION_SIZE: number = 3;
+    public static readonly NORMAL_SIZE: number = 3;
+    public static readonly INDEX_SIZE: number = 1;
 
     private _attributes: MeshBufferGeometryAttributes;
     private _indices?: MeshBufferAttribute;
@@ -30,11 +33,11 @@ export class MeshBufferGeometry {
 
 
     setIndices(indices: MeshBufferAttribute): void {
-        const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
-
-        if (indices.size !== this.INDEX_SIZE) {
+        if (indices.size !== MeshBufferGeometry.INDEX_SIZE) {
             throw new Error("Indices must be a 1D array");
         }
+
+        const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
 
         if (position && indices.count !== position.count) {
             throw new Error("Indices count must be the same as position count");
@@ -55,7 +58,7 @@ export class MeshBufferGeometry {
                 throw new Error("Position attribute count must be the same as indices count");
             }
 
-            if (attribute.size !== this.POSITION_SIZE) {
+            if (attribute.size !== MeshBufferGeometry.POSITION_SIZE) {
                 throw new Error("Position attribute size must be 3");
             }
         }
@@ -75,14 +78,20 @@ export class MeshBufferGeometry {
     }
 
 
-    protected calculateNormals(forceNewAttribute = false): void {
+    protected calculateNormals(
+        accessor: Accessor,
+        forceNewAttribute = false
+    ): void {
         const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
         const indices = this.indices;
 
         if (!position || !indices) return;
         let normal = this.getAttribute(MeshPrimitiveAttribute.NORMAL);
         if (forceNewAttribute || !normal)
-            normal = new MeshBufferAttribute(new Float32Array(position.length), this.NORMAL_SIZE);
+        {
+            const converter = new Uint32ArrayConverter();
+            normal = new MeshBufferAttribute(accessor, MeshBufferGeometry.NORMAL_SIZE, converter);
+        }      
 
         const p = position.data;
 
@@ -98,17 +107,9 @@ export class MeshBufferGeometry {
             const normalVector = Vector3.cross(Vector3.sub(v2, v1), Vector3.sub(v3, v1));
             normalVector.normalize();
 
-            normal.data[i1] += normalVector.X;
-            normal.data[i1 + 1] += normalVector.Y;
-            normal.data[i1 + 2] += normalVector.Z;
-
-            normal.data[i2] += normalVector.X;
-            normal.data[i2 + 1] += normalVector.Y;
-            normal.data[i2 + 2] += normalVector.Z;
-
-            normal.data[i3] += normalVector.X;
-            normal.data[i3 + 1] += normalVector.Y;
-            normal.data[i3 + 2] += normalVector.Z;
+            normal.set(i1, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i2, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i3, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
         }
 
         this.setAttribute(MeshPrimitiveAttribute.NORMAL, normal);
