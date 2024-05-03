@@ -1,18 +1,18 @@
-import { BufferAttribute } from "./BufferAttribute";
-import { Vector3 } from "./math/Vector";
+import { MeshBufferAttribute } from "./MeshBufferAttribute";
+import { Vector3 } from "../math/Vector";
 
 export enum PrimitiveAttribute {
     POSITION = 'position',
     NORMAL = 'normal',
 }
 
-export class BufferGeometry {
+export class MeshBufferGeometry {
     public readonly POSITION_SIZE: number = 3;
     public readonly NORMAL_SIZE: number = 3;
     public readonly INDEX_SIZE: number = 1;
 
-    private _attributes: { [name: string]: BufferAttribute | null };
-    private _indices?: BufferAttribute;
+    private _attributes: { [name: string]: MeshBufferAttribute | null };
+    private _indices?: MeshBufferAttribute;
 
 
     constructor() {
@@ -30,7 +30,7 @@ export class BufferGeometry {
     }
 
 
-    setIndices(indices: BufferAttribute): void {
+    setIndices(indices: MeshBufferAttribute): void {
         const position = this.getAttribute(PrimitiveAttribute.POSITION);
 
         if (indices.size !== this.INDEX_SIZE) {
@@ -50,7 +50,7 @@ export class BufferGeometry {
     }
 
 
-    setAttribute(name: string, attribute: BufferAttribute): void {
+    setAttribute(name: string, attribute: MeshBufferAttribute): void {
         if (name === PrimitiveAttribute.POSITION) {
             if (this.indices && attribute.count !== this.indices.count) {
                 throw new Error("Position attribute count must be the same as indices count");
@@ -65,7 +65,7 @@ export class BufferGeometry {
     }
 
 
-    getAttribute(name: string): BufferAttribute | null{
+    getAttribute(name: string): MeshBufferAttribute | null {
         return this._attributes[name];
     }
 
@@ -82,7 +82,7 @@ export class BufferGeometry {
         if (!position || !indices) return;
         let normal = this.getAttribute(PrimitiveAttribute.NORMAL);
         if (forceNewAttribute || !normal)
-            normal = new BufferAttribute(new Float32Array(position.length), this.NORMAL_SIZE);
+            normal = new MeshBufferAttribute(new Float32Array(position.length), this.NORMAL_SIZE);
 
         const p = position.data;
 

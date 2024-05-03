@@ -1,4 +1,4 @@
-import { BufferAttribute } from "../data/BufferAttribute";
+import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
 
 export const ShaderType = {
     VERTEX: WebGLRenderingContext.VERTEX_SHADER,
@@ -30,10 +30,15 @@ export const WebGLType = {
     SAMPLER_CUBE: WebGLRenderingContext.SAMPLER_CUBE,
 }
 
-export type AttributeSingleDataType = BufferAttribute | Float32Array | number[];
+export const BufferViewTarget = {
+    ARRAY_BUFFER: WebGLRenderingContext.ARRAY_BUFFER,
+    ELEMENT_ARRAY_BUFFER: WebGLRenderingContext.ELEMENT_ARRAY_BUFFER,
+}
+
+export type AttributeSingleDataType = MeshBufferAttribute | Float32Array | number[];
 export type AttributeDataType = [AttributeSingleDataType] | number[];
 export type AttributeSetters = (...v: AttributeDataType) => void;
-export type AttributeMapSetters = {[key: string]: AttributeSetters};
+export type AttributeMapSetters = { [key: string]: AttributeSetters };
 
 export type UniformSetters = (...v: number[]) => void;  // TODO: fix this type if needed
 export type UniformMapSetters = { [key: string]: UniformSetters };

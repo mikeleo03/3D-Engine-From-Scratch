@@ -1,7 +1,7 @@
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
 
 
-export class BufferAttribute {
+export class MeshBufferAttribute {
     private _data: TypedArray;
     private _size: number;
     private _dtype: number;

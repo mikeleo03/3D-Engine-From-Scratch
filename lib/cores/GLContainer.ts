@@ -1,4 +1,4 @@
-import { BufferAttribute } from "../data/BufferAttribute";
+import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
 import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType } from "./gltypes";
 
 export class GLContainer {
@@ -24,7 +24,7 @@ export class GLContainer {
         };
 
         this.setAttributes(
-            this.programInfo, 
+            this.programInfo,
             {
                 // TODO: add attributes here
             }
@@ -43,6 +43,10 @@ export class GLContainer {
 
     get canvasElement(): HTMLCanvasElement {
         return this.canvas;
+    }
+
+    get currentProgramInfo(): ProgramInfo {
+        return this.programInfo;
     }
 
     private initGL(canvas: HTMLCanvasElement = this.canvas): WebGLRenderingContext {
@@ -156,7 +160,7 @@ export class GLContainer {
             // Render Time (saat memanggil setAttributes() pada render loop)
             this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buf);
             const v = values[0];
-            if (v instanceof BufferAttribute) {
+            if (v instanceof MeshBufferAttribute) {
                 if (v.isDirty) {
                     // Data Changed Time (note that buffer is already binded)
                     this.gl.bufferData(this.gl.ARRAY_BUFFER, v.data, this.gl.STATIC_DRAW);
