@@ -1,5 +1,5 @@
 import { GLContainer } from "../cores/GLContainer";
-import { SceneNode } from "../data/Node";
+import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
 import { Camera } from "../data/components/Camera";
 

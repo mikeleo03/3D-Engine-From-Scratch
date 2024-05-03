@@ -1,5 +1,6 @@
 import { MeshBufferAttribute } from "./MeshBufferAttribute";
 import { Vector3 } from "../math/Vector";
+import { MeshPrimitiveAttribute } from "../types/gltftypes";
 
 export enum PrimitiveAttribute {
     POSITION = 'position',
@@ -11,12 +12,13 @@ export class MeshBufferGeometry {
     public readonly NORMAL_SIZE: number = 3;
     public readonly INDEX_SIZE: number = 1;
 
-    private _attributes: { [name: string]: MeshBufferAttribute | null };
+    private _attributes: { [key in keyof typeof MeshPrimitiveAttribute]?: MeshBufferAttribute };
     private _indices?: MeshBufferAttribute;
 
 
     constructor() {
         this._attributes = {};
+        this._indices = new MeshBufferAttribute(new Uint16Array(0), this.INDEX_SIZE);
     }
 
 
@@ -45,7 +47,7 @@ export class MeshBufferGeometry {
     }
 
 
-    removeIndices(): void {
+    resetIndices(): void {
         this._indices = undefined;
     }
 

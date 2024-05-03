@@ -196,4 +196,12 @@ export class Matrix4 {
 
         return result;
     }
+
+    get(row: number, col: number): number {
+        if (row < 0 || row >= 4 || col < 0 || col >= 4) {
+            throw new Error("Invalid row or column");
+        }
+
+        return this.data[row][col];
+    }
 }

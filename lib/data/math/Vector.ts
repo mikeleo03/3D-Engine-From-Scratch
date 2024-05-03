@@ -156,4 +156,8 @@ export class Vector3 {
 
         return new Vector3(x, y, z);
     }
+
+    toArray(): [number, number, number] {
+        return [this.x, this.y, this.z];
+    }
 }

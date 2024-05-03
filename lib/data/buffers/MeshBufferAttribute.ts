@@ -1,3 +1,5 @@
+import { Accessor } from "./Accessor";
+
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
 
 
@@ -8,6 +10,7 @@ export class MeshBufferAttribute {
     private _normalize = false;
     private _stride = 0;
     private _offset = 0;
+    private _accessor: Accessor;
 
 
     private _isDirty = true; // kita copy atribut minimal sekali di awal terlebih dahulu
@@ -21,8 +24,7 @@ export class MeshBufferAttribute {
      * @memberof BufferAttribute
      */
     constructor(
-        data: TypedArray,
-        size: number,
+        accessor: Accessor,
         options: {
             dtype?: number,
             normalize?: boolean,
@@ -74,8 +76,7 @@ export class MeshBufferAttribute {
         this._offset = offset;
     }
 
-
-    // Public get accessor to private properties.
+    get accessor() { return this._accessor; }
     get data() { return this._data; }
     get size() { return this._size; }
     get dtype() { return this._dtype; }
@@ -83,7 +84,7 @@ export class MeshBufferAttribute {
     get stride() { return this._stride; }
     get offset() { return this._offset; }
     get isDirty() { return this._isDirty; }
-    // Public set accessor to private properties.
+
     // Should toggle isDirty flag to true.
     set data(data: TypedArray) {
         this._data = data;

@@ -1,5 +1,5 @@
 import { UUID, randomUUID } from "crypto";
-import { SceneNode } from "./Node";
+import { SceneNode } from "./SceneNode";
 import { Scene } from "./Scene";
 import { Mesh } from "./components/Mesh";
 import { Camera } from "./components/Camera";

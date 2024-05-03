@@ -1,31 +1,31 @@
 import { GLTFState } from "./GLTFState";
-import { SceneNode } from "./Node";
+import { SceneNode } from "./SceneNode";
 import { Accessor } from "./buffers/Accessor";
 import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/Camera";
 import { Mesh } from "./components/Mesh";
-import { AccessorType, BufferType, BufferViewType, MeshType, NodeType, SceneType } from "./types/gltftypes";
+import { AccessorType, BufferType, BufferViewType, CameraType, MeshPrimitiveAttribute, MeshType, NodeType, SceneType } from "./types/gltftypes";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
     private _bufferViews: BufferViewType[] = [];
     private _accessors: AccessorType[] = [];
     private _meshes: MeshType[] = [];
-    private _cameras: Camera[] = [];
+    private _cameras: CameraType[] = [];
     private _nodes: NodeType[] = [];
     private _scenes: SceneType[] = [];
     private _scene: number = -1;
-    
+
     constructor(
         buffers: BufferType[],
         bufferViews: BufferViewType[],
         accessors: AccessorType[],
         meshes: MeshType[],
-        cameras: Camera[],
+        cameras: CameraType[],
         nodes: NodeType[],
         scenes: SceneType[],
-        scene: number        
+        scene: number
     ) {
         if (scene < -1 || scene >= scenes.length) {
             throw new Error("Invalid scene index");
@@ -71,14 +71,43 @@ export class GLTFRawState {
         });
 
         const meshRaws = state.meshes.map((mesh, idx) => {
-            const raw = mesh.toRaw(accessorMap.get(mesh.accessor)!!);
+            const raw = mesh.toRaw(accessorMap);
             const index = idx;
             meshMap.set(mesh, index);
             return raw;
         });
 
-        
+        const cameraRaws = state.cameras.map((camera, idx) => {
+            const raw = camera.toRaw();
+            const index = idx;
+            cameraMap.set(camera, index);
+            return raw;
+        });
 
+        const nodeRaws = state.nodes.map((node, idx) => {
+            const raw = node.toRaw(nodeMap, meshMap, cameraMap);
+            const index = idx;
+            nodeMap.set(node, index);
+            return raw;
+        });
+
+        const sceneRaws = state.scenes.map((scene, idx) => {
+            const raw = scene.toRaw(nodeMap);
+            return raw;
+        });
+
+        const scene = state.scene;
+
+        return new GLTFRawState(
+            bufferRaws,
+            bufferViewRaws,
+            accessorRaws,
+            meshRaws,
+            cameraRaws,
+            nodeRaws,
+            sceneRaws,
+            scene
+        );
     }
 
     public toGLTFState(): GLTFState {

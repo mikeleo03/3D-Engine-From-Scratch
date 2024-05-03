@@ -1,5 +1,3 @@
-export type SceneType = { "nodes": number[] };
-export type NodeType = { "name": string, "children": number[], "mesh": number, "camera": number };
 export type BufferType = { "byteLength": number, "uri": string };
 export type BufferViewType = { "buffer": number, "byteOffset": number, "byteLength": number, "target": number };
 export type AccessorType = {
@@ -11,4 +9,53 @@ export type AccessorType = {
     "max": number[],
     "min": number[]
 };
-export type MeshType = { "primitives": { "attributes": { "POSITION": number, "NORMAL": number }, "indices": number }[] };
+
+export const MeshPrimitiveAttribute = {
+    POSITION: "POSITION",
+    NORMAL: "NORMAL"
+};
+
+export type MeshPrimitiveType = {
+    attributes: {
+        [key in keyof typeof MeshPrimitiveAttribute]?: number;
+    };
+    indices?: number;
+}
+
+export type MeshType = { "primitives": MeshPrimitiveType[] };
+
+export const CameraView = {
+    PERSPECTIVE: "perspective",
+    ORTHOGRAPHIC: "orthographic"
+};
+
+export type CameraType = {
+    "type": "perspective",
+    "persepective": {
+        "aspectRatio": number,
+        "yfov": number,
+        "znear": number,
+        "zfar": number
+    }
+} | {
+    "type": "orthographic",
+    "orthographic": {
+        "xmag": number,
+        "ymag": number,
+        "znear": number,
+        "zfar": number
+    }
+};
+
+export type SceneNodeType = {
+    transalation: [number, number, number],
+    rotation: [number, number, number, number],
+    scale: [number, number, number]
+    children: number[],
+    mesh?: number,
+    camera?: number
+}
+
+export type SceneType = {
+    nodes: number[];
+}

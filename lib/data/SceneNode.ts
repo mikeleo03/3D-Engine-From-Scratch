@@ -1,15 +1,38 @@
+import { Camera } from "./components/Camera";
+import { Mesh } from "./components/Mesh";
 import { Matrix4 } from "./math/Matrix4";
+import { Quaternion } from "./math/Quaternion";
 import { Vector3 } from "./math/Vector";
+import { SceneNodeType } from "./types/gltftypes";
 
 export class SceneNode {
     private _position: Vector3 = new Vector3();
-    private _rotation: Vector3 = new Vector3();
+    private _rotation: Quaternion = new Quaternion();
     private _scale: Vector3 = new Vector3(1, 1, 1);
     private _localMatrix: Matrix4 = Matrix4.identity();
     private _worldMatrix: Matrix4 = Matrix4.identity();
     private _parent: SceneNode | null = null;
     private _children: SceneNode[] = []
+    private _mesh?: Mesh;
+    private _camera?: Camera;
     visible = true
+
+    constructor(
+        position: Vector3 = new Vector3(),
+        rotation: Quaternion = new Quaternion(),
+        scale: Vector3 = new Vector3(1, 1, 1),
+        parent: SceneNode | null = null,
+        mesh?: Mesh,
+        camera?: Camera
+    ) {
+        this._position = position;
+        this._rotation = rotation;
+        this._scale = scale;
+        this._parent = parent;
+        this.computeWorldMatrix();
+        this._mesh = mesh;
+        this._camera = camera;
+    }
 
 
     // Public getter, prevent re-instance new object
@@ -35,7 +58,7 @@ export class SceneNode {
     private computeLocalMatrix() {
         this._localMatrix = Matrix4.mul(
             Matrix4.translation3d(this._position),
-            Matrix4.rotation3d(this._rotation),
+            this.rotation.toMatrix4(),
             Matrix4.scale3d(this._scale)
         );
     }
@@ -96,5 +119,33 @@ export class SceneNode {
 
     removeFromParent() {
         if (this.parent) this.parent.remove(this);
+    }
+
+    toRaw(nodeMap: Map<SceneNode, number>, meshMap: Map<Mesh, number>, cameraMap: Map<Camera, number>): SceneNodeType {
+        // check if all children are in the map
+        for (let i = 0; i < this._children.length; i++) {
+            if (!nodeMap.has(this._children[i])) {
+                throw new Error("All children must be in the map");
+            }
+        }
+
+        // check if mesh is in the map
+        if (this._mesh && !meshMap.has(this._mesh)) {
+            throw new Error("Mesh must be in the map");
+        }
+
+        // check if camera is in the map
+        if (this._camera && !cameraMap.has(this._camera)) {
+            throw new Error("Camera must be in the map");
+        }
+
+        return {
+            transalation: this._position.toArray(),
+            rotation: this.rotation.toArray(),
+            scale: this._scale.toArray(),
+            children: this._children.map(child => nodeMap.get(child)!!),
+            mesh: this._mesh ? meshMap.get(this._mesh)!! : undefined,
+            camera: this._camera ? cameraMap.get(this._camera)!! : undefined,
+        };
     }
 }
