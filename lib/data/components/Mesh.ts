@@ -35,9 +35,15 @@ export class Mesh extends NodeComponent {
     }
 
     static fromRaw(raw: MeshType, accessors: Accessor[]): Mesh {
-        return new Mesh(
+        const geometries = raw.primitives.map(primitive => {
+            const position = primitive.attributes.POSITION !== undefined ? accessors[primitive.attributes.POSITION] : undefined;
+            const normal = primitive.attributes.NORMAL !== undefined ? accessors[primitive.attributes.NORMAL] : undefined;
+            const indices = primitive.indices !== undefined ? accessors[primitive.indices] : undefined;
 
-        );
+            return new MeshBufferGeometry(position, normal, indices);
+        });
+
+        return new Mesh(geometries);
     }
 
     private getPrimitives(accessorMap: Map<Accessor, number>): MeshPrimitiveType[] {

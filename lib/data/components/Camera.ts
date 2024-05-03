@@ -60,6 +60,26 @@ export class Camera extends NodeComponent {
         this._far = far;
     }
 
+    static fromRaw(raw: CameraType): Camera {
+        if (raw.type === "perspective") {
+            return new Camera(
+                raw.type,
+                raw.persepective.aspectRatio,
+                raw.persepective.yfov,
+                raw.persepective.znear,
+                raw.persepective.zfar
+            );
+        } else {
+            return new Camera(
+                raw.type,
+                raw.orthographic.xmag,
+                raw.orthographic.ymag,
+                raw.orthographic.znear,
+                raw.orthographic.zfar
+            );
+        }
+    }
+
     toRaw(): CameraType {
         if (this._type === "perspective") {
             return {

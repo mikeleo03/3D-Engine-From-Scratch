@@ -121,6 +121,21 @@ export class SceneNode {
         if (this.parent) this.parent.remove(this);
     }
 
+    static fromRaw(raw: SceneNodeType, meshes: Mesh[], cameras: Camera[]): SceneNode {
+        // NOTE: children are not set here
+        
+        const node = new SceneNode(
+            new Vector3(raw.transalation[0], raw.transalation[1], raw.transalation[2]),
+            new Quaternion(raw.rotation[0], raw.rotation[1], raw.rotation[2], raw.rotation[3]),
+            new Vector3(raw.scale[0], raw.scale[1], raw.scale[2]),
+            null,
+            raw.mesh !== undefined ? meshes[raw.mesh] : undefined,
+            raw.camera !== undefined ? cameras[raw.camera] : undefined
+        );
+
+        return node;
+    }
+
     toRaw(nodeMap: Map<SceneNode, number>, meshMap: Map<Mesh, number>, cameraMap: Map<Camera, number>): SceneNodeType {
         // check if all children are in the map
         for (let i = 0; i < this._children.length; i++) {

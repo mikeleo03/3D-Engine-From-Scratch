@@ -1,11 +1,12 @@
 import { GLTFState } from "./GLTFState";
+import { Scene } from "./Scene";
 import { SceneNode } from "./SceneNode";
 import { Accessor } from "./buffers/Accessor";
 import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/Camera";
 import { Mesh } from "./components/Mesh";
-import { AccessorType, BufferType, BufferViewType, CameraType, MeshPrimitiveAttribute, MeshType, NodeType, SceneType } from "./types/gltftypes";
+import { AccessorType, BufferType, BufferViewType, CameraType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
@@ -13,7 +14,7 @@ export class GLTFRawState {
     private _accessors: AccessorType[] = [];
     private _meshes: MeshType[] = [];
     private _cameras: CameraType[] = [];
-    private _nodes: NodeType[] = [];
+    private _nodes: SceneNodeType[] = [];
     private _scenes: SceneType[] = [];
     private _scene: number = -1;
 
@@ -23,7 +24,7 @@ export class GLTFRawState {
         accessors: AccessorType[],
         meshes: MeshType[],
         cameras: CameraType[],
-        nodes: NodeType[],
+        nodes: SceneNodeType[],
         scenes: SceneType[],
         scene: number
     ) {
@@ -111,6 +112,22 @@ export class GLTFRawState {
     }
 
     public toGLTFState(): GLTFState {
+        const buffers = this._buffers.map(buffer => GLTFBuffer.fromRaw(buffer));
+        const bufferViews = this._bufferViews.map(bufferView => BufferView.fromRaw(bufferView, buffers));
+        const accessors = this._accessors.map(accessor => Accessor.fromRaw(accessor, bufferViews));
+        const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors));
+        const cameras = this._cameras.map(camera => Camera.fromRaw(camera));
+        const nodes = this._nodes.map(node => SceneNode.fromRaw(node, meshes, cameras));
 
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+            for (let j = 0; j < this._nodes[i].children.length; j++) {
+                node.add(nodes[this._nodes[i].children[j]]);
+            }
+        }
+
+        const scenes = this._scenes.map(scene => Scene.fromRaw(scene, nodes));
+
+        return new GLTFState(buffers, bufferViews, accessors, meshes, cameras, nodes, scenes, this._scene);
     }
 }

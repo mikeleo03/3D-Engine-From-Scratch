@@ -13,12 +13,18 @@ export class Scene {
         return this._nodes;
     }
 
-    get roots(): SceneNode[] {
+    // TODO: Implement the following methods
 
-    }
+    // get roots(): SceneNode[] {
 
-    getCamera(root: SceneNode, cameraId: UUID | null = null): SceneNode | null {
+    // }
 
+    // getCamera(root: SceneNode, cameraId: UUID | null = null): SceneNode | null {
+
+    // }
+
+    static fromRaw(raw: SceneType, nodes: SceneNode[]): Scene {
+        return new Scene(raw.nodes.map(index => nodes[index]));
     }
 
     toRaw(nodeMap: Map<SceneNode, number>): SceneType {

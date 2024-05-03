@@ -81,13 +81,14 @@ export class GLTFState {
         return this._scenes[this._scene];
     }
 
-    getCurrentCamera(rootIndex: number = 0, cameraId: UUID | null = null): SceneNode | null {
-        const scene = this.CurrentScene;
-        if (!scene) {
-            return null;
-        }
+    // TODO: Implement the following methods
+    // getCurrentCamera(rootIndex: number = 0, cameraId: UUID | null = null): SceneNode | null {
+    //     const scene = this.CurrentScene;
+    //     if (!scene) {
+    //         return null;
+    //     }
 
-        // TODO: handle for multiple root if needed
-        return scene.getCamera(scene.roots[rootIndex], cameraId);
-    }
+    //     // TODO: handle for multiple root if needed
+    //     return scene.getCamera(scene.roots[rootIndex], cameraId);
+    // }
 }
