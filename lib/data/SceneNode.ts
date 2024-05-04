@@ -15,7 +15,7 @@ export class SceneNode {
     private _children: SceneNode[] = []
     private _mesh?: Mesh;
     private _camera?: Camera;
-    visible = true
+    // visible = true
 
     constructor(
         position: Vector3 = new Vector3(),

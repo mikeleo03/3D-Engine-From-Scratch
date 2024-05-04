@@ -22,6 +22,8 @@ export default function Page() {
       const { GLTFBuffer } = await import('@/lib/data/buffers/GLTFBuffer');
       const { BufferView } = await import('@/lib/data/buffers/BufferView');
       const { Accessor } = await import('@/lib/data/buffers/Accessor');
+      const { SceneNode } = await import('@/lib/data/SceneNode');
+      const { MeshBufferAttribute } = await import('@/lib/data/buffers/MeshBufferAttribute');
 
       const glContainer = new GLContainer(canvas);
 
@@ -54,7 +56,18 @@ export default function Page() {
       const verticesAccessor = new Accessor(
         verticesBufferView, 0, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [1, 1, 0], [0, 0, 0]);
 
-      console.log(verticesAccessor.getData(floatConverter));
+      const positionAttribute = new MeshBufferAttribute(
+        verticesAccessor, 
+        3, 
+        floatConverter, 
+        {
+          offset: 2,
+          stride: 4
+        }
+      );
+      positionAttribute.set(1, Float32Array.from([5, 5.22, 3.21]));
+
+      const node = new SceneNode();
 
       const parser = new GLTFParser();
 

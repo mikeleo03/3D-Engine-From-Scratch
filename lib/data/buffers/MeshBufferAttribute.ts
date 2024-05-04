@@ -66,8 +66,7 @@ export class MeshBufferAttribute {
                 throw new Error(`Data length does not match stride.`);
             }
         }
-
-
+        
         this._accessor = accessor;
         this._size = size;
         this._converter = conveter;
@@ -79,7 +78,7 @@ export class MeshBufferAttribute {
     get accessor() { return this._accessor; }
     get data() {
         // NOTE: This creates a new array every time it's called.
-        return this.accessor.getData(this._converter);
+        return this.accessor.getData(this._converter, this._offset);
     }
     get dtype() { return this._accessor.componentType; }
     get size() {
@@ -91,7 +90,7 @@ export class MeshBufferAttribute {
     get isDirty() { return this._isDirty; }
 
     getSingleElementByteCount() {
-        return this._accessor.getSingleByteCount();
+        return this._accessor.getSingleElementByteCount();
     }
 
     // Should toggle isDirty flag to true.
@@ -191,7 +190,7 @@ export class MeshBufferAttribute {
         const data = this.data;
 
         // account for stride, take note that no padding at the end of the buffer
-        const lengthWithStride = data.length - this._offset - this._size;
+        const lengthWithStride = data.length - this._size;
 
         if (lengthWithStride < 0) {
             return 0;
@@ -221,18 +220,21 @@ export class MeshBufferAttribute {
         const dataSize = data.length;
         const currentData = this.data;
 
-        const baseOffset = offset + (index * stride);
+        let baseOffset = index * stride;
 
         if (baseOffset + dataSize > currentData.length) {
             throw new Error(`Index out of range. Buffer size is ${currentData.length}, got ${baseOffset + dataSize}`);
         }
 
-        const bytes = this._converter.tobytes(data);
-        const singleByteCount = this.getSingleElementByteCount();
+        baseOffset += offset;
 
-        for (let i = 0; i < dataSize; i++) {
+        const bytes = this._converter.tobytes(data);
+        const singleElementByteCount = this.getSingleElementByteCount();
+        const singleByteCount = singleElementByteCount * this._size;
+
+        for (let i = 0; i < dataSize; i += singleByteCount) {
             // todo: fix byte conversion error
-            const newElementArray = new Uint8Array(bytes, i, this._size * singleByteCount);
+            const newElementArray = bytes.slice(i, i + this._size * singleByteCount);
             this._accessor.setData(newElementArray, baseOffset + i);
         }
     }
@@ -241,8 +243,7 @@ export class MeshBufferAttribute {
     get(index: number, size?: number): number[] {
         const dataSize = size || this._size;
         const stride = this._stride;
-        const offset = this._offset;
-        const baseIndex = index * stride + offset;
+        const baseIndex = index * stride;
         const data = this.data;
 
         const result: number[] = [];
