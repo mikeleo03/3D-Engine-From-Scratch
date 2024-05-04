@@ -79,11 +79,11 @@ export class Accessor {
 
     getData(converter?: TypedArrayConverter): ArrayLike<number> {
         // Note: this will create new array every time it's called
-        const data = new Uint8Array(
-            this._bufferView.buffer.data, 
+        const data = this._bufferView.data.slice(
             this._byteOffset, 
-            this._count * getByteCountForWebGLType(this._componentType)
+            this._byteOffset + this._count * getByteCountForWebGLType(this._componentType)
         );
+
 
         if (!converter) {
             return data;

@@ -35,8 +35,12 @@ export class GLTFBuffer implements ArrayBuffer {
     static fromRaw(raw: BufferType): GLTFBuffer {
         const data = new Uint8Array(raw.byteLength);
 
-        for (let i = 0; i < raw.byteLength; i++) {
-            data[i] = raw.uri.charCodeAt(i);
+        // read the byte uri
+        const byteString = atob(raw.uri.split(',')[1]);
+
+        // write the byte string into the buffer
+        for (let i = 0; i < byteString.length; i++) {
+            data[i] = byteString.charCodeAt(i);
         }
 
         return new GLTFBuffer(data);
@@ -44,7 +48,7 @@ export class GLTFBuffer implements ArrayBuffer {
 
     toRaw(): BufferType {
 
-        const uri = `data:application/octet-stream;base64,${Buffer.from(this._data).toString('base64')}`;
+        const uri = `data:application/octet-stream;base64,${Buffer.from(this._data.buffer).toString('base64')}`;
 
         return {
             uri: uri,

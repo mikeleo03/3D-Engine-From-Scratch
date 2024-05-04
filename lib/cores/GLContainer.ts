@@ -1,32 +1,31 @@
 import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
 import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType } from "./gltypes";
 
-type TypedArray = Float64Array | Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
+type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
 
 export class GLContainer {
-    private canvas: HTMLCanvasElement;
-    private gl: WebGLRenderingContext;
-    private programInfo: ProgramInfo;
+    private _canvas: HTMLCanvasElement;
+    private _gl: WebGLRenderingContext;
+    private _programInfo: ProgramInfo;
 
     constructor(
         canvas: HTMLCanvasElement
     ) {
-        this.canvas = canvas;
+        this._canvas = canvas;
 
-        this.gl = this.initGL();
+        this._gl = this.initGL();
         this.adjustCanvas();
         this.observeCanvas();
 
         const shaderProgram = this.initProgram();
 
-        this.programInfo = {
+        this._programInfo = {
             program: shaderProgram,
             uniformSetters: {},  // TODO: add uniformSetters here
-            attributeSetters: this.createAttributeSetters(),
         };
 
         this.setAttributes(
-            this.programInfo,
+            this._programInfo,
             {
                 // TODO: add attributes here
             }
@@ -36,22 +35,22 @@ export class GLContainer {
     }
 
     private get shaderProgram(): WebGLProgram {
-        return this.programInfo.program;
+        return this._programInfo.program;
     }
 
     get glContext(): WebGLRenderingContext {
-        return this.gl;
+        return this._gl;
     }
 
     get canvasElement(): HTMLCanvasElement {
-        return this.canvas;
+        return this._canvas;
     }
 
     get currentProgramInfo(): ProgramInfo {
-        return this.programInfo;
+        return this._programInfo;
     }
 
-    private initGL(canvas: HTMLCanvasElement = this.canvas): WebGLRenderingContext {
+    private initGL(canvas: HTMLCanvasElement = this._canvas): WebGLRenderingContext {
         const gl = canvas.getContext("webgl");
 
         if (!gl) {
@@ -62,34 +61,34 @@ export class GLContainer {
     }
 
     private adjustCanvas(): void {
-        const dw = this.canvas.clientWidth;
-        const dh = this.canvas.clientHeight;
-        if (this.canvas.width !== dw || this.canvas.height !== dh) {
-            this.canvas.width = dw;
-            this.canvas.height = dh;
-            this.gl.viewport(0, 0, dw, dh);
+        const dw = this._canvas.clientWidth;
+        const dh = this._canvas.clientHeight;
+        if (this._canvas.width !== dw || this._canvas.height !== dh) {
+            this._canvas.width = dw;
+            this._canvas.height = dh;
+            this._gl.viewport(0, 0, dw, dh);
         }
     }
 
     private observeCanvas(): void {
         const ro = new ResizeObserver(this.adjustCanvas.bind(this));
-        ro.observe(this.canvas, { box: 'content-box' });
+        ro.observe(this._canvas, { box: 'content-box' });
     }
 
     private createShader(source: string, type: GLenum) {
-        let shader = this.gl.createShader(type);
+        let shader = this._gl.createShader(type);
 
         if (!shader) {
             throw new Error("Failed to create shader");
         }
 
-        this.gl.shaderSource(shader, source);
-        this.gl.compileShader(shader);
+        this._gl.shaderSource(shader, source);
+        this._gl.compileShader(shader);
 
 
-        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-            const infoLog = this.gl.getShaderInfoLog(shader)
-            this.gl.deleteShader(shader);
+        if (!this._gl.getShaderParameter(shader, this._gl.COMPILE_STATUS)) {
+            const infoLog = this._gl.getShaderInfoLog(shader)
+            this._gl.deleteShader(shader);
 
             throw new Error("Failed to compile shader: " + infoLog);
         }
@@ -105,19 +104,19 @@ export class GLContainer {
      * @return {WebGLProgram?}
      */
     private createProgram(vertexShader: WebGLShader, fragmentShader: WebGLShader) {
-        const program = this.gl.createProgram();
+        const program = this._gl.createProgram();
 
         if (!program) {
             throw new Error("Failed to create program");
         }
 
-        this.gl.attachShader(program, vertexShader);
-        this.gl.attachShader(program, fragmentShader);
-        this.gl.linkProgram(program);
+        this._gl.attachShader(program, vertexShader);
+        this._gl.attachShader(program, fragmentShader);
+        this._gl.linkProgram(program);
 
-        if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
-            const infoLog = this.gl.getProgramInfoLog(program);
-            this.gl.deleteProgram(program);
+        if (!this._gl.getProgramParameter(program, this._gl.LINK_STATUS)) {
+            const infoLog = this._gl.getProgramInfoLog(program);
+            this._gl.deleteProgram(program);
             throw new Error("Failed to link program: " + infoLog);
         }
 
@@ -156,38 +155,38 @@ export class GLContainer {
 
     private createAttributeSetter(info: WebGLActiveInfo): AttributeSetters {
         // Initialization Time
-        const loc = this.gl.getAttribLocation(this.shaderProgram, info.name);
-        const buf = this.gl.createBuffer();
+        const loc = this._gl.getAttribLocation(this.shaderProgram, info.name);
+        const buf = this._gl.createBuffer();
         return (...values) => {
             // Render Time (saat memanggil setAttributes() pada render loop)
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buf);
+            this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
             const v = values[0];
             if (v instanceof MeshBufferAttribute) {
                 if (v.isDirty) {
                     // Data Changed Time (note that buffer is already binded)
-                    this.gl.bufferData(this.gl.ARRAY_BUFFER, v.data as TypedArray, this.gl.STATIC_DRAW);
+                    this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
                     v.consume();
                 }
-                this.gl.enableVertexAttribArray(loc);
-                this.gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
+                this._gl.enableVertexAttribArray(loc);
+                this._gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
             } else {
-                this.gl.disableVertexAttribArray(loc);
+                this._gl.disableVertexAttribArray(loc);
                 if (v instanceof Float32Array)
                     // @ts-ignore
-                    this.gl[`vertexAttrib${v.length}fv`](loc, v);
+                    this._gl[`vertexAttrib${v.length}fv`](loc, v);
                 else
                     // @ts-ignore
-                    this.gl[`vertexAttrib${values.length}f`](loc, ...values);
+                    this._gl[`vertexAttrib${values.length}f`](loc, ...values);
             }
         }
     }
 
     private createAttributeSetters(): AttributeMapSetters {
         const attribSetters: AttributeMapSetters = {};
-        const numAttribs = this.gl.getProgramParameter(this.shaderProgram, this.gl.ACTIVE_ATTRIBUTES);
+        const numAttribs = this._gl.getProgramParameter(this.shaderProgram, this._gl.ACTIVE_ATTRIBUTES);
 
         for (let i = 0; i < numAttribs; i++) {
-            const info = this.gl.getActiveAttrib(this.shaderProgram, i);
+            const info = this._gl.getActiveAttrib(this.shaderProgram, i);
             if (!info) continue;
             attribSetters[info.name] = this.createAttributeSetter(info);
         }
@@ -195,7 +194,7 @@ export class GLContainer {
     }
 
     private setAttribute(programInfo: ProgramInfo, attributeName: string, ...data: AttributeDataType): void {
-        const setters = programInfo.attributeSetters;
+        const setters = programInfo.attributeSetters!!;
         if (attributeName in setters) {
             const shaderName = `a_${attributeName}`;
             setters[shaderName](...data);

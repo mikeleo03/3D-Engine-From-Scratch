@@ -23,8 +23,8 @@ export class BufferView implements ArrayBufferView {
     get target() { return this._target; }
 
     get data(): Uint8Array { 
-        // Note: this will create new array every time it's called
-        return new Uint8Array(this._buffer.data, this._byteOffset, this._byteLength); 
+        // Note: this will create new array every time it's called 
+        return this._buffer.data.slice(this._byteOffset, this._byteOffset + this._byteLength);
     }
 
     setData(data: Uint8Array, byteOffset: number = 0): void {

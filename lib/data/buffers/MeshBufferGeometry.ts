@@ -3,7 +3,7 @@ import { Vector3 } from "../math/Vector";
 import { MeshPrimitiveAttribute } from "../types/gltftypes";
 import { Accessor } from "./Accessor";
 import { GLTFBuffer } from "./GLTFBuffer";
-import { Uint32ArrayConverter } from "./typedarrayconverters";
+import { Float32ArrayConverter, Uint32ArrayConverter } from "./typedarrayconverters";
 
 export type MeshBufferGeometryAttributes = {
     [name in MeshPrimitiveAttribute]?: MeshBufferAttribute;
@@ -87,11 +87,10 @@ export class MeshBufferGeometry {
 
         if (!position || !indices) return;
         let normal = this.getAttribute(MeshPrimitiveAttribute.NORMAL);
-        if (forceNewAttribute || !normal)
-        {
-            const converter = new Uint32ArrayConverter();
+        if (forceNewAttribute || !normal) {
+            const converter = new Float32ArrayConverter();
             normal = new MeshBufferAttribute(accessor, MeshBufferGeometry.NORMAL_SIZE, converter);
-        }      
+        }
 
         const p = position.data;
 
@@ -107,9 +106,9 @@ export class MeshBufferGeometry {
             const normalVector = Vector3.cross(Vector3.sub(v2, v1), Vector3.sub(v3, v1));
             normalVector.normalize();
 
-            normal.set(i1, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
-            normal.set(i2, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
-            normal.set(i3, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i1, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i2, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i3, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
         }
 
         this.setAttribute(MeshPrimitiveAttribute.NORMAL, normal);

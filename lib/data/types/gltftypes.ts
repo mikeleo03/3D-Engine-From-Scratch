@@ -15,6 +15,15 @@ export type AccessorType = {
     "max": number[],
     "min": number[]
 };
+export enum AccessorComponentType {
+    SCALAR = "SCALAR",
+    VEC2 = "VEC2",
+    VEC3 = "VEC3",
+    VEC4 = "VEC4",
+    MAT2 = "MAT2",
+    MAT3 = "MAT3",
+    MAT4 = "MAT4"
+}
 
 export enum MeshPrimitiveAttribute {
     POSITION = "POSITION",
@@ -62,3 +71,14 @@ export type SceneNodeType = {
 export type SceneType = {
     nodes: number[];
 }
+
+export type GLTFType = {
+    buffers: BufferType[],
+    bufferViews: BufferViewType[],
+    accessors: AccessorType[],
+    meshes: MeshType[],
+    cameras: CameraType[],
+    nodes: SceneNodeType[],
+    scenes: SceneType[],
+    scene: number
+};

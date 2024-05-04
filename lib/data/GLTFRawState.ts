@@ -42,6 +42,39 @@ export class GLTFRawState {
         this._scene = scene;
     }
 
+    get buffers(): BufferType[] {
+        return this._buffers;
+    }
+
+    get bufferViews(): BufferViewType[] {
+        return this._bufferViews;
+    }
+
+    get accessors(): AccessorType[] {
+        return this._accessors;
+    }
+
+    get meshes(): MeshType[] {
+        return this._meshes;
+    }
+
+    get cameras(): CameraType[] {
+        return this._cameras;
+    }
+
+    get nodes(): SceneNodeType[] {
+        return this._nodes;
+    }
+
+    get scenes(): SceneType[] {
+        return this._scenes;
+    }
+
+    get scene(): number {
+        return this._scene;
+    }
+    
+
     static fromGLTFState(state: GLTFState): GLTFRawState {
         const bufferMap = new Map<GLTFBuffer, number>();
         const bufferViewMap = new Map<BufferView, number>();

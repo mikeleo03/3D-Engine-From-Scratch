@@ -13,13 +13,6 @@ export class Float32ArrayConverter extends TypedArrayConverter {
     }
 }
 
-export class Float64ArrayConverter extends TypedArrayConverter {
-    from(buffer: ArrayBufferLike): Float64Array {
-        // Convert the Uint8Array to Float64Array and return
-        return new Float64Array(buffer);
-    }
-}
-
 export class Uint8ArrayConverter extends TypedArrayConverter {
     from(buffer: ArrayBufferLike): Uint8Array {
         // Convert the Uint8Array to Uint8Array and return

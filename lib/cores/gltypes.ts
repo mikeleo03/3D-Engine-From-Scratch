@@ -1,3 +1,5 @@
+"use client";
+
 import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
 
 export enum ShaderType {
@@ -80,7 +82,7 @@ export type UniformMapSetters = { [key: string]: UniformSetters };
 export type ProgramInfo = {
     program: WebGLProgram,
     uniformSetters: UniformMapSetters,
-    attributeSetters: AttributeMapSetters,
+    attributeSetters?: AttributeMapSetters,
 };
 
 export const UniformSetterWebGLType = {
