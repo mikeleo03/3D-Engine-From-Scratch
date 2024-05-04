@@ -26,7 +26,7 @@ export class SceneNode {
         camera?: Camera
     ) {
         this._position = position;
-        this._rotation = rotation;
+        this._rotation = rotation.normalize();
         this._scale = scale;
         this._parent = parent;
         this.computeWorldMatrix();

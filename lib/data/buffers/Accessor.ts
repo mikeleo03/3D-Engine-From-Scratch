@@ -78,11 +78,6 @@ export class Accessor {
             throw new Error(`Data size is too large for current accessor count`);
         }
 
-        if (data.length + elementOffset * singleElementByte < count * byteCount) {
-            throw new Error(`Data size is too small for current accessor count`);
-        }
-        
-
         this.bufferView.setData(
             data, 
             this._byteOffset + elementOffset * singleElementByte

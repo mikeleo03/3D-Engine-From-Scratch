@@ -1,4 +1,6 @@
 import { Float32ArrayConverter, Uint16ArrayConverter } from "@/lib/data/buffers/typedarrayconverters";
+import { Quaternion } from "@/lib/data/math/Quaternion";
+import { Vector3 } from "@/lib/data/math/Vector";
 import { BufferType } from "@/lib/data/types/gltftypes";
 import { useEffect, useRef } from "react";
 
@@ -24,6 +26,8 @@ export default function Page() {
       const { Accessor } = await import('@/lib/data/buffers/Accessor');
       const { SceneNode } = await import('@/lib/data/SceneNode');
       const { MeshBufferAttribute } = await import('@/lib/data/buffers/MeshBufferAttribute');
+      const { MeshBufferGeometry } = await import('@/lib/data/buffers/MeshBufferGeometry');
+      const { Mesh } = await import('@/lib/data/components/Mesh');
 
       const glContainer = new GLContainer(canvas);
 
@@ -34,10 +38,13 @@ export default function Page() {
         1,
         1
       );
+      const cameras = [camera];
+      const cameraMap = new Map();
+      cameraMap.set(camera, 0);
 
       const gltfBufferRaw: BufferType = {
-        "uri": "data:application/octet-stream;base64,AAABAAIAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAA=",
-        "byteLength": 44
+        "uri" : "data:application/octet-stream;base64,AAABAAIAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8=",
+        "byteLength" : 80
       }
 
       const gltfBuffer = GLTFBuffer.fromRaw(gltfBufferRaw);
@@ -45,7 +52,7 @@ export default function Page() {
 
 
       const indicesBufferView = new BufferView(gltfBuffer, 0, 6, BufferViewTarget.ELEMENT_ARRAY_BUFFER);
-      const verticesBufferView = new BufferView(gltfBuffer, 8, 36, BufferViewTarget.ARRAY_BUFFER);
+      const verticesBufferView = new BufferView(gltfBuffer, 8, 72, BufferViewTarget.ARRAY_BUFFER);
       const bufferViews = [indicesBufferView, verticesBufferView];
 
       const uShortConverter = new Uint16ArrayConverter();
@@ -55,19 +62,50 @@ export default function Page() {
         indicesBufferView, 0, WebGLType.UNSIGNED_SHORT, 3, AccessorComponentType.SCALAR, [2], [0]);
       const verticesAccessor = new Accessor(
         verticesBufferView, 0, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [1, 1, 0], [0, 0, 0]);
+      const normalAccessor = new Accessor(
+        verticesBufferView, 36, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [0, 0, 1], [0, 0, 1]);
 
       const positionAttribute = new MeshBufferAttribute(
         verticesAccessor, 
         3, 
         floatConverter, 
-        {
-          offset: 2,
-          stride: 4
-        }
       );
-      positionAttribute.set(1, Float32Array.from([5, 5.22, 3.21]));
+      const indicesAttribute = new MeshBufferAttribute(
+        indicesAccessor, 
+        1, 
+        uShortConverter, 
+      );
+      const normalAttribute = new MeshBufferAttribute(
+        normalAccessor, 
+        3, 
+        floatConverter, 
+      );
 
-      const node = new SceneNode();
+      const geometry = new MeshBufferGeometry({
+        POSITION: positionAttribute,
+        NORMAL: normalAttribute,
+      }, indicesAttribute);
+
+      geometry.calculateNormals(indicesAccessor, true);
+
+      const mesh = new Mesh([geometry]);
+      const meshes = [mesh];
+      const meshMap = new Map();
+      meshMap.set(mesh, 0);
+
+      const node = new SceneNode(
+        new Vector3(4.4, 3, 2),
+        new Quaternion(0, 0.5, 0, 1),
+        new Vector3(1, 1, 3),
+        undefined,
+        undefined,
+        camera,
+      );
+      const nodes = [node];
+      const nodeMap = new Map();
+      nodeMap.set(node, 0);
+
+
 
       const parser = new GLTFParser();
 
