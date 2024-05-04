@@ -95,8 +95,8 @@ export class MeshBufferAttribute {
     }
 
     // Should toggle isDirty flag to true.
-    setData(buffer: ArrayBufferLike) {
-        const bytes = this._converter.tobytes(buffer);
+    setData(data: ArrayLike<number>) {
+        const bytes = this._converter.tobytes(data);
         const arrays = this._converter.from(bytes);
 
         if (arrays.length !== this._accessor.count - this._offset) {
@@ -209,9 +209,7 @@ export class MeshBufferAttribute {
     }
 
 
-    set(index: number, bufer: ArrayBufferLike): void {
-        const data = this._converter.from(this._converter.tobytes(bufer));
-
+    set(index: number, data: ArrayLike<number>): void {
         if (data.length !== this._size) {
             throw new Error(`Data size mismatch. Expected ${this._size}, got ${data.length}`);
         }
@@ -229,7 +227,7 @@ export class MeshBufferAttribute {
             throw new Error(`Index out of range. Buffer size is ${currentData.length}, got ${baseOffset + dataSize}`);
         }
 
-        const bytes = this._converter.tobytes(bufer);
+        const bytes = this._converter.tobytes(data);
         const singleByteCount = this.getSingleElementByteCount();
 
         for (let i = 0; i < dataSize; i++) {

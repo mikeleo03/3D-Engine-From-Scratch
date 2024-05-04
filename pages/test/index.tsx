@@ -53,8 +53,8 @@ export default function Page() {
         indicesBufferView, 0, WebGLType.UNSIGNED_SHORT, 3, AccessorComponentType.SCALAR, [2], [0]);
       const verticesAccessor = new Accessor(
         verticesBufferView, 0, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [1, 1, 0], [0, 0, 0]);
-
-      console.log(verticesAccessor.getData());
+      
+      console.log(indicesAccessor.getData(uShortConverter));
 
       const parser = new GLTFParser();
 

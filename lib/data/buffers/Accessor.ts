@@ -84,7 +84,6 @@ export class Accessor {
             this._byteOffset + this._count * getByteCountForWebGLType(this._componentType)
         );
 
-
         if (!converter) {
             return data;
         }
