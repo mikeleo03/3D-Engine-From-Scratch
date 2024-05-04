@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   return (
     <div className="app-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "stretch" }}>
-      <div className="sidebar left-sidebar w-[90%] bg-gray-800 text-white p-4 " style={{ flex: 1, margin: 10 }}>
+      <div className="sidebar left-sidebar w-[90%] bg-gray-800 text-white p-4" style={{ flex: 1, margin: 10 }}>
         <h1 className="text-lg font-bold">WebGL 3D Engine</h1>
 
         <div className="flex justify-between mt-4">
@@ -20,7 +20,7 @@ export default function Home() {
             </select>
           </div>
 
-          <div className="mt-4">
+          <div className="ml-10 mt-4">
             <h2 className="font-semibold">Shape</h2>
             <select id="projection-type" name="projection-type"
               className="block appearance-none w-30 bg-white border border-gray-200 text-gray-700 py-2 px-3 pr-8 rounded leading-tight cursor-pointer focus:outline focus:border-black">
