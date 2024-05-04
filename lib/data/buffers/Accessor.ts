@@ -1,19 +1,25 @@
-import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
-import { AccessorType } from "../types/gltftypes";
+import { AccessorComponentType, AccessorType, getAccessorComponentType, getByteCountForComponentType } from "../types/gltftypes";
 import { BufferView } from "./BufferView";
 import { TypedArrayConverter } from "./typedarrayconverters";
-import { get } from "http";
 
 export class Accessor {
     private _bufferView: BufferView;
     private _byteOffset: number;
     private _componentType: number;
     private _count: number;
-    private _type: string;
+    private _type: AccessorComponentType;
     private _max: number[];
     private _min: number[];
     
-    constructor(bufferView: BufferView, byteOffset: number, componentType: number, count: number, type: string, max: number[], min: number[]) {
+    constructor(
+        bufferView: BufferView, 
+        byteOffset: number, 
+        componentType: number, 
+        count: number, 
+        type: AccessorComponentType, 
+        max: number[], 
+        min: number[]
+    ) {
         this._bufferView = bufferView;
         this._byteOffset = byteOffset;
         this._componentType = componentType;
@@ -69,19 +75,22 @@ export class Accessor {
             throw new Error(`Data size is too large for current accessor count`);
         }
 
-        if (data.length < (count + countOffset) * getByteCountForWebGLType(this._componentType)) {
+        if (data.length < (count + countOffset) * this.getSingleByteCount()) {
             throw new Error(`Data size is too small for current accessor count`);
         }
         
 
-        this.bufferView.setData(data, this._byteOffset + countOffset * getByteCountForWebGLType(this._componentType));
+        this.bufferView.setData(
+            data, 
+            this._byteOffset + countOffset * this.getSingleByteCount()
+        );
     }
 
     getData(converter?: TypedArrayConverter): ArrayLike<number> {
         // Note: this will create new array every time it's called
         const data = this._bufferView.data.slice(
             this._byteOffset, 
-            this._byteOffset + this._count * getByteCountForWebGLType(this._componentType)
+            this._byteOffset + this._count * this.getSingleByteCount()
         );
 
         if (!converter) {
@@ -92,11 +101,11 @@ export class Accessor {
     }
 
     getByteCount(): number {
-        return this._count * getByteCountForWebGLType(this._componentType);
+        return this._count * this.getSingleByteCount();
     }
 
     getSingleByteCount(): number {
-        return getByteCountForWebGLType(this._componentType);
+        return getByteCountForComponentType(this._componentType, this._type);
     }
 
     static fromRaw(raw: AccessorType, bufferViews: BufferView[]): Accessor {
@@ -105,7 +114,7 @@ export class Accessor {
             raw.byteOffset,
             raw.componentType,
             raw.count,
-            raw.type,
+            getAccessorComponentType(raw.type),
             raw.max,
             raw.min
         );

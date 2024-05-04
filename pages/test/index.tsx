@@ -26,7 +26,7 @@ export default function Page() {
       const glContainer = new GLContainer(canvas);
 
       const camera = new Camera(
-      CameraView.PERSPECTIVE,
+        CameraView.PERSPECTIVE,
         1,
         1,
         1,
@@ -34,14 +34,14 @@ export default function Page() {
       );
 
       const gltfBufferRaw: BufferType = {
-        "uri" : "data:application/octet-stream;base64,AAABAAIAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAA=",
-        "byteLength" : 44
+        "uri": "data:application/octet-stream;base64,AAABAAIAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAA=",
+        "byteLength": 44
       }
 
       const gltfBuffer = GLTFBuffer.fromRaw(gltfBufferRaw);
       const gltfBuffers = [gltfBuffer];
-        
-      
+
+
       const indicesBufferView = new BufferView(gltfBuffer, 0, 6, BufferViewTarget.ELEMENT_ARRAY_BUFFER);
       const verticesBufferView = new BufferView(gltfBuffer, 8, 36, BufferViewTarget.ARRAY_BUFFER);
       const bufferViews = [indicesBufferView, verticesBufferView];
@@ -53,8 +53,8 @@ export default function Page() {
         indicesBufferView, 0, WebGLType.UNSIGNED_SHORT, 3, AccessorComponentType.SCALAR, [2], [0]);
       const verticesAccessor = new Accessor(
         verticesBufferView, 0, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [1, 1, 0], [0, 0, 0]);
-      
-      console.log(indicesAccessor.getData(uShortConverter));
+
+      console.log(verticesAccessor.getData(floatConverter));
 
       const parser = new GLTFParser();
 
