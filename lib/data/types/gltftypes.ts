@@ -86,7 +86,7 @@ export enum CameraView {
 }
 export type CameraType = {
     "type": "perspective",
-    "persepective": {
+    "perspective": {
         "aspectRatio": number,
         "yfov": number,
         "znear": number,
@@ -95,10 +95,22 @@ export type CameraType = {
 } | {
     "type": "orthographic",
     "orthographic": {
-        "xmag": number,
-        "ymag": number,
+        "top": number,
+        "bottom": number,
+        "left": number,
+        "right": number,
         "znear": number,
-        "zfar": number
+        "zfar": number,
+    }
+} | {
+    "type": "oblique",
+    "oblique": {
+        "top": number,
+        "bottom": number,
+        "left": number,
+        "right": number,
+        "znear": number,
+        "zfar": number,
     }
 };
 
