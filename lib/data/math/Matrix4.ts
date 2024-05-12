@@ -211,9 +211,9 @@ export class Matrix4 {
 
         return new Matrix4([
             [f / aspectRatio, 0, 0, 0],
-            [0, f, 0, 0],
-            [0, 0, (far + near) * nf, 2 * far * near * nf],
-            [0, 0, -1,  0],
+            [0, f, 0,  0],
+            [0, 0, (far + near) * nf, -1],
+            [0, 0, 2 * far * near * nf,  0],
         ]);
     }
     
@@ -222,24 +222,22 @@ export class Matrix4 {
         const b = 1 / (top - bottom);
         const c = 1 / (near - far);
         return new Matrix4([
-            [2 * a, 0, 0, (left + right) * -1 * a],
-            [0, 2 * b, 0, (bottom + top) * -1 * b],
-            [0, 0, 2 * c, (near + far) * c],
-            [0, 0, 0, 1],
+            [2 * a, 0, 0, 0],
+            [0, 2 * b, 0, 0],
+            [0, 0, 2 * c, 0],
+            [(left + right) * -1 * a, (top + bottom) * -1 * b, (far + near) * -1 * c, 1],
         ]);
     }
 
     static oblique(left: number, right: number, bottom: number, top: number, near: number, far: number, angle: number, scale=0.5) {
         angle *= Math.PI / 180;
-        return Matrix4.mul(
-            Matrix4.ortographic(left, right, bottom, top, near, far).mul(
-                new Matrix4([
-                    [1, 0, scale * Math.cos(angle), 0],
-                    [0, 1, scale * Math.sin(angle), 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 1],
-                ])
-            )
+        return Matrix4.ortographic(left, right, bottom, top, near, far).mul(
+            new Matrix4([
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [-1 * scale * Math.cos(angle), scale * Math.sin(angle), 1, 0],
+                [0, 0, 0, 1],
+            ])
         );
     }
 }
