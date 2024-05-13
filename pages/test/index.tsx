@@ -43,8 +43,8 @@ export default function Page() {
       cameraMap.set(camera, 0);
 
       const gltfBufferRaw: BufferType = {
-        "uri" : "data:application/octet-stream;base64,AAABAAIAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8=",
-        "byteLength" : 80
+        "uri": "data:application/octet-stream;base64,AAABAAIAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8=",
+        "byteLength": 80
       }
 
       const gltfBuffer = GLTFBuffer.fromRaw(gltfBufferRaw);
@@ -66,19 +66,19 @@ export default function Page() {
         verticesBufferView, 36, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [0, 0, 1], [0, 0, 1]);
 
       const positionAttribute = new MeshBufferAttribute(
-        verticesAccessor, 
-        3, 
-        floatConverter, 
+        verticesAccessor,
+        3,
+        floatConverter,
       );
       const indicesAttribute = new MeshBufferAttribute(
-        indicesAccessor, 
-        1, 
-        uShortConverter, 
+        indicesAccessor,
+        1,
+        uShortConverter,
       );
       const normalAttribute = new MeshBufferAttribute(
-        normalAccessor, 
-        3, 
-        floatConverter, 
+        normalAccessor,
+        3,
+        floatConverter,
       );
 
       const geometry = new MeshBufferGeometry({
