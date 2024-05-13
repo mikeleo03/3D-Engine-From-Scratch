@@ -28,6 +28,9 @@ export default function Page() {
       const { MeshBufferAttribute } = await import('@/lib/data/buffers/MeshBufferAttribute');
       const { MeshBufferGeometry } = await import('@/lib/data/buffers/MeshBufferGeometry');
       const { Mesh } = await import('@/lib/data/components/Mesh');
+      const { Scene } = await import('@/lib/data/Scene');
+      const { GLTFState } = await import('@/lib/data/GLTFState');
+      const { GLTFRawState } = await import('@/lib/data/GLTFRawState');
 
       const glContainer = new GLContainer(canvas);
 
@@ -64,6 +67,11 @@ export default function Page() {
         verticesBufferView, 0, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [1, 1, 0], [0, 0, 0]);
       const normalAccessor = new Accessor(
         verticesBufferView, 36, WebGLType.FLOAT, 3, AccessorComponentType.VEC3, [0, 0, 1], [0, 0, 1]);
+      const accessors = [indicesAccessor, verticesAccessor, normalAccessor];
+      const accessorMap = new Map();
+      accessorMap.set(indicesAccessor, 0);
+      accessorMap.set(verticesAccessor, 1);
+      accessorMap.set(normalAccessor, 2);
 
       const positionAttribute = new MeshBufferAttribute(
         verticesAccessor,
@@ -86,9 +94,10 @@ export default function Page() {
         NORMAL: normalAttribute,
       }, indicesAttribute);
 
-      geometry.calculateNormals(indicesAccessor, true);
+      geometry.calculateNormals(normalAccessor, true);
 
       const mesh = new Mesh([geometry]);
+
       const meshes = [mesh];
       const meshMap = new Map();
       meshMap.set(mesh, 0);
@@ -98,17 +107,51 @@ export default function Page() {
         new Quaternion(0, 0.5, 0, 1),
         new Vector3(1, 1, 3),
         undefined,
-        undefined,
+        mesh,
         camera,
       );
       const nodes = [node];
       const nodeMap = new Map();
       nodeMap.set(node, 0);
 
+      const scene = new Scene(nodes);
+      const scenes = [scene];
 
+      const gltfState = new GLTFState(
+        gltfBuffers,
+        bufferViews,
+        accessors,
+        meshes,
+        cameras,
+        nodes,
+        scenes,
+        0
+      );
+
+      // console.log(GLTFRawState.fromGLTFState(gltfState));
 
       const parser = new GLTFParser();
 
+      function downloadFile(file: File) {
+        // Create a temporary URL for the File object
+        const url = window.URL.createObjectURL(file);
+
+        // Create a link element
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name; // Use the file name from the File object
+
+        // Simulate a click on the link to trigger the download
+        link.click();
+
+        // Clean up by revoking the Object URL
+        window.URL.revokeObjectURL(url);
+      }
+
+      const file = parser.write(gltfState);
+
+      // downloadFile(file);
+      console.log(await parser.parse(file));
     };
 
     initializeGL();
