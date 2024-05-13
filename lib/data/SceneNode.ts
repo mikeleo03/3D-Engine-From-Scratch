@@ -43,6 +43,8 @@ export class SceneNode {
     get localMatrix() { return this._localMatrix; }
     get worldMatrix() { return this._worldMatrix; }
     get children() { return this._children; }
+    get camera() { return this._camera; }
+    get mesh() { return this._mesh; }
 
 
     // Public setter

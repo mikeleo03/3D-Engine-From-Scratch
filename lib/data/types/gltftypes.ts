@@ -113,6 +113,7 @@ export type SceneNodeType = {
 
 export type SceneType = {
     nodes: number[];
+    activeCamera: number;
 }
 
 export type GLTFType = {

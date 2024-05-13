@@ -51,7 +51,7 @@ export class GLContainer {
     }
 
     private initGL(canvas: HTMLCanvasElement = this._canvas): WebGLRenderingContext {
-        const gl = canvas.getContext("webgl");
+        const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
 
         if (!gl) {
             throw new Error("WebGL is not supported");
