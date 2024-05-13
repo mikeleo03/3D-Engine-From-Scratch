@@ -31,6 +31,8 @@ export default function Page() {
       const { Scene } = await import('@/lib/data/Scene');
       const { GLTFState } = await import('@/lib/data/GLTFState');
       const { GLTFRawState } = await import('@/lib/data/GLTFRawState');
+      const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
+      const { RenderManager } = await import('@/lib/rendering/RenderManager');
 
       const glContainer = new GLContainer(canvas);
 
@@ -152,6 +154,11 @@ export default function Page() {
 
       // downloadFile(file);
       console.log(await parser.parse(file));
+
+      const glRenderer = new GLRenderer(glContainer);
+      const renderManager = new RenderManager(gltfState, glRenderer);
+
+      renderManager.loop(30);
     };
 
     initializeGL();
