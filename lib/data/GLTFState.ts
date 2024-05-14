@@ -2,7 +2,7 @@ import { UUID, randomUUID } from "crypto";
 import { SceneNode } from "./SceneNode";
 import { Scene } from "./Scene";
 import { Mesh } from "./components/Mesh";
-import { Camera } from "./components/Camera";
+import { Camera } from "./components/cameras/Camera";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { BufferView } from "./buffers/BufferView";
 import { Accessor } from "./buffers/Accessor";
@@ -80,15 +80,4 @@ export class GLTFState {
 
         return this._scenes[this._scene];
     }
-
-    // TODO: Implement the following methods
-    // getCurrentCamera(rootIndex: number = 0, cameraId: UUID | null = null): SceneNode | null {
-    //     const scene = this.CurrentScene;
-    //     if (!scene) {
-    //         return null;
-    //     }
-
-    //     // TODO: handle for multiple root if needed
-    //     return scene.getCamera(scene.roots[rootIndex], cameraId);
-    // }
 }

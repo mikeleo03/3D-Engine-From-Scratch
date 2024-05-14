@@ -2,8 +2,8 @@ import { GLTFState } from "../data/GLTFState";
 import { GLRenderer } from "./GLRenderer";
 
 export class RenderManager {
-    private static readonly DEFAULT_FPS = 60;
-    
+    private static readonly DEFAULT_FPS = 30;
+
     private _gltfState: GLTFState;
     private _glRenderer: GLRenderer;
 
@@ -24,21 +24,14 @@ export class RenderManager {
             return;
         }
 
-        // TODO: handle for multiple roots and cameras if needed
-        const camera = this._gltfState.getCurrentCamera();
-
-        if (!camera) {
-            return;
-        }
-
-        this._glRenderer.render(scene, camera);
+        this._glRenderer.render(scene);
     }
 
     loop(fps: number = RenderManager.DEFAULT_FPS) {
         if (this._isRunning) {
             this.stop();
         }
-        
+
         this._isRunning = true;
         this._interval = 1000 / fps;
 

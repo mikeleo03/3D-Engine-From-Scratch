@@ -1,58 +1,32 @@
 import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
-import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType } from "./gltypes";
+import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformMapSetters, UniformSetterWebGLType } from "./gltypes";
 
-type TypedArray = Float64Array | Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
+type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
 
 export class GLContainer {
-    private canvas: HTMLCanvasElement;
-    private gl: WebGLRenderingContext;
-    private programInfo: ProgramInfo;
+    private _canvas: HTMLCanvasElement;
+    private _gl: WebGLRenderingContext;
 
     constructor(
         canvas: HTMLCanvasElement
     ) {
-        this.canvas = canvas;
+        this._canvas = canvas;
 
-        this.gl = this.initGL();
+        this._gl = this.initGL();
         this.adjustCanvas();
         this.observeCanvas();
-
-        const shaderProgram = this.initProgram();
-
-        this.programInfo = {
-            program: shaderProgram,
-            uniformSetters: {},  // TODO: add uniformSetters here
-            attributeSetters: this.createAttributeSetters(),
-        };
-
-        this.setAttributes(
-            this.programInfo,
-            {
-                // TODO: add attributes here
-            }
-        );
-
-        // TODO: set uniforms here
-    }
-
-    private get shaderProgram(): WebGLProgram {
-        return this.programInfo.program;
     }
 
     get glContext(): WebGLRenderingContext {
-        return this.gl;
+        return this._gl;
     }
 
     get canvasElement(): HTMLCanvasElement {
-        return this.canvas;
+        return this._canvas;
     }
 
-    get currentProgramInfo(): ProgramInfo {
-        return this.programInfo;
-    }
-
-    private initGL(canvas: HTMLCanvasElement = this.canvas): WebGLRenderingContext {
-        const gl = canvas.getContext("webgl");
+    private initGL(canvas: HTMLCanvasElement = this._canvas): WebGLRenderingContext {
+        const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
 
         if (!gl) {
             throw new Error("WebGL is not supported");
@@ -62,34 +36,34 @@ export class GLContainer {
     }
 
     private adjustCanvas(): void {
-        const dw = this.canvas.clientWidth;
-        const dh = this.canvas.clientHeight;
-        if (this.canvas.width !== dw || this.canvas.height !== dh) {
-            this.canvas.width = dw;
-            this.canvas.height = dh;
-            this.gl.viewport(0, 0, dw, dh);
+        const dw = this._canvas.clientWidth;
+        const dh = this._canvas.clientHeight;
+        if (this._canvas.width !== dw || this._canvas.height !== dh) {
+            this._canvas.width = dw;
+            this._canvas.height = dh;
+            this._gl.viewport(0, 0, dw, dh);
         }
     }
 
     private observeCanvas(): void {
         const ro = new ResizeObserver(this.adjustCanvas.bind(this));
-        ro.observe(this.canvas, { box: 'content-box' });
+        ro.observe(this._canvas, { box: 'content-box' });
     }
 
     private createShader(source: string, type: GLenum) {
-        let shader = this.gl.createShader(type);
+        let shader = this._gl.createShader(type);
 
         if (!shader) {
             throw new Error("Failed to create shader");
         }
 
-        this.gl.shaderSource(shader, source);
-        this.gl.compileShader(shader);
+        this._gl.shaderSource(shader, source);
+        this._gl.compileShader(shader);
 
 
-        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-            const infoLog = this.gl.getShaderInfoLog(shader)
-            this.gl.deleteShader(shader);
+        if (!this._gl.getShaderParameter(shader, this._gl.COMPILE_STATUS)) {
+            const infoLog = this._gl.getShaderInfoLog(shader)
+            this._gl.deleteShader(shader);
 
             throw new Error("Failed to compile shader: " + infoLog);
         }
@@ -105,103 +79,120 @@ export class GLContainer {
      * @return {WebGLProgram?}
      */
     private createProgram(vertexShader: WebGLShader, fragmentShader: WebGLShader) {
-        const program = this.gl.createProgram();
+        const program = this._gl.createProgram();
 
         if (!program) {
             throw new Error("Failed to create program");
         }
 
-        this.gl.attachShader(program, vertexShader);
-        this.gl.attachShader(program, fragmentShader);
-        this.gl.linkProgram(program);
+        this._gl.attachShader(program, vertexShader);
+        this._gl.attachShader(program, fragmentShader);
+        this._gl.linkProgram(program);
 
-        if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
-            const infoLog = this.gl.getProgramInfoLog(program);
-            this.gl.deleteProgram(program);
+        if (!this._gl.getProgramParameter(program, this._gl.LINK_STATUS)) {
+            const infoLog = this._gl.getProgramInfoLog(program);
+            this._gl.deleteProgram(program);
             throw new Error("Failed to link program: " + infoLog);
         }
 
         return program;
     }
 
-    private getVertexShader(): WebGLShader {
-        // TODO: modify this source code
-        const vertexSource = `
-            attribute vec2 a_position;
-            void main() {
-                gl_Position = vec4(a_position, 0.0, 1.0);
+    getProgramInfo(vertexSource: string, fragmentSource: string): ProgramInfo {
+        const vertexShader = this.createShader(vertexSource, ShaderType.VERTEX);
+        const fragmentShader = this.createShader(fragmentSource, ShaderType.FRAGMENT);
+
+        const program = this.createProgram(vertexShader, fragmentShader);
+
+        return {
+            program: program,
+            uniformSetters: this.createUniformSetters(program),
+            attributeSetters: this.createAttributeSetters(program),
+        };
+    }
+
+    
+    private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): (value: any) => void { 
+        const loc = this._gl.getUniformLocation(program, info.name);
+
+        if (!loc) {
+            throw new Error("Failed to get uniform location");
+        }
+
+        const type = info.type;
+
+        return (value: any) => {
+            const typeString = UniformSetterWebGLType[type];
+            const setter = `uniform${typeString}`;
+
+            if (typeString.startsWith("Matrix")) {
+                // @ts-ignore
+                this._gl[setter](loc, false, value);
             }
-        `;
-
-        return this.createShader(vertexSource, ShaderType.VERTEX);
+            
+            // @ts-ignore
+            this._gl[setter](loc, value);
+        }   
     }
 
-    private getFragmentShader(): WebGLShader {
-        // TODO: modify this source code
-        const fragmentSource = `
-            void main() {
-                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-            }
-        `;
+    private createUniformSetters(program: WebGLProgram): UniformMapSetters {
+        const uniformSetters: UniformMapSetters = {};
+        const numUniforms = this._gl.getProgramParameter(program, this._gl.ACTIVE_UNIFORMS);
 
-        return this.createShader(fragmentSource, ShaderType.FRAGMENT);
+        for (let i = 0; i < numUniforms; i++) {
+            const info = this._gl.getActiveUniform(program, i);
+            if (!info) continue;
+            uniformSetters[info.name] = this.createUniformSetter(info, program);
+        }
+
+        return uniformSetters;
     }
 
-    private initProgram(): WebGLProgram {
-        const vertexShader = this.getVertexShader();
-        const fragmentShader = this.getFragmentShader();
-
-        return this.createProgram(vertexShader, fragmentShader);
-    }
-
-    private createAttributeSetter(info: WebGLActiveInfo): AttributeSetters {
+    private createAttributeSetter(info: WebGLActiveInfo, program: WebGLProgram): AttributeSetters {
         // Initialization Time
-        const loc = this.gl.getAttribLocation(this.shaderProgram, info.name);
-        const buf = this.gl.createBuffer();
+        const loc = this._gl.getAttribLocation(program, info.name);
+        const buf = this._gl.createBuffer();
         return (...values) => {
             // Render Time (saat memanggil setAttributes() pada render loop)
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buf);
+            this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
             const v = values[0];
-            if (v instanceof MeshBufferAttribute) {
-                if (v.isDirty) {
-                    // Data Changed Time (note that buffer is already binded)
-                    this.gl.bufferData(this.gl.ARRAY_BUFFER, v.data as TypedArray, this.gl.STATIC_DRAW);
-                    v.consume();
-                }
-                this.gl.enableVertexAttribArray(loc);
-                this.gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
+            if (v instanceof MeshBufferAttribute) {  
+                this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
+                
+                this._gl.enableVertexAttribArray(loc);
+                this._gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
             } else {
-                this.gl.disableVertexAttribArray(loc);
+                this._gl.disableVertexAttribArray(loc);
                 if (v instanceof Float32Array)
                     // @ts-ignore
-                    this.gl[`vertexAttrib${v.length}fv`](loc, v);
+                    this._gl[`vertexAttrib${v.length}fv`](loc, v);
                 else
                     // @ts-ignore
-                    this.gl[`vertexAttrib${values.length}f`](loc, ...values);
+                    this._gl[`vertexAttrib${values.length}f`](loc, ...values);
             }
         }
     }
 
-    private createAttributeSetters(): AttributeMapSetters {
+    private createAttributeSetters(program: WebGLProgram): AttributeMapSetters {
         const attribSetters: AttributeMapSetters = {};
-        const numAttribs = this.gl.getProgramParameter(this.shaderProgram, this.gl.ACTIVE_ATTRIBUTES);
+        const numAttribs = this._gl.getProgramParameter(program, this._gl.ACTIVE_ATTRIBUTES);
 
         for (let i = 0; i < numAttribs; i++) {
-            const info = this.gl.getActiveAttrib(this.shaderProgram, i);
+            const info = this._gl.getActiveAttrib(program, i);
             if (!info) continue;
-            attribSetters[info.name] = this.createAttributeSetter(info);
+            attribSetters[info.name] = this.createAttributeSetter(info, program);
         }
         return attribSetters;
     }
 
     private setAttribute(programInfo: ProgramInfo, attributeName: string, ...data: AttributeDataType): void {
-        const setters = programInfo.attributeSetters;
+        const setters = programInfo.attributeSetters!!;
         if (attributeName in setters) {
             const shaderName = `a_${attributeName}`;
             setters[shaderName](...data);
         }
     }
-    private setAttributes(
+    setAttributes(
         programInfo: ProgramInfo,
         attributes: { [attributeName: string]: AttributeSingleDataType },
     ): void {
@@ -209,6 +200,19 @@ export class GLContainer {
             this.setAttribute(programInfo, attributeName, attributes[attributeName]);
     }
 
-    // TODO: add set uniform methods
+    private setUniform(programInfo: ProgramInfo, uniformName: string, ...data: number[]): void {
+        const setters = programInfo.uniformSetters!!;
+        if (uniformName in setters) {
+            setters[uniformName](...data);
+        }
+    }
+
+    setUniforms(
+        programInfo: ProgramInfo,
+        uniforms: { [uniformName: string]: number[] },
+    ): void {
+        for (let uniformName in uniforms)
+            this.setUniform(programInfo, uniformName, ...uniforms[uniformName]);
+    }
 
 }

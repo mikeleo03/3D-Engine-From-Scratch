@@ -1,7 +1,8 @@
 import { Accessor } from "../buffers/Accessor";
 import { MeshBufferAttribute } from "../buffers/MeshBufferAttribute";
 import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "../buffers/MeshBufferGeometry";
-import { Float32ArrayConverter, Float64ArrayConverter, Uint32ArrayConverter } from "../buffers/typedarrayconverters";
+import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters";
+import { ShaderMaterial } from "./materials";
 import { MeshPrimitiveType, MeshType } from "../types/gltftypes";
 import { NodeComponent } from "./NodeComponent";
 
@@ -9,19 +10,28 @@ export class Mesh extends NodeComponent {
     static readonly COMPONENT_NAME = "mesh";
 
     private _geometries: MeshBufferGeometry[];
-    // TODO: add material
+    private _material: ShaderMaterial;
 
-    constructor(_geometries: MeshBufferGeometry[]) {
+    constructor(_geometries: MeshBufferGeometry[], material: ShaderMaterial) {
         super(Mesh.COMPONENT_NAME);
         this._geometries = _geometries;
+        this._material = material;
     }
 
     get geometries(): MeshBufferGeometry[] {
         return this._geometries;
     }
 
+    get material(): ShaderMaterial {
+        return this._material;
+    }
+
     set geometries(geometries: MeshBufferGeometry[]) {
         this._geometries = geometries;
+    }
+
+    set material(material: ShaderMaterial) {
+        this._material = material;
     }
 
     addGeometry(geometry: MeshBufferGeometry): void {
@@ -44,23 +54,23 @@ export class Mesh extends NodeComponent {
 
             const attribute: MeshBufferGeometryAttributes = {
                 POSITION: position ? new MeshBufferAttribute(
-                    position, 
+                    position,
                     MeshBufferGeometry.POSITION_SIZE,
-                    new Float64ArrayConverter(),
+                    new Float32ArrayConverter(),
                 ) : undefined,
                 NORMAL: normal ? new MeshBufferAttribute(
                     normal,
                     MeshBufferGeometry.NORMAL_SIZE,
-                    new Float64ArrayConverter(),
+                    new Float32ArrayConverter(),
                 ) : undefined,
             };
 
             return new MeshBufferGeometry(
-                attribute, 
+                attribute,
                 indices ? new MeshBufferAttribute(
                     indices,
                     MeshBufferGeometry.INDEX_SIZE,
-                    new Uint32ArrayConverter(),
+                    new Uint16ArrayConverter(),
                 ) : undefined);
         });
 

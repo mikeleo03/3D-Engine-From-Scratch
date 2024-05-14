@@ -1,3 +1,5 @@
+"use client";
+
 import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
 
 export enum ShaderType {
@@ -83,7 +85,7 @@ export type ProgramInfo = {
     attributeSetters: AttributeMapSetters,
 };
 
-export const UniformSetterWebGLType = {
+export const UniformSetterWebGLType: {[key: number]: string} = {
     [WebGLRenderingContext.FLOAT]: "1f",
     [WebGLRenderingContext.FLOAT_VEC2]: "2f",
     [WebGLRenderingContext.FLOAT_VEC3]: "3f",

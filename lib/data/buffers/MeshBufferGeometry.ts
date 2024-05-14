@@ -1,9 +1,8 @@
 import { MeshBufferAttribute } from "./MeshBufferAttribute";
-import { Vector3 } from "../math/Vector";
+import { Vector3 } from "../math/index";
 import { MeshPrimitiveAttribute } from "../types/gltftypes";
 import { Accessor } from "./Accessor";
-import { GLTFBuffer } from "./GLTFBuffer";
-import { Uint32ArrayConverter } from "./typedarrayconverters";
+import { Float32ArrayConverter } from "./typedarrayconverters";
 
 export type MeshBufferGeometryAttributes = {
     [name in MeshPrimitiveAttribute]?: MeshBufferAttribute;
@@ -78,27 +77,28 @@ export class MeshBufferGeometry {
     }
 
 
-    protected calculateNormals(
+    calculateNormals(
         accessor: Accessor,
         forceNewAttribute = false
     ): void {
+        // TODO: error when force new attribute
         const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
         const indices = this.indices;
 
         if (!position || !indices) return;
         let normal = this.getAttribute(MeshPrimitiveAttribute.NORMAL);
-        if (forceNewAttribute || !normal)
-        {
-            const converter = new Uint32ArrayConverter();
+        if (forceNewAttribute || !normal) {
+            const converter = new Float32ArrayConverter();
             normal = new MeshBufferAttribute(accessor, MeshBufferGeometry.NORMAL_SIZE, converter);
-        }      
+        }
 
         const p = position.data;
+        const indicesData = indices.data;
 
         for (let i = 0; i < indices.length; i += 3) {
-            const i1 = indices.data[i] * 3;
-            const i2 = indices.data[i + 1] * 3;
-            const i3 = indices.data[i + 2] * 3;
+            const i1 = indicesData[i] * 3;
+            const i2 = indicesData[i + 1] * 3;
+            const i3 = indicesData[i + 2] * 3;
 
             const v1 = new Vector3(p[i1], p[i1 + 1], p[i1 + 2]);
             const v2 = new Vector3(p[i2], p[i2 + 1], p[i2 + 2]);
@@ -107,9 +107,9 @@ export class MeshBufferGeometry {
             const normalVector = Vector3.cross(Vector3.sub(v2, v1), Vector3.sub(v3, v1));
             normalVector.normalize();
 
-            normal.set(i1, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
-            normal.set(i2, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
-            normal.set(i3, Float64Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i + 1, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
+            normal.set(i + 2, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
         }
 
         this.setAttribute(MeshPrimitiveAttribute.NORMAL, normal);

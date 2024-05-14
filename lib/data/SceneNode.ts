@@ -1,5 +1,6 @@
-import { Camera } from "./components/Camera";
+import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/Mesh";
+import { NodeComponent } from "./components/NodeComponent";
 import { Matrix4 } from "./math/Matrix4";
 import { Quaternion } from "./math/Quaternion";
 import { Vector3 } from "./math/Vector";
@@ -15,7 +16,7 @@ export class SceneNode {
     private _children: SceneNode[] = []
     private _mesh?: Mesh;
     private _camera?: Camera;
-    visible = true
+    // visible = true
 
     constructor(
         position: Vector3 = new Vector3(),
@@ -26,12 +27,20 @@ export class SceneNode {
         camera?: Camera
     ) {
         this._position = position;
-        this._rotation = rotation;
+        this._rotation = rotation.normalize();
         this._scale = scale;
         this._parent = parent;
         this.computeWorldMatrix();
         this._mesh = mesh;
         this._camera = camera;
+
+        if (mesh) {
+            mesh.addNodes(this);
+        }
+
+        if (camera) {
+            camera.addNodes(this);
+        }
     }
 
 
@@ -43,6 +52,8 @@ export class SceneNode {
     get localMatrix() { return this._localMatrix; }
     get worldMatrix() { return this._worldMatrix; }
     get children() { return this._children; }
+    get camera() { return this._camera; }
+    get mesh() { return this._mesh; }
 
 
     // Public setter
@@ -123,7 +134,7 @@ export class SceneNode {
 
     static fromRaw(raw: SceneNodeType, meshes: Mesh[], cameras: Camera[]): SceneNode {
         // NOTE: children are not set here
-        
+
         const node = new SceneNode(
             new Vector3(raw.transalation[0], raw.transalation[1], raw.transalation[2]),
             new Quaternion(raw.rotation[0], raw.rotation[1], raw.rotation[2], raw.rotation[3]),
@@ -162,5 +173,19 @@ export class SceneNode {
             mesh: this._mesh ? meshMap.get(this._mesh)!! : undefined,
             camera: this._camera ? cameraMap.get(this._camera)!! : undefined,
         };
+    }
+
+    addComponent(component: NodeComponent) {
+        component.addNodes(this);
+
+        if (component instanceof Camera) {
+            this._camera = component;
+        }
+
+        else if (component instanceof Mesh) {
+            this._mesh = component;
+        }
+
+        throw new Error("Unknown component type");
     }
 }
