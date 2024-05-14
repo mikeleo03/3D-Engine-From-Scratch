@@ -17,7 +17,7 @@ export class NodeComponent {
         return this._nodes;
     }
 
-    setNodes(...node: SceneNode[]) {
+    addNodes(...node: SceneNode[]) {
         this._nodes.push(...node);
     }
 }

@@ -6,7 +6,6 @@ type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Ar
 export class GLContainer {
     private _canvas: HTMLCanvasElement;
     private _gl: WebGLRenderingContext;
-    private _programInfo?: ProgramInfo;
 
     constructor(
         canvas: HTMLCanvasElement
@@ -24,10 +23,6 @@ export class GLContainer {
 
     get canvasElement(): HTMLCanvasElement {
         return this._canvas;
-    }
-
-    get currentProgramInfo(): ProgramInfo | undefined {
-        return this._programInfo;
     }
 
     private initGL(canvas: HTMLCanvasElement = this._canvas): WebGLRenderingContext {
@@ -101,10 +96,6 @@ export class GLContainer {
         }
 
         return program;
-    }
-
-    setProgramInfo(programInfo: ProgramInfo): void {
-        this._programInfo = programInfo;
     }
 
     getProgramInfo(vertexSource: string, fragmentSource: string): ProgramInfo {

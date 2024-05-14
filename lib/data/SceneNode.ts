@@ -1,5 +1,6 @@
 import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/Mesh";
+import { NodeComponent } from "./components/NodeComponent";
 import { Matrix4 } from "./math/Matrix4";
 import { Quaternion } from "./math/Quaternion";
 import { Vector3 } from "./math/Vector";
@@ -32,6 +33,14 @@ export class SceneNode {
         this.computeWorldMatrix();
         this._mesh = mesh;
         this._camera = camera;
+
+        if (mesh) {
+            mesh.addNodes(this);
+        }
+
+        if (camera) {
+            camera.addNodes(this);
+        }
     }
 
 
@@ -164,5 +173,19 @@ export class SceneNode {
             mesh: this._mesh ? meshMap.get(this._mesh)!! : undefined,
             camera: this._camera ? cameraMap.get(this._camera)!! : undefined,
         };
+    }
+
+    addComponent(component: NodeComponent) {
+        component.addNodes(this);
+
+        if (component instanceof Camera) {
+            this._camera = component;
+        }
+
+        else if (component instanceof Mesh) {
+            this._mesh = component;
+        }
+
+        throw new Error("Unknown component type");
     }
 }

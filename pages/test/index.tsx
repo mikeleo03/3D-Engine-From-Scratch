@@ -33,6 +33,7 @@ export default function Page() {
       const { GLTFRawState } = await import('@/lib/data/GLTFRawState');
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
       const { RenderManager } = await import('@/lib/rendering/RenderManager');
+      const { BasicMaterial } = await import ('@/lib/data/materials/BasicMaterial');
 
       const glContainer = new GLContainer(canvas);
 
@@ -90,10 +91,11 @@ export default function Page() {
         POSITION: positionAttribute,
         NORMAL: normalAttribute,
       }, indicesAttribute);
+      geometry.calculateNormals(normalAccessor);
 
-      geometry.calculateNormals(normalAccessor, true);
+      const material = new BasicMaterial({});
 
-      const mesh = new Mesh([geometry]);
+      const mesh = new Mesh([geometry], material);
 
       const meshes = [mesh];
       const meshMap = new Map();

@@ -1,4 +1,3 @@
-import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
 import { Accessor } from "./Accessor";
 import { TypedArrayConverter } from "./typedarrayconverters";
 

@@ -1,3 +1,5 @@
+import { ProgramInfo } from "@/lib/cores";
+
 export class ShaderMaterial {
     static idCounter: number = 0;
 
@@ -6,6 +8,7 @@ export class ShaderMaterial {
     private _vertexShader: string;
     private _fragmentShader: string;
     private _uniforms: { [key: string]: any } = {};
+    private _programInfo: ProgramInfo | null = null;
 
     constructor(options: { name?: string, vertexShader?: string, fragmentShader?: string, uniforms?: object } = {}) {
         const { name, vertexShader, fragmentShader, uniforms } = options;
@@ -29,6 +32,14 @@ export class ShaderMaterial {
 
     get uniforms() {
         return this._uniforms;
+    }
+
+    get programInfo(): ProgramInfo | null {
+        return this._programInfo;
+    }
+
+    set programInfo(programInfo: ProgramInfo) {
+        this._programInfo = programInfo;
     }
 
     equals(material: ShaderMaterial): boolean {
