@@ -95,4 +95,19 @@ export class Color {
         yield this._b;
         yield this._a;
     }
+
+    toRaw() {
+        return { r: this._r, g: this._g, b: this._b, a: this._a };
+    }
+
+    static fromRaw(obj: { r: number, g: number, b: number, a: number }) {
+        if (typeof obj !== 'object' || obj === null) {
+            throw new Error("Invalid JSON object");
+        }
+        const { r, g, b, a } = obj;
+        if (typeof r !== 'number' || typeof g !== 'number' || typeof b !== 'number' || typeof a !== 'number') {
+            throw new Error("Invalid properties in JSON object");
+        }
+        return new Color(r, g, b, a);
+    }
 }

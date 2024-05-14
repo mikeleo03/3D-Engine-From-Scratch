@@ -160,4 +160,12 @@ export class Vector3 {
     toArray(): [number, number, number] {
         return [this.x, this.y, this.z];
     }
+
+    toRaw() {
+        return this.toArray();
+    }
+
+    static fromRaw(arr: number[]) {
+        return new Vector3(...arr);
+    }
 }
