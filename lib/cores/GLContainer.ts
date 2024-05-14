@@ -237,6 +237,19 @@ export class GLContainer {
             this.setAttribute(programInfo, attributeName, attributes[attributeName]);
     }
 
-    // TODO: add set uniform methods
+    private setUniform(programInfo: ProgramInfo, uniformName: string, ...data: number[]): void {
+        const setters = programInfo.uniformSetters!!;
+        if (uniformName in setters) {
+            setters[uniformName](...data);
+        }
+    }
+
+    private setUniforms(
+        programInfo: ProgramInfo,
+        uniforms: { [uniformName: string]: number[] },
+    ): void {
+        for (let uniformName in uniforms)
+            this.setUniform(programInfo, uniformName, ...uniforms[uniformName]);
+    }
 
 }
