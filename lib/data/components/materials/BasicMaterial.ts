@@ -1,12 +1,13 @@
 import { Color } from "../../../cores/Color";
 import { ShaderMaterial } from "./index";
+import { MaterialType } from "@/lib/data/types/gltftypes";
 import basicFragment from "./shaders/BasicFragment";
 import basicVertex from "./shaders/BasicVertex";
 
 export class BasicMaterial extends ShaderMaterial {
     private _color: Color;
 
-    constructor(options: { name?: string; color?: Color }) {
+    constructor(options: { name: string; color?: Color }) {
         const { name, color } = options || {};
         super({
             name: name,
@@ -15,6 +16,7 @@ export class BasicMaterial extends ShaderMaterial {
             uniforms: {
                 color: color || Color.white(),
             },
+            type: "Basic Material"
         });
         this._color = this.uniforms['color'];
     }
@@ -28,6 +30,15 @@ export class BasicMaterial extends ShaderMaterial {
     }
 
     override toRaw(): MaterialType {
-        // TODO: leon
+        const { vertexShader, fragmentShader, ...other } = super.toRaw();
+        return {
+            vertexShader, fragmentShader, ...other, type: this.type
+        };
+    }
+
+    static fromRaw(json: MaterialType): ShaderMaterial {
+        const obj = new BasicMaterial(json);
+        ShaderMaterial.fromRaw(json, obj);
+        return obj;
     }
 }

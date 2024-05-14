@@ -1,7 +1,9 @@
 import { ProgramInfo } from "@/lib/cores";
-import { MaterialType } from "../types/gltftypes";
+import { MaterialType } from "@/lib/data/types/gltftypes";
+import { Vector3 } from "@/lib/data/math/Vector";
+import { Color } from "@/lib/cores/Color";
 
-export abstract class ShaderMaterial {
+export class ShaderMaterial {
     static idCounter: number = 0;
 
     private _name: string;
@@ -11,7 +13,7 @@ export abstract class ShaderMaterial {
     private _uniforms: { [key: string]: any } = {};
     private _programInfo: ProgramInfo | null = null;
 
-    constructor(options: { name?: string, vertexShader?: string, fragmentShader?: string, uniforms?: object } = {}) {
+    constructor(options: MaterialType) {
         const { name, vertexShader, fragmentShader, uniforms } = options;
         this._name = name || "Shader Material";
         this._vertexShader = vertexShader || '';
@@ -39,6 +41,10 @@ export abstract class ShaderMaterial {
         return this._programInfo;
     }
 
+    get type() {
+        return 'Shader Material';
+    }
+
     set programInfo(programInfo: ProgramInfo) {
         this._programInfo = programInfo;
     }
@@ -47,11 +53,46 @@ export abstract class ShaderMaterial {
         return this._id == material._id;
     }
     
-    static fromRaw(raw: MaterialType): ShaderMaterial {
-        // TODO: leon
+    static fromRaw(raw: MaterialType, obj: ShaderMaterial | null = null): ShaderMaterial {
+        const uniforms: { [key: string]: any } = {};
+        for (const key in raw.uniforms) {
+            const uniform = raw.uniforms[key];
+            if (Array.isArray(uniform) && uniform[0] === 'Color') {
+                uniforms[key] = Color.fromRaw(uniform[1]);
+            } else if (Array.isArray(uniform) && uniform[0] === 'Vector3') {
+                uniforms[key] = Vector3.fromRaw(uniform[1]);
+            } else {
+                uniforms[key] = uniform;
+            }
+        }
+
+        raw.uniforms = uniforms;
+        if (!obj) {
+            obj = new ShaderMaterial(raw);
+        } else {
+            obj._uniforms = raw.uniforms;
+        }
+        return obj;
     }
 
-    abstract toRaw(): MaterialType;
-
-
+    toRaw(): MaterialType {
+        const uniformsData: { [key: string]: any } = {};
+        for (const key in this._uniforms) {
+            const uniform = this._uniforms[key];
+            if (uniform instanceof Color) {
+                uniformsData[key] = ['Color', uniform.toRaw()];
+            } else if (uniform instanceof Vector3) {
+                uniformsData[key] = ['Vector3', uniform.toRaw()];
+            } else {
+                uniformsData[key] = uniform;
+            }
+        }
+        return {
+            name: this._name,
+            vertexShader: this._vertexShader,
+            fragmentShader: this._fragmentShader,
+            uniforms: uniformsData,
+            type: this.type,
+        };
+    }
 }
