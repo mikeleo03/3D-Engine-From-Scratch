@@ -1,4 +1,4 @@
-import { Color } from "../../cores/Color";
+import { Color } from "../../../cores/Color";
 import { ShaderMaterial } from "./index";
 import basicFragment from "./shaders/BasicFragment";
 import basicVertex from "./shaders/BasicVertex";

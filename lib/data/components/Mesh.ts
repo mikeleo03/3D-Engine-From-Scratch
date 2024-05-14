@@ -2,7 +2,7 @@ import { Accessor } from "../buffers/Accessor";
 import { MeshBufferAttribute } from "../buffers/MeshBufferAttribute";
 import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "../buffers/MeshBufferGeometry";
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters";
-import { ShaderMaterial } from "../materials";
+import { ShaderMaterial } from "./materials";
 import { MeshPrimitiveType, MeshType } from "../types/gltftypes";
 import { NodeComponent } from "./NodeComponent";
 
