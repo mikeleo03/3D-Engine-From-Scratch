@@ -26,4 +26,8 @@ export class BasicMaterial extends ShaderMaterial {
     get color() {
         return this._color;
     }
+
+    override toRaw(): MaterialType {
+        // TODO: leon
+    }
 }

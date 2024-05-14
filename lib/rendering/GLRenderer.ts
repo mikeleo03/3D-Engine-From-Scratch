@@ -20,17 +20,16 @@ export class GLRenderer {
         const gl = this._glContainer.glContext;
 
         if (mesh) {
-            // Render mesh
-            const material = mesh.material;
-            
-            if (!material.programInfo)
-            {
-                material.programInfo = this._glContainer.getProgramInfo(material.vertexShader, material.fragmentShader);
-            }
-
-            const programInfo = material.programInfo;
-
             for (const geometry of mesh.geometries) {
+                const material = geometry.material;
+            
+                if (!material.programInfo)
+                {
+                    material.programInfo = this._glContainer.getProgramInfo(material.vertexShader, material.fragmentShader);
+                }
+
+                const programInfo = material.programInfo;
+
                 // TODO: Set additional uniforms, pass camera as additional argument to this function if needed
                 this._glContainer.setUniforms(programInfo, material.uniforms);
                 this._glContainer.setAttributes(programInfo, geometry.attributes);

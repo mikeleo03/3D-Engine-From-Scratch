@@ -1,6 +1,7 @@
 import { ProgramInfo } from "@/lib/cores";
+import { MaterialType } from "../types/gltftypes";
 
-export class ShaderMaterial {
+export abstract class ShaderMaterial {
     static idCounter: number = 0;
 
     private _name: string;
@@ -45,4 +46,12 @@ export class ShaderMaterial {
     equals(material: ShaderMaterial): boolean {
         return this._id == material._id;
     }
+    
+    static fromRaw(raw: MaterialType): ShaderMaterial {
+        // TODO: leon
+    }
+
+    abstract toRaw(): MaterialType;
+
+
 }

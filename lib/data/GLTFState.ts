@@ -6,12 +6,14 @@ import { Camera } from "./components/cameras/Camera";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { BufferView } from "./buffers/BufferView";
 import { Accessor } from "./buffers/Accessor";
+import { ShaderMaterial } from "./materials";
 
 
 export class GLTFState {
     private _buffers: GLTFBuffer[] = [];
     private _bufferViews: BufferView[] = [];
     private _accessors: Accessor[] = [];
+    private _materials: ShaderMaterial[] = [];
     private _meshes: Mesh[];
     private _cameras: Camera[];
     private _nodes: SceneNode[];
@@ -21,6 +23,7 @@ export class GLTFState {
         buffers: GLTFBuffer[],
         bufferViews: BufferView[],
         accessors: Accessor[],
+        materials: ShaderMaterial[],
         meshes: Mesh[],
         cameras: Camera[],
         nodes: SceneNode[],
@@ -34,6 +37,7 @@ export class GLTFState {
         this._buffers = buffers;
         this._bufferViews = bufferViews;
         this._accessors = accessors;
+        this._materials = materials;
         this._meshes = meshes;
         this._cameras = cameras;
         this._nodes = nodes;
@@ -53,6 +57,10 @@ export class GLTFState {
         return this._accessors;
     }
 
+    get materials(): ShaderMaterial[] {
+        return this._materials;
+    }
+    
     get meshes(): Mesh[] {
         return this._meshes;
     }

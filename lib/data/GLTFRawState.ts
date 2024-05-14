@@ -6,12 +6,14 @@ import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/Mesh";
-import { AccessorType, BufferType, BufferViewType, CameraType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
+import { AccessorType, BufferType, BufferViewType, CameraType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
+import { ShaderMaterial } from "./materials";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
     private _bufferViews: BufferViewType[] = [];
     private _accessors: AccessorType[] = [];
+    private _materials: MaterialType[] = [];
     private _meshes: MeshType[] = [];
     private _cameras: CameraType[] = [];
     private _nodes: SceneNodeType[] = [];
@@ -22,6 +24,7 @@ export class GLTFRawState {
         buffers: BufferType[],
         bufferViews: BufferViewType[],
         accessors: AccessorType[],
+        _materials: MaterialType[],
         meshes: MeshType[],
         cameras: CameraType[],
         nodes: SceneNodeType[],
@@ -35,6 +38,7 @@ export class GLTFRawState {
         this._buffers = buffers;
         this._bufferViews = bufferViews;
         this._accessors = accessors;
+        this._materials = _materials;
         this._meshes = meshes;
         this._cameras = cameras;
         this._nodes = nodes;
@@ -52,6 +56,10 @@ export class GLTFRawState {
 
     get accessors(): AccessorType[] {
         return this._accessors;
+    }
+
+    get materials(): MaterialType[] {
+        return this._materials;
     }
 
     get meshes(): MeshType[] {
@@ -79,6 +87,7 @@ export class GLTFRawState {
         const bufferMap = new Map<GLTFBuffer, number>();
         const bufferViewMap = new Map<BufferView, number>();
         const accessorMap = new Map<Accessor, number>();
+        const materialMap = new Map<ShaderMaterial, number>();
         const meshMap = new Map<Mesh, number>();
         const cameraMap = new Map<Camera, number>();
         const nodeMap = new Map<SceneNode, number>();
@@ -104,8 +113,15 @@ export class GLTFRawState {
             return raw;
         });
 
+        const materialRaws = state.materials.map((material, idx) => {
+            const raw = material.toRaw();
+            const index = idx;
+            materialMap.set(material, index);
+            return raw;
+        });
+
         const meshRaws = state.meshes.map((mesh, idx) => {
-            const raw = mesh.toRaw(accessorMap);
+            const raw = mesh.toRaw(accessorMap, materialMap);
             const index = idx;
             meshMap.set(mesh, index);
             return raw;
@@ -136,6 +152,7 @@ export class GLTFRawState {
             bufferRaws,
             bufferViewRaws,
             accessorRaws,
+            materialRaws,
             meshRaws,
             cameraRaws,
             nodeRaws,
@@ -148,7 +165,8 @@ export class GLTFRawState {
         const buffers = this._buffers.map(buffer => GLTFBuffer.fromRaw(buffer));
         const bufferViews = this._bufferViews.map(bufferView => BufferView.fromRaw(bufferView, buffers));
         const accessors = this._accessors.map(accessor => Accessor.fromRaw(accessor, bufferViews));
-        const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors));
+        const materials = this._materials.map(material => ShaderMaterial.fromRaw(material));
+        const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors, materials));
         const cameras = this._cameras.map(camera => Camera.fromRaw(camera));
         const nodes = this._nodes.map(node => SceneNode.fromRaw(node, meshes, cameras));
 
@@ -161,6 +179,6 @@ export class GLTFRawState {
 
         const scenes = this._scenes.map(scene => Scene.fromRaw(scene, nodes));
 
-        return new GLTFState(buffers, bufferViews, accessors, meshes, cameras, nodes, scenes, this._scene);
+        return new GLTFState(buffers, bufferViews, accessors, materials, meshes, cameras, nodes, scenes, this._scene);
     }
 }
