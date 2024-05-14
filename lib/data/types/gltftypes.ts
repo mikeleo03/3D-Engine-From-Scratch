@@ -101,6 +101,7 @@ export type CameraType = {
         "right": number,
         "znear": number,
         "zfar": number,
+        "angle": number
     }
 } | {
     "type": "oblique",
@@ -111,6 +112,7 @@ export type CameraType = {
         "right": number,
         "znear": number,
         "zfar": number,
+        "angle": number
     }
 };
 
