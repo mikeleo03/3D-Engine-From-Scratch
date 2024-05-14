@@ -1,6 +1,6 @@
-import { Color } from "../../cores/index";
-import { Vector3 } from "../math/index";
-import { MaterialType } from "../types/gltftypes";
+import { MaterialType } from "../../types/gltftypes";
+import { Color } from "../../../cores/index";
+import { Vector3 } from "../../math/index";
 import { ShaderMaterial } from "./index";
 import phongFragment from "./shaders/PhongFragment";
 import phongVertex from "./shaders/PhongVertex";

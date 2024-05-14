@@ -105,7 +105,8 @@ export class OrthographicCamera extends Camera {
                 left: this._left,
                 right: this._right,
                 znear: this._near,
-                zfar: this._far
+                zfar: this._far,
+                angle: this._angle
             }
         };
     }

@@ -33,7 +33,7 @@ export default function Page() {
       const { GLTFRawState } = await import('@/lib/data/GLTFRawState');
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
       const { RenderManager } = await import('@/lib/rendering/RenderManager');
-      const { BasicMaterial } = await import ('@/lib/data/materials/BasicMaterial');
+      const { BasicMaterial } = await import ('@/lib/data/components/materials/BasicMaterial');
 
       const glContainer = new GLContainer(canvas);
 
