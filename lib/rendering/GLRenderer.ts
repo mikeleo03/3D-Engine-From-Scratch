@@ -11,6 +11,9 @@ export class GLRenderer {
 
     private clearCanvas() {
         const gl = this._glContainer.glContext;
+
+        gl.clearColor(1, 1, 1, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
     }
 
     private renderRoot(root: SceneNode, camera: Camera) {
@@ -25,6 +28,8 @@ export class GLRenderer {
     }
 
     render(scene: Scene) {
+        this.clearCanvas();
+        
         const camera = scene.getActiveCameraNode()?.camera;
         if (!camera) {
             return;

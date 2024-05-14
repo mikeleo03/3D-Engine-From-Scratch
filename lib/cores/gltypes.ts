@@ -82,10 +82,10 @@ export type UniformMapSetters = { [key: string]: UniformSetters };
 export type ProgramInfo = {
     program: WebGLProgram,
     uniformSetters: UniformMapSetters,
-    attributeSetters?: AttributeMapSetters,
+    attributeSetters: AttributeMapSetters,
 };
 
-export const UniformSetterWebGLType = {
+export const UniformSetterWebGLType: {[key: number]: string} = {
     [WebGLRenderingContext.FLOAT]: "1f",
     [WebGLRenderingContext.FLOAT_VEC2]: "2f",
     [WebGLRenderingContext.FLOAT_VEC3]: "3f",

@@ -1,5 +1,5 @@
 import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
-import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType } from "./gltypes";
+import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformMapSetters, UniformSetterWebGLType } from "./gltypes";
 
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
 
@@ -21,17 +21,9 @@ export class GLContainer {
 
         this._programInfo = {
             program: shaderProgram,
-            uniformSetters: {},  // TODO: add uniformSetters here
+            uniformSetters: this.createUniformSetters(),
+            attributeSetters: this.createAttributeSetters(),
         };
-
-        this.setAttributes(
-            this._programInfo,
-            {
-                // TODO: add attributes here
-            }
-        );
-
-        // TODO: set uniforms here
     }
 
     private get shaderProgram(): WebGLProgram {
@@ -151,6 +143,43 @@ export class GLContainer {
         const fragmentShader = this.getFragmentShader();
 
         return this.createProgram(vertexShader, fragmentShader);
+    }
+
+    
+    private createUniformSetter(info: WebGLActiveInfo): (value: any) => void { 
+        const loc = this._gl.getUniformLocation(this.shaderProgram, info.name);
+
+        if (!loc) {
+            throw new Error("Failed to get uniform location");
+        }
+
+        const type = info.type;
+
+        return (value: any) => {
+            const typeString = UniformSetterWebGLType[type];
+            const setter = `uniform${typeString}`;
+
+            if (typeString.startsWith("Matrix")) {
+                // @ts-ignore
+                this._gl[setter](loc, false, value);
+            }
+            
+            // @ts-ignore
+            this._gl[setter](loc, value);
+        }   
+    }
+
+    private createUniformSetters(): UniformMapSetters {
+        const uniformSetters: UniformMapSetters = {};
+        const numUniforms = this._gl.getProgramParameter(this.shaderProgram, this._gl.ACTIVE_UNIFORMS);
+
+        for (let i = 0; i < numUniforms; i++) {
+            const info = this._gl.getActiveUniform(this.shaderProgram, i);
+            if (!info) continue;
+            uniformSetters[info.name] = this.createUniformSetter(info);
+        }
+
+        return uniformSetters;
     }
 
     private createAttributeSetter(info: WebGLActiveInfo): AttributeSetters {
