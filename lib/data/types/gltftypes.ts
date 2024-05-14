@@ -139,6 +139,7 @@ export type GLTFType = {
     buffers: BufferType[],
     bufferViews: BufferViewType[],
     accessors: AccessorType[],
+    materials: MaterialType[],
     meshes: MeshType[],
     cameras: CameraType[],
     nodes: SceneNodeType[],
