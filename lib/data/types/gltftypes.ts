@@ -69,11 +69,7 @@ export function getByteCountForComponentType(elementType: number, accessorType: 
 }
 
 export type MaterialType = {
-    "pbrMetallicRoughness": {
-        "baseColorFactor": number[],
-        "metallicFactor": number,
-        "roughnessFactor": number
-    }
+    // TODO: LEON
 }
 
 export enum MeshPrimitiveAttribute {
