@@ -1,3 +1,4 @@
+import { MaterialType } from "../../types/gltftypes";
 import { Color } from "../../../cores/index";
 import { Vector3 } from "../../math/index";
 import { ShaderMaterial } from "./index";
@@ -6,13 +7,13 @@ import phongVertex from "./shaders/PhongVertex";
 
 export class PhongMaterial extends ShaderMaterial {
     constructor(options: {
-        name?: string;
+        name: string;
         ambientColor?: Color;
         diffuseColor?: Color;
         specularColor?: Color;
         shininess?: number;
         lightPosition?: Vector3;
-    } = {}) {
+    }) {
         const {
             name,
             ambientColor,
@@ -22,7 +23,7 @@ export class PhongMaterial extends ShaderMaterial {
             lightPosition,
         } = options;
         super({
-            name,
+            name: name,
             vertexShader: phongVertex,
             fragmentShader: phongFragment,
             uniforms: {
@@ -32,6 +33,7 @@ export class PhongMaterial extends ShaderMaterial {
                 shininess: shininess || 30,
                 lightPosition: lightPosition || new Vector3(400, 400, 300),
             },
+            type: "Phong Material"
         });
     }
 
@@ -61,5 +63,22 @@ export class PhongMaterial extends ShaderMaterial {
 
     set shininess(val: number) {
         this.shininess = val;
+    }
+
+    get type() {
+        return 'Phong Material';
+    }
+
+    override toRaw(): MaterialType {
+        const { vertexShader, fragmentShader, ...other } = super.toRaw();
+        return {
+            vertexShader, fragmentShader, ...other, type: this.type
+        };
+    }
+
+    static fromRaw(json: MaterialType): ShaderMaterial {
+        const obj = new PhongMaterial(json);
+        ShaderMaterial.fromRaw(json, obj);
+        return obj;
     }
 }

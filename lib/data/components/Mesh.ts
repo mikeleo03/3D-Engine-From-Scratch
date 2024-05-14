@@ -10,28 +10,18 @@ export class Mesh extends NodeComponent {
     static readonly COMPONENT_NAME = "mesh";
 
     private _geometries: MeshBufferGeometry[];
-    private _material: ShaderMaterial;
 
-    constructor(_geometries: MeshBufferGeometry[], material: ShaderMaterial) {
+    constructor(_geometries: MeshBufferGeometry[]) {
         super(Mesh.COMPONENT_NAME);
         this._geometries = _geometries;
-        this._material = material;
     }
 
     get geometries(): MeshBufferGeometry[] {
         return this._geometries;
     }
 
-    get material(): ShaderMaterial {
-        return this._material;
-    }
-
     set geometries(geometries: MeshBufferGeometry[]) {
         this._geometries = geometries;
-    }
-
-    set material(material: ShaderMaterial) {
-        this._material = material;
     }
 
     addGeometry(geometry: MeshBufferGeometry): void {
@@ -46,11 +36,12 @@ export class Mesh extends NodeComponent {
         }
     }
 
-    static fromRaw(raw: MeshType, accessors: Accessor[]): Mesh {
+    static fromRaw(raw: MeshType, accessors: Accessor[], materials: ShaderMaterial[]): Mesh {
         const geometries = raw.primitives.map(primitive => {
             const position = primitive.attributes.POSITION !== undefined ? accessors[primitive.attributes.POSITION] : undefined;
             const normal = primitive.attributes.NORMAL !== undefined ? accessors[primitive.attributes.NORMAL] : undefined;
             const indices = primitive.indices !== undefined ? accessors[primitive.indices] : undefined;
+            const material = materials[primitive.material];
 
             const attribute: MeshBufferGeometryAttributes = {
                 POSITION: position ? new MeshBufferAttribute(
@@ -67,6 +58,7 @@ export class Mesh extends NodeComponent {
 
             return new MeshBufferGeometry(
                 attribute,
+                material,
                 indices ? new MeshBufferAttribute(
                     indices,
                     MeshBufferGeometry.INDEX_SIZE,
@@ -77,7 +69,10 @@ export class Mesh extends NodeComponent {
         return new Mesh(geometries);
     }
 
-    private getPrimitives(accessorMap: Map<Accessor, number>): MeshPrimitiveType[] {
+    private getPrimitives(
+        accessorMap: Map<Accessor, number>,
+        materialMap: Map<ShaderMaterial, number>
+    ): MeshPrimitiveType[] {
         return this._geometries.map(geometry => {
             const position = geometry.attributes.POSITION;
             const normal = geometry.attributes.NORMAL;
@@ -100,6 +95,7 @@ export class Mesh extends NodeComponent {
                     POSITION: position ? accessorMap.get(position.accessor)!! : undefined,
                     NORMAL: normal ? accessorMap.get(normal.accessor)!! : undefined
                 },
+                material: materialMap.get(geometry.material)!!,
                 indices: indices ? accessorMap.get(indices.accessor)!! : undefined
             };
 
@@ -107,9 +103,9 @@ export class Mesh extends NodeComponent {
         });
     }
 
-    toRaw(accessorMap: Map<Accessor, number>): MeshType {
+    toRaw(accessorMap: Map<Accessor, number>, materialMap: Map<ShaderMaterial, number>): MeshType {
         return {
-            primitives: this.getPrimitives(accessorMap),
+            primitives: this.getPrimitives(accessorMap, materialMap),
         };
     }
 }

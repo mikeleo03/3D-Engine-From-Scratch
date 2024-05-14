@@ -87,15 +87,16 @@ export default function Page() {
         floatConverter,
       );
 
+      const material = new BasicMaterial({});
+      const materials = [material];
+
       const geometry = new MeshBufferGeometry({
         POSITION: positionAttribute,
         NORMAL: normalAttribute,
-      }, indicesAttribute);
+      }, material, indicesAttribute);
       geometry.calculateNormals(normalAccessor);
 
-      const material = new BasicMaterial({});
-
-      const mesh = new Mesh([geometry], material);
+      const mesh = new Mesh([geometry]);
 
       const meshes = [mesh];
       const meshMap = new Map();
@@ -120,6 +121,7 @@ export default function Page() {
         gltfBuffers,
         bufferViews,
         accessors,
+        materials,
         meshes,
         cameras,
         nodes,

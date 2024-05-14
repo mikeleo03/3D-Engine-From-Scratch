@@ -68,6 +68,34 @@ export function getByteCountForComponentType(elementType: number, accessorType: 
     }
 }
 
+interface ColorRaw {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
+interface Vector3Raw {
+    x: number;
+    y: number;
+    z: number;
+}
+
+type UniformData = 
+    | ['Color', ColorRaw]
+    | ['Vector3', Vector3Raw]
+    | any;
+
+export type MaterialType = { 
+    "name": string,
+    "vertexShader": string, 
+    "fragmentShader": string, 
+    "uniforms": {
+        [key: string]: UniformData;
+    },
+    "type": string
+} 
+
 export enum MeshPrimitiveAttribute {
     POSITION = "POSITION",
     NORMAL = "NORMAL"
@@ -76,6 +104,7 @@ export type MeshPrimitiveType = {
     attributes: {
         [key in keyof typeof MeshPrimitiveAttribute]?: number;
     };
+    material: number;
     indices?: number;
 }
 export type MeshType = { "primitives": MeshPrimitiveType[] };
@@ -134,6 +163,7 @@ export type GLTFType = {
     buffers: BufferType[],
     bufferViews: BufferViewType[],
     accessors: AccessorType[],
+    materials: MaterialType[],
     meshes: MeshType[],
     cameras: CameraType[],
     nodes: SceneNodeType[],

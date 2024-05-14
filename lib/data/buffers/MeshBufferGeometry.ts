@@ -3,6 +3,7 @@ import { Vector3 } from "../math/index";
 import { MeshPrimitiveAttribute } from "../types/gltftypes";
 import { Accessor } from "./Accessor";
 import { Float32ArrayConverter } from "./typedarrayconverters";
+import { ShaderMaterial } from "../components/materials";
 
 export type MeshBufferGeometryAttributes = {
     [name in MeshPrimitiveAttribute]?: MeshBufferAttribute;
@@ -13,11 +14,16 @@ export class MeshBufferGeometry {
     public static readonly INDEX_SIZE: number = 1;
 
     private _attributes: MeshBufferGeometryAttributes;
+    private _material: ShaderMaterial;
     private _indices?: MeshBufferAttribute;
 
-
-    constructor(attributes: MeshBufferGeometryAttributes = {}, indices?: MeshBufferAttribute) {
+    constructor(
+        attributes: MeshBufferGeometryAttributes = {}, 
+        material: ShaderMaterial,
+        indices?: MeshBufferAttribute
+    ) {
         this._attributes = attributes;
+        this._material = material;
         this._indices = indices;
     }
 
@@ -25,6 +31,9 @@ export class MeshBufferGeometry {
         return this._attributes;
     }
 
+    get material() {
+        return this._material;
+    }
 
     get indices() {
         return this._indices;
