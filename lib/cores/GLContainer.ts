@@ -6,7 +6,7 @@ type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Ar
 export class GLContainer {
     private _canvas: HTMLCanvasElement;
     private _gl: WebGLRenderingContext;
-    private _programInfo: ProgramInfo;
+    private _programInfo?: ProgramInfo;
 
     constructor(
         canvas: HTMLCanvasElement
@@ -16,18 +16,6 @@ export class GLContainer {
         this._gl = this.initGL();
         this.adjustCanvas();
         this.observeCanvas();
-
-        const shaderProgram = this.initProgram();
-
-        this._programInfo = {
-            program: shaderProgram,
-            uniformSetters: this.createUniformSetters(shaderProgram),
-            attributeSetters: this.createAttributeSetters(shaderProgram),
-        };
-    }
-
-    private get shaderProgram(): WebGLProgram {
-        return this._programInfo.program;
     }
 
     get glContext(): WebGLRenderingContext {
@@ -38,7 +26,7 @@ export class GLContainer {
         return this._canvas;
     }
 
-    get currentProgramInfo(): ProgramInfo {
+    get currentProgramInfo(): ProgramInfo | undefined {
         return this._programInfo;
     }
 
@@ -115,34 +103,21 @@ export class GLContainer {
         return program;
     }
 
-    private getVertexShader(): WebGLShader {
-        // TODO: modify this source code
-        const vertexSource = `
-            attribute vec2 a_position;
-            void main() {
-                gl_Position = vec4(a_position, 0.0, 1.0);
-            }
-        `;
-
-        return this.createShader(vertexSource, ShaderType.VERTEX);
+    setProgramInfo(programInfo: ProgramInfo): void {
+        this._programInfo = programInfo;
     }
 
-    private getFragmentShader(): WebGLShader {
-        // TODO: modify this source code
-        const fragmentSource = `
-            void main() {
-                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-            }
-        `;
+    getProgramInfo(vertexSource: string, fragmentSource: string): ProgramInfo {
+        const vertexShader = this.createShader(vertexSource, ShaderType.VERTEX);
+        const fragmentShader = this.createShader(fragmentSource, ShaderType.FRAGMENT);
 
-        return this.createShader(fragmentSource, ShaderType.FRAGMENT);
-    }
+        const program = this.createProgram(vertexShader, fragmentShader);
 
-    private initProgram(): WebGLProgram {
-        const vertexShader = this.getVertexShader();
-        const fragmentShader = this.getFragmentShader();
-
-        return this.createProgram(vertexShader, fragmentShader);
+        return {
+            program: program,
+            uniformSetters: this.createUniformSetters(program),
+            attributeSetters: this.createAttributeSetters(program),
+        };
     }
 
     
@@ -190,12 +165,9 @@ export class GLContainer {
             // Render Time (saat memanggil setAttributes() pada render loop)
             this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
             const v = values[0];
-            if (v instanceof MeshBufferAttribute) {
-                if (v.isDirty) {
-                    // Data Changed Time (note that buffer is already binded)
-                    this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
-                    v.consume();
-                }
+            if (v instanceof MeshBufferAttribute) {  
+                this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
+                
                 this._gl.enableVertexAttribArray(loc);
                 this._gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
             } else {
@@ -229,7 +201,7 @@ export class GLContainer {
             setters[shaderName](...data);
         }
     }
-    private setAttributes(
+    setAttributes(
         programInfo: ProgramInfo,
         attributes: { [attributeName: string]: AttributeSingleDataType },
     ): void {
@@ -244,7 +216,7 @@ export class GLContainer {
         }
     }
 
-    private setUniforms(
+    setUniforms(
         programInfo: ProgramInfo,
         uniforms: { [uniformName: string]: number[] },
     ): void {

@@ -10,9 +10,6 @@ export class MeshBufferAttribute {
     private _stride = 0;
     private _offset = 0;
 
-    private _isDirty = true; // kita copy atribut minimal sekali di awal terlebih dahulu
-
-
     /**
      * Creates an instance of BufferAttribute.
      * @param {TypedArray} data Typed array data.
@@ -69,7 +66,6 @@ export class MeshBufferAttribute {
     get normalize() { return this._normalize; }
     get stride() { return this._stride; }
     get offset() { return this._offset; }
-    get isDirty() { return this._isDirty; }
 
     getSingleElementByteCount() {
         return this._accessor.getSingleElementByteCount();
@@ -85,12 +81,8 @@ export class MeshBufferAttribute {
         }
 
         this._accessor.setData(bytes, this._offset);
-
-        this._isDirty = true;
     }
     set size(size: number) {
-        const data = this.data;
-
         if (size < 1) {
             throw new Error(`Size must be greater than zero.`);
         }
@@ -100,7 +92,6 @@ export class MeshBufferAttribute {
         }
 
         this._size = size;
-        this._isDirty = true;
 
         if (this._stride < this._size) {
             this._stride = this._size;
@@ -108,7 +99,6 @@ export class MeshBufferAttribute {
     }
     set normalize(normalize: boolean) {
         this._normalize = normalize;
-        this._isDirty = true;
     }
     set stride(stride: number) {
         if (stride < this._size) {
@@ -116,7 +106,6 @@ export class MeshBufferAttribute {
         }
 
         this._stride = stride;
-        this._isDirty = true;
     }
     set offset(offset: number) {
         if (offset < 0) {
@@ -124,7 +113,6 @@ export class MeshBufferAttribute {
         }
 
         this._offset = offset;
-        this._isDirty = true;
     }
 
 
@@ -134,9 +122,6 @@ export class MeshBufferAttribute {
      *
      * Hanya dipanggil pada attribute setter.
      */
-    consume() {
-        this._isDirty = false;
-    }
 
 
     /**
@@ -160,8 +145,6 @@ export class MeshBufferAttribute {
         if (data.length !== this._size) {
             throw new Error(`Data size mismatch. Expected ${this._size}, got ${data.length}`);
         }
-
-        this._isDirty = true;
 
         const dataSize = data.length;
         const currentData = this.data;

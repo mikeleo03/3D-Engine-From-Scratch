@@ -18,7 +18,7 @@ export default function Page() {
       // IMPORTANT: use dynamic import to avoid loading the entire library at server side
       const { GLContainer } = await import('@/lib/cores/GLContainer');
       const { GLTFParser } = await import('@/lib/data/GLTFParser');
-      const { Camera } = await import('@/lib/data/components/Camera');
+      const { PerspectiveCamera } = await import('@/lib/data/components/cameras/PerspectiveCamera');
       const { CameraView, BufferViewTarget, AccessorComponentType } = await import('@/lib/data/types/gltftypes');
       const { WebGLType } = await import('@/lib/cores/gltypes');
       const { GLTFBuffer } = await import('@/lib/data/buffers/GLTFBuffer');
@@ -36,13 +36,8 @@ export default function Page() {
 
       const glContainer = new GLContainer(canvas);
 
-      const camera = new Camera(
-        CameraView.PERSPECTIVE,
-        1,
-        1,
-        1,
-        1
-      );
+      const camera = new PerspectiveCamera(16 / 9, 0.5, 0.1, 100);
+
       const cameras = [camera];
       const cameraMap = new Map();
       cameraMap.set(camera, 0);

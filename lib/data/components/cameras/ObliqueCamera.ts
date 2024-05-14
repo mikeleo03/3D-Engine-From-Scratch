@@ -1,8 +1,9 @@
-import { Matrix4 } from "../math/Matrix4";
-import { Camera } from "../components/Camera";
+import { Matrix4 } from "../../math/Matrix4";
+import { CameraType } from "../../types/gltftypes";
+import { Camera } from "./Camera";
 
-export class OrthographicCamera extends Camera {
-    static readonly COMPONENT_NAME: string = "Orthographic Camera";
+export class ObliqueCamera extends Camera {
+    static readonly COMPONENT_NAME: string = "Oblique Camera";
 
     private _top: number;
     private _bottom: number;
@@ -88,10 +89,25 @@ export class OrthographicCamera extends Camera {
             (this._right - this._left) / 2,
             (this._top - this._bottom) / 2,
         ];
-        
-        this.projectionMatrix = Matrix4.ortographic(
-            -(d[2] + d[0])/2, (d[2] + d[0])/2, -(d[3] + d[1])/2, (d[3] + d[1])/2, 
-            this._near, this._far
+
+        this.projectionMatrix = Matrix4.oblique(
+            -(d[2] + d[0]) / 2, (d[2] + d[0]) / 2, -(d[3] + d[1]) / 2, (d[3] + d[1]) / 2,
+            this._near, this._far,
+            this._angle, 0.5,
         );
+    }
+    
+    override toRaw(): CameraType {
+        return {
+            type: "oblique",
+            oblique: {
+                top: this._top,
+                bottom: this._bottom,
+                left: this._left,
+                right: this._right,
+                znear: this._near,
+                zfar: this._far
+            }
+        };
     }
 }

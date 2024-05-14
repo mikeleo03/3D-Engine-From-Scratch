@@ -1,5 +1,6 @@
-import { Matrix4 } from "../math/Matrix4";
-import { Camera } from "../components/Camera";
+import { Matrix4 } from "../../math/Matrix4";
+import { CameraType } from "../../types/gltftypes";
+import { Camera } from "./Camera";
 
 export class PerspectiveCamera extends Camera {
     static readonly COMPONENT_NAME: string = "Perspective Camera";
@@ -51,9 +52,22 @@ export class PerspectiveCamera extends Camera {
         this._far = far;
     }
 
-    updateProjectionMatrix() {        
+    updateProjectionMatrix() {
         this.projectionMatrix = Matrix4.perspective(
             this._yfov, this._aspectRatio, this._near, this._far,
         );
+
+    }
+
+    override toRaw(): CameraType {
+        return {
+            type: "perspective",
+            perspective: {
+                aspectRatio: this._aspectRatio,
+                yfov: this._yfov,
+                znear: this._near,
+                zfar: this._far,
+            },
+        };
     }
 }

@@ -1,4 +1,4 @@
-import { Camera } from "./components/Camera";
+import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/Mesh";
 import { Matrix4 } from "./math/Matrix4";
 import { Quaternion } from "./math/Quaternion";
@@ -125,7 +125,7 @@ export class SceneNode {
 
     static fromRaw(raw: SceneNodeType, meshes: Mesh[], cameras: Camera[]): SceneNode {
         // NOTE: children are not set here
-        
+
         const node = new SceneNode(
             new Vector3(raw.transalation[0], raw.transalation[1], raw.transalation[2]),
             new Quaternion(raw.rotation[0], raw.rotation[1], raw.rotation[2], raw.rotation[3]),

@@ -2,7 +2,7 @@ import { UUID, randomUUID } from "crypto";
 import { SceneNode } from "./SceneNode";
 import { Scene } from "./Scene";
 import { Mesh } from "./components/Mesh";
-import { Camera } from "./components/Camera";
+import { Camera } from "./components/cameras/Camera";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { BufferView } from "./buffers/BufferView";
 import { Accessor } from "./buffers/Accessor";

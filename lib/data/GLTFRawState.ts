@@ -4,7 +4,7 @@ import { SceneNode } from "./SceneNode";
 import { Accessor } from "./buffers/Accessor";
 import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
-import { Camera } from "./components/Camera";
+import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/Mesh";
 import { AccessorType, BufferType, BufferViewType, CameraType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
 
@@ -73,7 +73,7 @@ export class GLTFRawState {
     get scene(): number {
         return this._scene;
     }
-    
+
 
     static fromGLTFState(state: GLTFState): GLTFRawState {
         const bufferMap = new Map<GLTFBuffer, number>();

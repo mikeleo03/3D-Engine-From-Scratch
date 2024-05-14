@@ -1,7 +1,7 @@
 import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
-import { Camera } from "../data/components/Camera";
+import { Camera } from "../data/components/cameras/Camera";
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -29,7 +29,7 @@ export class GLRenderer {
 
     render(scene: Scene) {
         this.clearCanvas();
-        
+
         const camera = scene.getActiveCameraNode()?.camera;
         if (!camera) {
             return;
