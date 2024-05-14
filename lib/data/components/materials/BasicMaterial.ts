@@ -1,5 +1,5 @@
-import { Color } from "../../../cores/Color";
-import { ShaderMaterial } from "./index";
+import { Color } from "@/lib/cores";
+import { ShaderMaterial } from "./ShaderMaterial";
 import { MaterialType } from "@/lib/data/types/gltftypes";
 import basicFragment from "./shaders/BasicFragment";
 import basicVertex from "./shaders/BasicVertex";
