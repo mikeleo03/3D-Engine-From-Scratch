@@ -55,23 +55,28 @@ export abstract class Camera extends NodeComponent {
                 raw.perspective.zfar
             );
         }
-        // else if (raw.type === "orthographic") {
-        //     return new OrthographicCamera(
-                
-        //     );
-        // }
-
-        // else if (raw.type === "oblique") {
-        //     return new ObliqueCamera(
-        //         raw.oblique.top,
-        //         raw.oblique.bottom,
-        //         raw.oblique.left,
-        //         raw.oblique.right,
-        //         raw.oblique.znear,
-        //         raw.oblique.zfar,
-        //         raw.oblique.angle
-        //     );
-        // }
+        else if (raw.type === "orthographic") {
+            return new OrthographicCamera(
+                raw.orthographic.top,
+                raw.orthographic.bottom,
+                raw.orthographic.left,
+                raw.orthographic.right,
+                raw.orthographic.znear,
+                raw.orthographic.zfar,
+                raw.orthographic.angle
+            );
+        }
+        else if (raw.type === "oblique") {
+            return new ObliqueCamera(
+                raw.oblique.top,
+                raw.oblique.bottom,
+                raw.oblique.left,
+                raw.oblique.right,
+                raw.oblique.znear,
+                raw.oblique.zfar,
+                raw.oblique.angle
+            );
+        }
 
         throw new Error(`Unknown camera type`);
     }
