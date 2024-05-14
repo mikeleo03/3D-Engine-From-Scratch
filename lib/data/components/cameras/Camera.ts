@@ -1,4 +1,3 @@
-import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from ".";
 import { Matrix4 } from "../../math/Matrix4";
 import { CameraType } from "../../types/gltftypes";
 import { NodeComponent } from "../NodeComponent";
@@ -44,41 +43,6 @@ export abstract class Camera extends NodeComponent {
 
     updateProjectionMatrix() {
         throw new Error("updateProjectionMatrix() must be implemented in derived classes.");
-    }
-
-    static fromRaw(raw: CameraType): Camera {
-        if (raw.type === "perspective") {
-            return new PerspectiveCamera(
-                raw.perspective.aspectRatio,
-                raw.perspective.yfov,
-                raw.perspective.znear,
-                raw.perspective.zfar
-            );
-        }
-        else if (raw.type === "orthographic") {
-            return new OrthographicCamera(
-                raw.orthographic.top,
-                raw.orthographic.bottom,
-                raw.orthographic.left,
-                raw.orthographic.right,
-                raw.orthographic.znear,
-                raw.orthographic.zfar,
-                raw.orthographic.angle
-            );
-        }
-        else if (raw.type === "oblique") {
-            return new ObliqueCamera(
-                raw.oblique.top,
-                raw.oblique.bottom,
-                raw.oblique.left,
-                raw.oblique.right,
-                raw.oblique.znear,
-                raw.oblique.zfar,
-                raw.oblique.angle
-            );
-        }
-
-        throw new Error(`Unknown camera type`);
     }
 
     abstract toRaw(): CameraType;
