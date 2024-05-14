@@ -7,7 +7,7 @@ import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/Mesh";
 import { AccessorType, BufferType, BufferViewType, CameraType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
-import { ShaderMaterial } from "./materials";
+import { ShaderMaterial } from "./components/materials";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];

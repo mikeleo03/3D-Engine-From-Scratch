@@ -6,7 +6,7 @@ import { Camera } from "./components/cameras/Camera";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { BufferView } from "./buffers/BufferView";
 import { Accessor } from "./buffers/Accessor";
-import { ShaderMaterial } from "./materials";
+import { ShaderMaterial } from "./components/materials";
 
 
 export class GLTFState {

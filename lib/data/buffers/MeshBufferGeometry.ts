@@ -3,7 +3,7 @@ import { Vector3 } from "../math/index";
 import { MeshPrimitiveAttribute } from "../types/gltftypes";
 import { Accessor } from "./Accessor";
 import { Float32ArrayConverter } from "./typedarrayconverters";
-import { ShaderMaterial } from "../materials";
+import { ShaderMaterial } from "../components/materials";
 
 export type MeshBufferGeometryAttributes = {
     [name in MeshPrimitiveAttribute]?: MeshBufferAttribute;

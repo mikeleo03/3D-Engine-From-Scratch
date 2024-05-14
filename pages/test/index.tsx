@@ -88,6 +88,7 @@ export default function Page() {
       );
 
       const material = new BasicMaterial({});
+      const materials = [material];
 
       const geometry = new MeshBufferGeometry({
         POSITION: positionAttribute,
@@ -120,6 +121,7 @@ export default function Page() {
         gltfBuffers,
         bufferViews,
         accessors,
+        materials,
         meshes,
         cameras,
         nodes,
