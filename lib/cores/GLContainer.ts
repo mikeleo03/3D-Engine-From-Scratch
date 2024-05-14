@@ -21,8 +21,8 @@ export class GLContainer {
 
         this._programInfo = {
             program: shaderProgram,
-            uniformSetters: this.createUniformSetters(),
-            attributeSetters: this.createAttributeSetters(),
+            uniformSetters: this.createUniformSetters(shaderProgram),
+            attributeSetters: this.createAttributeSetters(shaderProgram),
         };
     }
 
@@ -146,8 +146,8 @@ export class GLContainer {
     }
 
     
-    private createUniformSetter(info: WebGLActiveInfo): (value: any) => void { 
-        const loc = this._gl.getUniformLocation(this.shaderProgram, info.name);
+    private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): (value: any) => void { 
+        const loc = this._gl.getUniformLocation(program, info.name);
 
         if (!loc) {
             throw new Error("Failed to get uniform location");
@@ -169,22 +169,22 @@ export class GLContainer {
         }   
     }
 
-    private createUniformSetters(): UniformMapSetters {
+    private createUniformSetters(program: WebGLProgram): UniformMapSetters {
         const uniformSetters: UniformMapSetters = {};
-        const numUniforms = this._gl.getProgramParameter(this.shaderProgram, this._gl.ACTIVE_UNIFORMS);
+        const numUniforms = this._gl.getProgramParameter(program, this._gl.ACTIVE_UNIFORMS);
 
         for (let i = 0; i < numUniforms; i++) {
-            const info = this._gl.getActiveUniform(this.shaderProgram, i);
+            const info = this._gl.getActiveUniform(program, i);
             if (!info) continue;
-            uniformSetters[info.name] = this.createUniformSetter(info);
+            uniformSetters[info.name] = this.createUniformSetter(info, program);
         }
 
         return uniformSetters;
     }
 
-    private createAttributeSetter(info: WebGLActiveInfo): AttributeSetters {
+    private createAttributeSetter(info: WebGLActiveInfo, program: WebGLProgram): AttributeSetters {
         // Initialization Time
-        const loc = this._gl.getAttribLocation(this.shaderProgram, info.name);
+        const loc = this._gl.getAttribLocation(program, info.name);
         const buf = this._gl.createBuffer();
         return (...values) => {
             // Render Time (saat memanggil setAttributes() pada render loop)
@@ -210,14 +210,14 @@ export class GLContainer {
         }
     }
 
-    private createAttributeSetters(): AttributeMapSetters {
+    private createAttributeSetters(program: WebGLProgram): AttributeMapSetters {
         const attribSetters: AttributeMapSetters = {};
-        const numAttribs = this._gl.getProgramParameter(this.shaderProgram, this._gl.ACTIVE_ATTRIBUTES);
+        const numAttribs = this._gl.getProgramParameter(program, this._gl.ACTIVE_ATTRIBUTES);
 
         for (let i = 0; i < numAttribs; i++) {
-            const info = this._gl.getActiveAttrib(this.shaderProgram, i);
+            const info = this._gl.getActiveAttrib(program, i);
             if (!info) continue;
-            attribSetters[info.name] = this.createAttributeSetter(info);
+            attribSetters[info.name] = this.createAttributeSetter(info, program);
         }
         return attribSetters;
     }
