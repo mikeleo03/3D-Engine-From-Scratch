@@ -204,4 +204,40 @@ export class Matrix4 {
 
         return this.data[row][col];
     }
+
+    static perspective(yfov: number, aspectRatio: number, near: number, far: number) {
+        const f = Math.tan(0.5 * Math.PI * (1 - yfov/180));
+        const nf = 1 / (near - far);
+
+        return new Matrix4([
+            [f / aspectRatio, 0, 0, 0],
+            [0, f, 0,  0],
+            [0, 0, (far + near) * nf, -1],
+            [0, 0, 2 * far * near * nf,  0],
+        ]);
+    }
+    
+    static ortographic(left: number, right: number, bottom: number, top: number, near: number, far: number) {
+        const a = 1 / (right - left);
+        const b = 1 / (top - bottom);
+        const c = 1 / (near - far);
+        return new Matrix4([
+            [2 * a, 0, 0, 0],
+            [0, 2 * b, 0, 0],
+            [0, 0, 2 * c, 0],
+            [(left + right) * -1 * a, (top + bottom) * -1 * b, (far + near) * -1 * c, 1],
+        ]);
+    }
+
+    static oblique(left: number, right: number, bottom: number, top: number, near: number, far: number, angle: number, scale=0.5) {
+        angle *= Math.PI / 180;
+        return Matrix4.ortographic(left, right, bottom, top, near, far).mul(
+            new Matrix4([
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [-1 * scale * Math.cos(angle), scale * Math.sin(angle), 1, 0],
+                [0, 0, 0, 1],
+            ])
+        );
+    }
 }

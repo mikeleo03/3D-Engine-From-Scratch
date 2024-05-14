@@ -1,67 +1,53 @@
+import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "../cameras";
+import { Matrix4 } from "../math/Matrix4";
 import { CameraType } from "../types/gltftypes";
 import { NodeComponent } from "./NodeComponent";
 
 export class Camera extends NodeComponent {
     static readonly COMPONENT_NAME: string = "Camera";
 
+    private _projectionMatrix: Matrix4;
+    private _zoom: number;
     private _type: string;
-    private _aspectRatio: number;
-    private _yfov: number;
-    private _near: number;
-    private _far: number;
 
-    constructor(type: string, aspectRatio: number, yfov: number, near: number, far: number) {
+    constructor(type: string) {
         super(Camera.COMPONENT_NAME);
 
+        this._projectionMatrix = Matrix4.identity();
         this._type = type;
-        this._aspectRatio = aspectRatio;
-        this._yfov = yfov;
-        this._near = near;
-        this._far = far;
+        this._zoom = 1;
     }
 
     get type(): string {
         return this._type;
     }
 
-    get aspectRatio(): number {
-        return this._aspectRatio;
+    get projectionMatrix(): Matrix4 {
+        return this._projectionMatrix;
     }
 
-    get yfov(): number {
-        return this._yfov;
-    }
-
-    get near(): number {
-        return this._near;
-    }
-
-    get far(): number {
-        return this._far;
+    get zoom(): number {
+        return this._zoom;
     }
 
     set type(type: string) {
         this._type = type;
     }
 
-    set aspectRatio(aspectRatio: number) {
-        this._aspectRatio = aspectRatio;
+    set projectionMatrix(matrix: Matrix4) {
+        this._projectionMatrix = matrix;
     }
 
-    set yfov(yfov: number) {
-        this._yfov = yfov;
+    set zoom(zoom: number) {
+        this._zoom = zoom;
     }
 
-    set near(near: number) {
-        this._near = near;
-    }
-
-    set far(far: number) {
-        this._far = far;
+    updateProjectionMatrix() {
+        throw new Error("updateProjectionMatrix() must be implemented in derived classes.");
     }
 
     static fromRaw(raw: CameraType): Camera {
-        if (raw.type === "perspective") {
+        /* if (raw.type === "perspective") {
             return new Camera(
                 raw.type,
                 raw.persepective.aspectRatio,
@@ -77,28 +63,46 @@ export class Camera extends NodeComponent {
                 raw.orthographic.znear,
                 raw.orthographic.zfar
             );
-        }
+        } */
+        return new Camera(raw.type);
     }
 
     toRaw(): CameraType {
-        if (this._type === "perspective") {
+        if (this._type === "Perspective Camera") {
+            const perspectiveCamera = this as unknown as PerspectiveCamera;
             return {
                 type: "perspective",
-                persepective: {
-                    aspectRatio: this._aspectRatio,
-                    yfov: this._yfov,
-                    znear: this._near,
-                    zfar: this._far
+                perspective: {
+                    aspectRatio: perspectiveCamera.aspectRatio,
+                    yfov: perspectiveCamera.yfov,
+                    znear: perspectiveCamera.near,
+                    zfar: perspectiveCamera.far
                 }
             };
-        } else {
+        } else if (this._type === "Orthograhic Camera") {
+            const orthographicCamera = this as unknown as OrthographicCamera;
             return {
                 type: "orthographic",
                 orthographic: {
-                    xmag: this._aspectRatio,
-                    ymag: this._yfov,
-                    znear: this._near,
-                    zfar: this._far
+                    top: orthographicCamera.top,
+                    bottom: orthographicCamera.bottom,
+                    left: orthographicCamera.left,
+                    right: orthographicCamera.right,
+                    znear: orthographicCamera.near,
+                    zfar: orthographicCamera.far
+                }
+            };
+        } else {
+            const obliqueCamera = this as unknown as ObliqueCamera;
+            return {
+                type: "oblique",
+                oblique: {
+                    top: obliqueCamera.top,
+                    bottom: obliqueCamera.bottom,
+                    left: obliqueCamera.left,
+                    right: obliqueCamera.right,
+                    znear: obliqueCamera.near,
+                    zfar: obliqueCamera.far
                 }
             };
         }

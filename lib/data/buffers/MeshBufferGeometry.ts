@@ -1,5 +1,5 @@
 import { MeshBufferAttribute } from "./MeshBufferAttribute";
-import { Vector3 } from "../math/Vector";
+import { Vector3 } from "../math/index";
 import { MeshPrimitiveAttribute } from "../types/gltftypes";
 import { Accessor } from "./Accessor";
 import { Float32ArrayConverter } from "./typedarrayconverters";
