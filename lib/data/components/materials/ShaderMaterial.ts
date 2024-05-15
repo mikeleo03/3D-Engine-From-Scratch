@@ -57,10 +57,10 @@ export class ShaderMaterial {
         const uniforms: { [key: string]: any } = {};
         for (const key in raw.uniforms) {
             const uniform = raw.uniforms[key];
-            if (Array.isArray(uniform) && uniform[0] === 'Color') {
-                uniforms[key] = Color.fromRaw(uniform[1]);
-            } else if (Array.isArray(uniform) && uniform[0] === 'Vector3') {
-                uniforms[key] = Vector3.fromRaw(uniform[1]);
+            if (key === 'color' || key === 'ambientColor' || key === 'diffuseColor' || key === 'specularColor') {
+                uniforms[key] = Color.fromRaw(uniform as number[]);
+            } else if (key === 'lightPosition') {
+                uniforms[key] = Vector3.fromRaw(uniform as number[]);
             } else {
                 uniforms[key] = uniform;
             }
@@ -80,9 +80,9 @@ export class ShaderMaterial {
         for (const key in this._uniforms) {
             const uniform = this._uniforms[key];
             if (uniform instanceof Color) {
-                uniformsData[key] = ['Color', uniform.toRaw()];
+                uniformsData[key] = uniform.toRaw();
             } else if (uniform instanceof Vector3) {
-                uniformsData[key] = ['Vector3', uniform.toRaw()];
+                uniformsData[key] = uniform.toRaw();
             } else {
                 uniformsData[key] = uniform;
             }

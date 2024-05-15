@@ -1,4 +1,6 @@
+import { Color } from "@/lib/cores";
 import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
+import { Vector3 } from "../math";
 
 export type BufferType = { "byteLength": number, "uri": string };
 
@@ -68,18 +70,13 @@ export function getByteCountForComponentType(elementType: number, accessorType: 
     }
 }
 
-type UniformData = 
-    | ['Color', number[]]
-    | ['Vector3', number[]]
-    | any;
-
 export type MaterialType = {
     "type": string,
     "name": string,
     "vertexShader": string, 
     "fragmentShader": string, 
     "uniforms": {
-        [key: string]: UniformData;
+        [key: string]: number[] | Color | Vector3 | number;
     },
 } 
 
