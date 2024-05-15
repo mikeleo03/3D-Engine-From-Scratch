@@ -40,16 +40,12 @@ export class MeshBufferAttribute {
         if (size > data.length) {
             throw new Error(`Buffer size is too small for current offset and data length.`);
         }
-
-        if (options.stride && options.stride < size) {
-            throw new Error(`Stride must be greater than or equal to size`);
-        }
         
         this._accessor = accessor;
         this._size = size;
         this._converter = conveter;
         this._normalize = options.normalize || false;
-        this._stride = options.stride || this._size;
+        this._stride = options.stride || 0;
         this._offset = options.offset || 0;
     }
 
@@ -86,24 +82,12 @@ export class MeshBufferAttribute {
             throw new Error(`Size must be greater than zero.`);
         }
 
-        if (this._stride < size) {
-            throw new Error(`Stride must be greater than or equal to size.`);
-        }
-
         this._size = size;
-
-        if (this._stride < this._size) {
-            this._stride = this._size;
-        }
     }
     set normalize(normalize: boolean) {
         this._normalize = normalize;
     }
     set stride(stride: number) {
-        if (stride < this._size) {
-            throw new Error(`Stride must be greater than or equal to size.`);
-        }
-
         this._stride = stride;
     }
     set offset(offset: number) {

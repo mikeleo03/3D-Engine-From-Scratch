@@ -159,7 +159,8 @@ export class GLContainer {
             // Render Time (saat memanggil setAttributes() pada render loop)
             this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
             const v = values[0];
-            if (v instanceof MeshBufferAttribute) {  
+
+            if (v instanceof MeshBufferAttribute) {
                 this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
                 
                 this._gl.enableVertexAttribArray(loc);
@@ -190,9 +191,16 @@ export class GLContainer {
 
     private setAttribute(programInfo: ProgramInfo, attributeName: string, ...data: AttributeDataType): void {
         const setters = programInfo.attributeSetters!!;
+        
+        if (!attributeName.startsWith('a_'))
+        {
+            attributeName = `a_${attributeName}`;
+        }
+
+        attributeName = attributeName.toLowerCase()
+
         if (attributeName in setters) {
-            const shaderName = `a_${attributeName}`;
-            setters[shaderName](...data);
+            setters[attributeName](...data);
         }
     }
     setAttributes(

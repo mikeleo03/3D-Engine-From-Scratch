@@ -76,7 +76,6 @@ export class MeshBufferGeometry {
 
 
     getAttribute(name: MeshPrimitiveAttribute): MeshBufferAttribute | null {
-        MeshPrimitiveAttribute[name]
         return this._attributes[name] || null;
     }
 

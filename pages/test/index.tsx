@@ -94,7 +94,7 @@ export default function Page() {
         POSITION: positionAttribute,
         NORMAL: normalAttribute,
       }, material, indicesAttribute);
-      geometry.calculateNormals(normalAccessor);
+      // geometry.calculateNormals(normalAccessor);
 
       const mesh = new Mesh([geometry]);
 
@@ -103,9 +103,9 @@ export default function Page() {
       meshMap.set(mesh, 0);
 
       const node = new SceneNode(
-        new Vector3(4.4, 3, 2),
-        new Quaternion(0, 0.5, 0, 1),
-        new Vector3(1, 1, 3),
+        new Vector3(0, 0, 0),
+        new Quaternion(0, 0, 0, 1),
+        new Vector3(1, 1, 1),
         undefined,
         mesh,
         camera,
@@ -152,12 +152,13 @@ export default function Page() {
       const file = parser.write(gltfState);
 
       // downloadFile(file);
-      console.log(await parser.parse(file));
+      // console.log(await parser.parse(file));
 
       const glRenderer = new GLRenderer(glContainer);
-      const renderManager = new RenderManager(gltfState, glRenderer);
+      // const renderManager = new RenderManager(gltfState, glRenderer);
 
-      renderManager.loop(30);
+      // renderManager.loop(30);
+      glRenderer.render(scene);
     };
 
     initializeGL();
