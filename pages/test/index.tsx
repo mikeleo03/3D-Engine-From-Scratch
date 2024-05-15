@@ -92,8 +92,8 @@ export default function Page() {
       const materials = [material];
 
       const geometry = new MeshBufferGeometry({
-        POSITION: positionAttribute,
-        NORMAL: normalAttribute,
+        position: positionAttribute,
+        normal: normalAttribute,
       }, material, indicesAttribute);
       // geometry.calculateNormals(normalAccessor);
 

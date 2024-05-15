@@ -81,8 +81,8 @@ export type MaterialType = {
 } 
 
 export enum MeshPrimitiveAttribute {
-    POSITION = "POSITION",
-    NORMAL = "NORMAL"
+    POSITION = "position",
+    NORMAL = "normal"
 }
 export type MeshPrimitiveType = {
     attributes: {

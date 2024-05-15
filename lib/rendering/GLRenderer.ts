@@ -42,7 +42,7 @@ export class GLRenderer {
                 this._glContainer.setAttributes(programInfo, geometry.attributes);
 
                 // draw triangles
-                gl.drawArrays(gl.TRIANGLES, 0, geometry.attributes.POSITION?.count || 0);
+                gl.drawArrays(gl.TRIANGLES, 0, geometry.attributes.position?.count || 0);
             }
         }
 

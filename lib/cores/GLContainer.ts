@@ -196,8 +196,6 @@ export class GLContainer {
             attributeName = `a_${attributeName}`;
         }
 
-        attributeName = attributeName.toLowerCase()
-
         if (attributeName in setters) {
             setters[attributeName](...data);
         }
@@ -217,8 +215,6 @@ export class GLContainer {
             uniformName = `u_${uniformName}`;
         }
 
-        uniformName = uniformName.toLowerCase();
-
         if (uniformName in setters) {
             setters[uniformName](...data);
         }
@@ -228,7 +224,7 @@ export class GLContainer {
         programInfo: ProgramInfo,
         uniforms: { [uniformName: string]: UniformSingleDataType },
     ): void {
-        // TODO: leon, Add support for number type
+        // TODO: leon, Add support for number type, lihat cara checking values[0] di setattribute
         for (let uniformName in uniforms)
         {
             this.setUniform(programInfo, uniformName, ...uniforms[uniformName]);

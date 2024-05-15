@@ -44,12 +44,12 @@ export class Mesh extends NodeComponent {
             const material = materials[primitive.material];
 
             const attribute: MeshBufferGeometryAttributes = {
-                POSITION: position ? new GLBufferAttribute(
+                position: position ? new GLBufferAttribute(
                     position,
                     MeshBufferGeometry.POSITION_SIZE,
                     new Float32ArrayConverter(),
                 ) : undefined,
-                NORMAL: normal ? new GLBufferAttribute(
+                normal: normal ? new GLBufferAttribute(
                     normal,
                     MeshBufferGeometry.NORMAL_SIZE,
                     new Float32ArrayConverter(),
@@ -74,8 +74,8 @@ export class Mesh extends NodeComponent {
         materialMap: Map<ShaderMaterial, number>
     ): MeshPrimitiveType[] {
         return this._geometries.map(geometry => {
-            const position = geometry.attributes.POSITION;
-            const normal = geometry.attributes.NORMAL;
+            const position = geometry.attributes.position;
+            const normal = geometry.attributes.normal;
             const indices = geometry.indices;
 
             if (position && !accessorMap.has(position.accessor)) {
