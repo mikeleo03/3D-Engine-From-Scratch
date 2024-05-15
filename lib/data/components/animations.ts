@@ -2,12 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import {SceneNode} from "@/lib/data/SceneNode";
 import {Quaternion, Vector3} from "@/lib/data/math";
+import { AnimationClipType, AnimationPathType, AnimationTRS } from '../types/gltftypes';
 
-export type AnimationTRS = {
-  translation?: [number, number, number];
-  rotation?: [number, number, number];
-  scale?: [number, number, number];
-}
 
 export type AnimationPath = {
   keyframe?: AnimationTRS;
@@ -19,6 +15,42 @@ export type AnimationPath = {
 export type AnimationClip = {
   name: string;
   frames: AnimationPath[];
+}
+
+export class AnimationPathUtil {
+  static fromRaw(raw: AnimationPathType): AnimationPath {
+      return {
+        keyframe: raw.keyframe,
+      }
+  }
+
+  static toRaw(path: AnimationPath, animationPathMap: Map<AnimationPath, number>): AnimationPathType {
+    const children = path.children ? Object.fromEntries(
+      Object.entries(path.children).map(([key, value]) => [key, animationPathMap.get(value)!!]
+    )) : undefined;
+
+    return {
+      keyframe: path.keyframe,
+      children: children
+    }
+  }
+
+}
+
+export class AnimationClipUtil {
+  static fromRaw(raw: AnimationClipType): AnimationClip {
+    return {
+      name: raw.name,
+      frames: raw.frames.map(frame => AnimationPathUtil.fromRaw(frame)),
+    }
+  }
+
+  static toRaw(clip: AnimationClip, animationPathMap: Map<AnimationPath, number>): AnimationClipType {
+    return {
+      name: clip.name,
+      frames: clip.frames.map(frame => AnimationPathUtil.toRaw(frame, animationPathMap)),
+    }
+  }
 }
 
 // CONTOH PENGGUNAAN DARI GUIDEBOOK

@@ -1,4 +1,3 @@
-import { UUID, randomUUID } from "crypto";
 import { SceneNode } from "./SceneNode";
 import { Scene } from "./Scene";
 import { Mesh } from "./components/mesh/Mesh";
@@ -7,6 +6,8 @@ import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { BufferView } from "./buffers/BufferView";
 import { Accessor } from "./buffers/Accessor";
 import { ShaderMaterial } from "./components/materials";
+import { AnimationClip } from "./components/animations";
+
 
 
 export class GLTFState {
@@ -18,6 +19,7 @@ export class GLTFState {
     private _cameras: Camera[];
     private _nodes: SceneNode[];
     private _scenes: Scene[];
+    private _animations: AnimationClip[];
     private _scene: number = -1;
     constructor(
         buffers: GLTFBuffer[],
@@ -28,6 +30,7 @@ export class GLTFState {
         cameras: Camera[],
         nodes: SceneNode[],
         scenes: Scene[],
+        animations: AnimationClip[],
         scene: number
     ) {
         if (scene < -1 || scene >= scenes.length) {
@@ -42,6 +45,7 @@ export class GLTFState {
         this._cameras = cameras;
         this._nodes = nodes;
         this._scenes = scenes;
+        this._animations = animations;
         this._scene = scene;
     }
 
@@ -75,6 +79,10 @@ export class GLTFState {
 
     get scenes(): Scene[] {
         return this._scenes;
+    }
+
+    get animations(): AnimationClip[] {
+        return this._animations;
     }
 
     get scene(): number {

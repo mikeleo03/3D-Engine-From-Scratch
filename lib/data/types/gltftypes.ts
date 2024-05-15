@@ -146,6 +146,23 @@ export type SceneType = {
     activeCamera: number;
 }
 
+export type AnimationTRS = {
+    translation?: [number, number, number];
+    rotation?: [number, number, number];
+    scale?: [number, number, number];
+  }
+  
+export type AnimationPathType = {
+    keyframe?: AnimationTRS;
+    children?: {
+        [childName: string]: number
+    }
+}
+export type AnimationClipType = {
+    name: string;
+    frames: AnimationPathType[];
+}
+
 export type GLTFType = {
     buffers: BufferType[],
     bufferViews: BufferViewType[],

@@ -6,10 +6,11 @@ import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/mesh/Mesh";
-import { AccessorType, BufferType, BufferViewType, CameraType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
+import { AccessorType, AnimationClipType, BufferType, BufferViewType, CameraType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
 import { ShaderMaterial } from "./components/materials";
 import { CameraUtil } from "./components/cameras/CameraUtil";
 import { MaterialUtil } from "./components/materials/MaterialUtil";
+import { AnimationClipUtil, AnimationPath } from "./components/animations";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
@@ -20,6 +21,7 @@ export class GLTFRawState {
     private _cameras: CameraType[] = [];
     private _nodes: SceneNodeType[] = [];
     private _scenes: SceneType[] = [];
+    private _animations: AnimationClipType[] = [];
     private _scene: number = -1;
 
     constructor(
@@ -31,6 +33,7 @@ export class GLTFRawState {
         cameras: CameraType[],
         nodes: SceneNodeType[],
         scenes: SceneType[],
+        animations: AnimationClipType[],
         scene: number
     ) {
         if (scene < -1 || scene >= scenes.length) {
@@ -45,6 +48,7 @@ export class GLTFRawState {
         this._cameras = cameras;
         this._nodes = nodes;
         this._scenes = scenes;
+        this._animations = animations;
         this._scene = scene;
     }
 
@@ -80,6 +84,10 @@ export class GLTFRawState {
         return this._scenes;
     }
 
+    get animations(): AnimationClipType[] {
+        return this._animations;
+    }
+
     get scene(): number {
         return this._scene;
     }
@@ -93,6 +101,7 @@ export class GLTFRawState {
         const meshMap = new Map<Mesh, number>();
         const cameraMap = new Map<Camera, number>();
         const nodeMap = new Map<SceneNode, number>();
+        const animationPathMap = new Map<AnimationPath, number>();
 
         const bufferRaws = state.buffers.map((buffer, idx) => {
             const raw = buffer.toRaw();
@@ -136,10 +145,12 @@ export class GLTFRawState {
             return raw;
         });
 
-        const nodeRaws = state.nodes.map((node, idx) => {
+        state.nodes.forEach((node, idx) => {
+            nodeMap.set(node, idx);
+        });
+
+        const nodeRaws = state.nodes.map(node => {
             const raw = node.toRaw(nodeMap, meshMap, cameraMap);
-            const index = idx;
-            nodeMap.set(node, index);
             return raw;
         });
 
@@ -148,6 +159,17 @@ export class GLTFRawState {
             return raw;
         });
 
+        const animationRaws: AnimationClipType[] = [];
+
+        state.animations.forEach(animation => {
+            animation.frames.forEach((frame, idx) => {
+                animationPathMap.set(frame, idx);
+            });
+
+            const raw = AnimationClipUtil.toRaw(animation, animationPathMap);
+            animationRaws.push(raw);
+        });
+        
         const scene = state.scene;
 
         return new GLTFRawState(
@@ -159,6 +181,7 @@ export class GLTFRawState {
             cameraRaws,
             nodeRaws,
             sceneRaws,
+            animationRaws,
             scene
         );
     }
@@ -181,6 +204,39 @@ export class GLTFRawState {
 
         const scenes = this._scenes.map(scene => Scene.fromRaw(scene, nodes));
 
-        return new GLTFState(buffers, bufferViews, accessors, materials, meshes, cameras, nodes, scenes, this._scene);
+        const animations = this._animations.map(animation => AnimationClipUtil.fromRaw(animation));
+
+        for (let i = 0; i < animations.length; i++) {
+            const animation = animations[i];
+            for (let j = 0; j < this._animations[i].frames.length; j++) {
+                const frame = animation.frames[j];
+
+                if (!this._animations[i].frames[j].children)
+                {
+                    continue;
+                }
+
+                if (!frame.children) {
+                    frame.children = {};
+                };
+
+                for (const childName in this._animations[i].frames[j].children) {
+                    frame.children[childName] = animation.frames[this._animations[i].frames[j].children![childName]];
+                }
+            }
+        }
+
+        return new GLTFState(
+            buffers, 
+            bufferViews, 
+            accessors, 
+            materials, 
+            meshes, 
+            cameras, 
+            nodes, 
+            scenes, 
+            animations,
+            this._scene
+        );
     }
 }
