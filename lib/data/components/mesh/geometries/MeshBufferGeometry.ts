@@ -89,7 +89,6 @@ export class MeshBufferGeometry {
         accessor: Accessor,
         forceNewAttribute = false
     ): void {
-        // TODO: error when force new attribute
         const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
         const indices = this.indices;
 
