@@ -2,7 +2,7 @@ import { Quaternion } from "./Quaternion";
 import { Vector3 } from "./Vector";
 
 export class Matrix4 {
-    private data: number[][] = [
+    private _data: number[][] = [
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
@@ -21,7 +21,7 @@ export class Matrix4 {
                 }
             }
 
-            this.data = data;
+            this._data = data;
         }
     }
 
@@ -68,7 +68,7 @@ export class Matrix4 {
         for (let i = 0; i < matrices.length; i++) {
             for (let j = 0; j < 4; j++) {
                 for (let k = 0; k < 4; k++) {
-                    result.data[j][k] += matrices[i].data[j][k];
+                    result._data[j][k] += matrices[i]._data[j][k];
                 }
             }
         }
@@ -81,7 +81,7 @@ export class Matrix4 {
 
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
-                result.data[i][j] = m1.data[i][j] - m2.data[i][j];
+                result._data[i][j] = m1._data[i][j] - m2._data[i][j];
             }
         }
 
@@ -98,15 +98,32 @@ export class Matrix4 {
         return result;
     }
 
+    get data(): number[][] {
+        // make sure to return a copy of the data
+        return this._data.map(row => row.slice());
+    }
+
+    get buffer(): Float32Array {
+        const buffer = new Float32Array(16);
+
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                buffer[i * 4 + j] = this._data[i][j];
+            }
+        }
+
+        return buffer;
+    }
+
     clone() {
-        return new Matrix4(this.data);
+        return new Matrix4(this._data);
     }
 
     add(m: Matrix4, inplace: Boolean = false): Matrix4 {
         if (inplace) {
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 4; j++) {
-                    this.data[i][j] += m.data[i][j];
+                    this._data[i][j] += m._data[i][j];
                 }
             }
 
@@ -117,7 +134,7 @@ export class Matrix4 {
 
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
-                result.data[i][j] = this.data[i][j] + m.data[i][j];
+                result._data[i][j] = this._data[i][j] + m._data[i][j];
             }
         }
 
@@ -128,7 +145,7 @@ export class Matrix4 {
         if (inplace) {
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 4; j++) {
-                    this.data[i][j] -= m.data[i][j];
+                    this._data[i][j] -= m._data[i][j];
                 }
             }
 
@@ -139,7 +156,7 @@ export class Matrix4 {
 
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
-                result.data[i][j] = this.data[i][j] - m.data[i][j];
+                result._data[i][j] = this._data[i][j] - m._data[i][j];
             }
         }
 
@@ -152,14 +169,14 @@ export class Matrix4 {
 
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 4; j++) {
-                    result.data[i][j] = 0;
+                    result._data[i][j] = 0;
                     for (let k = 0; k < 4; k++) {
-                        result.data[i][j] += this.data[i][k] * m.data[k][j];
+                        result._data[i][j] += this._data[i][k] * m._data[k][j];
                     }
                 }
             }
 
-            this.data = result.data;
+            this._data = result._data;
             return this;
         }
 
@@ -167,9 +184,9 @@ export class Matrix4 {
 
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
-                result.data[i][j] = 0;
+                result._data[i][j] = 0;
                 for (let k = 0; k < 4; k++) {
-                    result.data[i][j] += this.data[i][k] * m.data[k][j];
+                    result._data[i][j] += this._data[i][k] * m._data[k][j];
                 }
             }
         }
@@ -190,7 +207,7 @@ export class Matrix4 {
 
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
-                result.data[i][j] = this.data[j][i];
+                result._data[i][j] = this._data[j][i];
             }
         }
 
@@ -202,7 +219,7 @@ export class Matrix4 {
             throw new Error("Invalid row or column");
         }
 
-        return this.data[row][col];
+        return this._data[row][col];
     }
 
     static perspective(yfov: number, aspectRatio: number, near: number, far: number) {

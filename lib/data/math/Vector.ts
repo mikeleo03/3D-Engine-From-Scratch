@@ -67,6 +67,14 @@ export class Vector3 {
         return new Vector3(x, y, z);
     }
 
+    get data(): number[] {
+        return [this.x, this.y, this.z];
+    }
+
+    get buffer (): Float32Array {
+        return new Float32Array([this.x, this.y, this.z]);
+    }
+
     add(v: Vector3, inplace: Boolean = false): Vector3 {
         if (inplace) {
             this.x += v.x;

@@ -16,7 +16,7 @@ export class GLRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT);
     }
 
-    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Matrix4 }) {
+    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Float32Array }) {
         const mesh = root.mesh;
         const gl = this._glContainer.glContext;
 
@@ -33,10 +33,10 @@ export class GLRenderer {
                 this._glContainer.setProgram(programInfo);
 
                 this._glContainer.setUniforms(programInfo, { 
-                    ...material.uniforms, 
+                    ...material.bufferUniforms, 
                     ...uniforms,
-                    worldMatrix: root.worldMatrix,
-                    cameraPosition: root.position,
+                    worldMatrix: root.worldMatrix.buffer,
+                    cameraPosition: root.position.buffer,
                 });
                 
                 this._glContainer.setAttributes(programInfo, geometry.attributes);
@@ -60,7 +60,7 @@ export class GLRenderer {
         }
 
         const defaultUniform = {
-            viewMatrix: camera.projectionMatrix,
+            viewMatrix: camera.projectionMatrix.buffer,
         }
 
         const nodes = scene.roots;

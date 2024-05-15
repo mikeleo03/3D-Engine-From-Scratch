@@ -1,4 +1,4 @@
-import { ProgramInfo } from "@/lib/cores";
+import { ProgramInfo, UniformSingleDataType } from "@/lib/cores";
 import { MaterialType } from "@/lib/data/types/gltftypes";
 import { Vector3 } from "@/lib/data/math/Vector";
 import { Color } from "@/lib/cores/Color";
@@ -35,6 +35,24 @@ export class ShaderMaterial {
 
     get uniforms() {
         return this._uniforms;
+    }
+
+    get bufferUniforms(): { [key: string]: UniformSingleDataType } {
+        const bufferUniforms: { [key: string]: UniformSingleDataType } = {};
+        for (const key in this._uniforms) {
+            const uniform = this._uniforms[key];
+            if (uniform instanceof Vector3) {
+                bufferUniforms[key] = uniform.buffer;
+            }
+            else if (uniform instanceof Color) {
+                bufferUniforms[key] = uniform.buffer;
+            }
+
+            else {
+                throw new Error(`Uniform type not supported: ${uniform}`);
+            }
+        }
+        return bufferUniforms;
     }
 
     get programInfo(): ProgramInfo | null {

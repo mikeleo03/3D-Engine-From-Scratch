@@ -1,5 +1,5 @@
 import { GLBufferAttribute } from "../data/buffers/GLBufferAttribute";
-import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformMapSetters, UniformSetterWebGLType } from "./gltypes";
+import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformDataType, UniformMapSetters, UniformSetterWebGLType, UniformSetters, UniformSingleDataType } from "./gltypes";
 
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
 
@@ -115,7 +115,7 @@ export class GLContainer {
         this._gl.useProgram(programInfo.program);
     }
 
-    private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): (value: any) => void {
+    private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): UniformSetters {
         const loc = this._gl.getUniformLocation(program, info.name);
 
         if (!loc) {
@@ -124,17 +124,17 @@ export class GLContainer {
 
         const type = info.type;
 
-        return (value: any) => {
+        return (...values: UniformDataType) => {
             const typeString = UniformSetterWebGLType[type];
             const setter = `uniform${typeString}`;
 
             if (typeString.startsWith("Matrix")) {
                 // @ts-ignore
-                this._gl[setter](loc, false, value);
+                this._gl[setter](loc, false, ...values);
             }
 
             // @ts-ignore
-            this._gl[setter](loc, value);
+            this._gl[setter](loc, ...values);
         }
     }
 
@@ -210,8 +210,15 @@ export class GLContainer {
             this.setAttribute(programInfo, attributeName, attributes[attributeName]);
     }
 
-    private setUniform(programInfo: ProgramInfo, uniformName: string, ...data: any): void {
+    private setUniform(programInfo: ProgramInfo, uniformName: string, ...data: UniformDataType): void {
         const setters = programInfo.uniformSetters!!;
+
+        if (!uniformName.startsWith('u_')) {
+            uniformName = `u_${uniformName}`;
+        }
+
+        uniformName = uniformName.toLowerCase();
+
         if (uniformName in setters) {
             setters[uniformName](...data);
         }
@@ -219,10 +226,13 @@ export class GLContainer {
 
     setUniforms(
         programInfo: ProgramInfo,
-        uniforms: { [uniformName: string]: any },
+        uniforms: { [uniformName: string]: UniformSingleDataType },
     ): void {
         for (let uniformName in uniforms)
+        {
             this.setUniform(programInfo, uniformName, ...uniforms[uniformName]);
+            
+        }
     }
 
 }

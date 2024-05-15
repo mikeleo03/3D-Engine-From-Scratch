@@ -69,6 +69,10 @@ export class Color {
         (this._b * 255).toString(16).padStart(2, '0');
     }
 
+    get buffer(): number[] {
+        return this.toRaw();
+    }
+
     static red() {
         return new Color(1, 0, 0, 1);
     }

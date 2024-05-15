@@ -76,7 +76,9 @@ export type AttributeDataType = [AttributeSingleDataType] | number[];
 export type AttributeSetters = (...v: AttributeDataType) => void;
 export type AttributeMapSetters = { [key: string]: AttributeSetters };
 
-export type UniformSetters = (...v: any) => void;
+export type UniformSingleDataType =  number[] | Float32Array;
+export type UniformDataType = [UniformSingleDataType] | number[];
+export type UniformSetters = (...v: UniformDataType) => void;
 export type UniformMapSetters = { [key: string]: UniformSetters };
 
 export type ProgramInfo = {
