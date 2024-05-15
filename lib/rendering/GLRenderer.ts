@@ -38,6 +38,8 @@ export class GLRenderer {
                     worldMatrix: root.worldMatrix.buffer,
                     cameraPosition: root.position.buffer,
                 });
+
+                console.log(root.worldMatrix.buffer);
                 
                 this._glContainer.setAttributes(programInfo, geometry.attributes);
 
@@ -59,12 +61,22 @@ export class GLRenderer {
             return;
         }
 
-        const defaultUniform = {
-            viewMatrix: camera.projectionMatrix.buffer,
-        }
-
         const nodes = scene.roots;
         for (const node of nodes) {
+            node.computeWorldMatrix();
+            console.log(node.worldMatrix);
+            const invWorldMatrix = Matrix4.inv(node.worldMatrix);
+            console.log(invWorldMatrix);
+            node.computeLocalMatrix()
+            console.log(node.localMatrix);
+            const viewMatrix = Matrix4.mul(camera.projectionMatrix, invWorldMatrix);
+
+            const defaultUniform = {
+                viewMatrix: viewMatrix.buffer,
+            }
+
+            console.log(viewMatrix);
+
             this.renderRoot(node, defaultUniform);
         }
     }

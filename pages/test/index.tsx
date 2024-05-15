@@ -19,6 +19,8 @@ export default function Page() {
       const { GLContainer } = await import('@/lib/cores/GLContainer');
       const { GLTFParser } = await import('@/lib/data/GLTFParser');
       const { PerspectiveCamera } = await import('@/lib/data/components/cameras/PerspectiveCamera');
+      const { OrthographicCamera } = await import('@/lib/data/components/cameras/OrthographicCamera');
+      const { ObliqueCamera } = await import('@/lib/data/components/cameras/ObliqueCamera');
       const { CameraView, BufferViewTarget, AccessorComponentType } = await import('@/lib/data/types/gltftypes');
       const { WebGLType } = await import('@/lib/cores/gltypes');
       const { GLTFBuffer } = await import('@/lib/data/buffers/GLTFBuffer');
@@ -34,11 +36,35 @@ export default function Page() {
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
       const { RenderManager } = await import('@/lib/rendering/RenderManager');
       const { BasicMaterial } = await import('@/lib/data/components/materials/BasicMaterial');
+      const { PhongMaterial } = await import('@/lib/data/components/materials/PhongMaterial');
       const { Color } = await import('@/lib/cores');
 
       const glContainer = new GLContainer(canvas);
 
-      const camera = new PerspectiveCamera(16 / 9, 0.5, 0.1, 100);
+      const camera = new PerspectiveCamera(
+        60,
+        canvas.width / canvas.height,
+        0.01,
+        9999
+      );
+
+      /* const camera = new OrthographicCamera(
+        -canvas.width / 2,
+        canvas.width / 2,
+        canvas.height / 2,
+        -canvas.height / 2,
+        -1000,
+        1000
+      ); */
+
+      /* const camera = new ObliqueCamera(
+        -canvas.width / 2,
+        canvas.width / 2,
+        canvas.height / 2,
+        -canvas.height / 2,
+        -1000,
+        1000
+      ); */
 
       const cameras = [camera];
       const cameraMap = new Map();
@@ -88,7 +114,8 @@ export default function Page() {
         floatConverter,
       );
 
-      const material = new BasicMaterial({ name: "test", color: new Color(0, 0, 0, 1) });
+      const material = new BasicMaterial({ name: "test", color: Color.black() });
+      // const material = new PhongMaterial({ name: "test", ambientColor: Color.black(), diffuseColor: Color.black(), specularColor: Color.black(), shininess: 30, lightPosition: new Vector3(400, 400, 300) });
       const materials = [material];
 
       const geometry = new MeshBufferGeometry({
