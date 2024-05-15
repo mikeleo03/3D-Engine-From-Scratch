@@ -228,6 +228,7 @@ export class GLContainer {
         programInfo: ProgramInfo,
         uniforms: { [uniformName: string]: UniformSingleDataType },
     ): void {
+        // TODO: leon, Add support for number type
         for (let uniformName in uniforms)
         {
             this.setUniform(programInfo, uniformName, ...uniforms[uniformName]);

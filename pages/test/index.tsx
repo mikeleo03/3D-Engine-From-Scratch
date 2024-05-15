@@ -34,6 +34,7 @@ export default function Page() {
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
       const { RenderManager } = await import('@/lib/rendering/RenderManager');
       const { BasicMaterial } = await import('@/lib/data/components/materials/BasicMaterial');
+      const { Color } = await import('@/lib/cores');
 
       const glContainer = new GLContainer(canvas);
 
@@ -87,7 +88,7 @@ export default function Page() {
         floatConverter,
       );
 
-      const material = new BasicMaterial({ name: "test" });
+      const material = new BasicMaterial({ name: "test", color: new Color(0, 0, 0, 1) });
       const materials = [material];
 
       const geometry = new MeshBufferGeometry({

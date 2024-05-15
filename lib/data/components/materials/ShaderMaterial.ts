@@ -48,6 +48,11 @@ export class ShaderMaterial {
                 bufferUniforms[key] = uniform.buffer;
             }
 
+            else if (typeof uniform === 'number')
+            {
+                // TODO: leon, Add support for number type
+            }
+
             else {
                 throw new Error(`Uniform type not supported: ${uniform}`);
             }
