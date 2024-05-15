@@ -9,6 +9,7 @@ import { Mesh } from "./components/mesh/Mesh";
 import { AccessorType, BufferType, BufferViewType, CameraType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
 import { ShaderMaterial } from "./components/materials";
 import { CameraUtil } from "./components/cameras/CameraUtil";
+import { MaterialUtil } from "./components/materials/MaterialUtil";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
@@ -166,7 +167,7 @@ export class GLTFRawState {
         const buffers = this._buffers.map(buffer => GLTFBuffer.fromRaw(buffer));
         const bufferViews = this._bufferViews.map(bufferView => BufferView.fromRaw(bufferView, buffers));
         const accessors = this._accessors.map(accessor => Accessor.fromRaw(accessor, bufferViews));
-        const materials = this._materials.map(material => ShaderMaterial.fromRaw(material));
+        const materials = this._materials.map(material => MaterialUtil.fromRaw(material));
         const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors, materials));
         const cameras = this._cameras.map(camera => CameraUtil.fromRaw(camera));
         const nodes = this._nodes.map(node => SceneNode.fromRaw(node, meshes, cameras));
