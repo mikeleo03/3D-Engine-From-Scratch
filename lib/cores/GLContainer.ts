@@ -124,17 +124,19 @@ export class GLContainer {
 
         const type = info.type;
 
-        return (...values: UniformDataType) => {
+        return (values: UniformSingleDataType) => {
             const typeString = UniformSetterWebGLType[type];
             const setter = `uniform${typeString}`;
 
             if (typeString.startsWith("Matrix")) {
                 // @ts-ignore
-                this._gl[setter](loc, false, ...values);
+                this._gl[setter](loc, false, values);
             }
 
-            // @ts-ignore
-            this._gl[setter](loc, ...values);
+            else {
+                // @ts-ignore
+                this._gl[setter](loc, ...values);
+            }
         }
     }
 
@@ -208,7 +210,7 @@ export class GLContainer {
             this.setAttribute(programInfo, attributeName, attributes[attributeName]);
     }
 
-    private setUniform(programInfo: ProgramInfo, uniformName: string, ...data: UniformDataType): void {
+    private setUniform(programInfo: ProgramInfo, uniformName: string, data: UniformSingleDataType): void {
         const setters = programInfo.uniformSetters!!;
 
         if (!uniformName.startsWith('u_')) {
@@ -216,7 +218,7 @@ export class GLContainer {
         }
 
         if (uniformName in setters) {
-            setters[uniformName](...data);
+            setters[uniformName](data);
         }
     }
 
@@ -227,8 +229,7 @@ export class GLContainer {
         // TODO: leon, Add support for number type, lihat cara checking values[0] di setattribute
         for (let uniformName in uniforms)
         {
-            this.setUniform(programInfo, uniformName, ...uniforms[uniformName]);
-            
+            this.setUniform(programInfo, uniformName, uniforms[uniformName]); 
         }
     }
 
