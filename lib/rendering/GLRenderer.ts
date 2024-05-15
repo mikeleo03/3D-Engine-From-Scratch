@@ -1,6 +1,7 @@
 import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
+import { Matrix4 } from "../data/math";
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -15,7 +16,7 @@ export class GLRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT);
     }
 
-    private renderRoot(root: SceneNode) {
+    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Matrix4 }) {
         const mesh = root.mesh;
         const gl = this._glContainer.glContext;
 
@@ -31,8 +32,13 @@ export class GLRenderer {
 
                 this._glContainer.setProgram(programInfo);
 
-                // TODO: Set additional uniforms, pass camera as additional argument to this function if needed
-                this._glContainer.setUniforms(programInfo, material.uniforms);
+                this._glContainer.setUniforms(programInfo, { 
+                    ...material.uniforms, 
+                    ...uniforms,
+                    worldMatrix: root.worldMatrix,
+                    cameraPosition: root.position,
+                });
+                
                 this._glContainer.setAttributes(programInfo, geometry.attributes);
 
                 // draw triangles
@@ -41,7 +47,7 @@ export class GLRenderer {
         }
 
         for (const child of root.children) {
-            this.renderRoot(child);
+            this.renderRoot(child, uniforms);
         }
     }
 
@@ -53,11 +59,13 @@ export class GLRenderer {
             return;
         }
 
-        const nodes = scene.roots;
-        for (const node of nodes) {
-            this.renderRoot(node);
+        const defaultUniform = {
+            viewMatrix: camera.projectionMatrix,
         }
 
-        // TODO: setup camera
+        const nodes = scene.roots;
+        for (const node of nodes) {
+            this.renderRoot(node, defaultUniform);
+        }
     }
 }
