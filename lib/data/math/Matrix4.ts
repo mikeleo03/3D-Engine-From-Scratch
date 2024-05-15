@@ -98,6 +98,52 @@ export class Matrix4 {
         return result;
     }
 
+    static det(m : Matrix4) {
+        const [
+            [m00, m01, m02, m03],
+            [m10, m11, m12, m13],
+            [m20, m21, m22, m23],
+            [m30, m31, m32, m33]
+        ] = m.data;
+        return (
+            m03*m12*m21*m30 - m02*m13*m21*m30 - m03*m11*m22*m30 + m01*m13*m22*m30+
+            m02*m11*m23*m30 - m01*m12*m23*m30 - m03*m12*m20*m31 + m02*m13*m20*m31+
+            m03*m10*m22*m31 - m00*m13*m22*m31 - m02*m10*m23*m31 + m00*m12*m23*m31+
+            m03*m11*m20*m32 - m01*m13*m20*m32 - m03*m10*m21*m32 + m00*m13*m21*m32+
+            m01*m10*m23*m32 - m00*m11*m23*m32 - m02*m11*m20*m33 + m01*m12*m20*m33+
+            m02*m10*m21*m33 - m00*m12*m21*m33 - m01*m10*m22*m33 + m00*m11*m22*m33
+        );
+    }
+
+    static inv(m: Matrix4) {
+        const [
+            [m00, m01, m02, m03], 
+            [m10, m11, m12, m13], 
+            [m20, m21, m22, m23], 
+            [m30, m31, m32, m33]
+        ] = m.data;
+
+        const s = 1 / Matrix4.det(m);
+        return new Matrix4([
+            [(m12*m23*m31 - m13*m22*m31 + m13*m21*m32 - m11*m23*m32 - m12*m21*m33 + m11*m22*m33)*s,
+            (m03*m22*m31 - m02*m23*m31 - m03*m21*m32 + m01*m23*m32 + m02*m21*m33 - m01*m22*m33)*s,
+            (m02*m13*m31 - m03*m12*m31 + m03*m11*m32 - m01*m13*m32 - m02*m11*m33 + m01*m12*m33)*s,
+            (m03*m12*m21 - m02*m13*m21 - m03*m11*m22 + m01*m13*m22 + m02*m11*m23 - m01*m12*m23)*s],
+            [(m13*m22*m30 - m12*m23*m30 - m13*m20*m32 + m10*m23*m32 + m12*m20*m33 - m10*m22*m33)*s,
+            (m02*m23*m30 - m03*m22*m30 + m03*m20*m32 - m00*m23*m32 - m02*m20*m33 + m00*m22*m33)*s,
+            (m03*m12*m30 - m02*m13*m30 - m03*m10*m32 + m00*m13*m32 + m02*m10*m33 - m00*m12*m33)*s,
+            (m02*m13*m20 - m03*m12*m20 + m03*m10*m22 - m00*m13*m22 - m02*m10*m23 + m00*m12*m23)*s],
+            [(m11*m23*m30 - m13*m21*m30 + m13*m20*m31 - m10*m23*m31 - m11*m20*m33 + m10*m21*m33)*s,
+            (m03*m21*m30 - m01*m23*m30 - m03*m20*m31 + m00*m23*m31 + m01*m20*m33 - m00*m21*m33)*s,
+            (m01*m13*m30 - m03*m11*m30 + m03*m10*m31 - m00*m13*m31 - m01*m10*m33 + m00*m11*m33)*s,
+            (m03*m11*m20 - m01*m13*m20 - m03*m10*m21 + m00*m13*m21 + m01*m10*m23 - m00*m11*m23)*s],
+            [(m12*m21*m30 - m11*m22*m30 - m12*m20*m31 + m10*m22*m31 + m11*m20*m32 - m10*m21*m32)*s,
+            (m01*m22*m30 - m02*m21*m30 + m02*m20*m31 - m00*m22*m31 - m01*m20*m32 + m00*m21*m32)*s,
+            (m02*m11*m30 - m01*m12*m30 - m02*m10*m31 + m00*m12*m31 + m01*m10*m32 - m00*m11*m32)*s,
+            (m01*m12*m20 - m02*m11*m20 + m02*m10*m21 - m00*m12*m21 - m01*m10*m22 + m00*m11*m22)*s],
+        ]);
+    }
+
     get data(): number[][] {
         // make sure to return a copy of the data
         return this._data.map(row => row.slice());
@@ -242,7 +288,7 @@ export class Matrix4 {
             [2 * a, 0, 0, 0],
             [0, 2 * b, 0, 0],
             [0, 0, 2 * c, 0],
-            [(left + right) * -1 * a, (top + bottom) * -1 * b, (far + near) * -1 * c, 1],
+            [(left + right) * -1 * a, (top + bottom) * -1 * b, (far + near) * c, 1],
         ]);
     }
 
