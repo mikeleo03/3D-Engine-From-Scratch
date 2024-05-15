@@ -87,7 +87,7 @@ export default function Page() {
         floatConverter,
       );
 
-      const material = new BasicMaterial({});
+      const material = new BasicMaterial({name: "test"});
       const materials = [material];
 
       const geometry = new MeshBufferGeometry({

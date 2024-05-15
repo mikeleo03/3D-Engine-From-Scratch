@@ -111,6 +111,9 @@ export class GLContainer {
         };
     }
 
+    setProgram(programInfo: ProgramInfo): void {
+        this._gl.useProgram(programInfo.program);
+    }
     
     private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): (value: any) => void { 
         const loc = this._gl.getUniformLocation(program, info.name);

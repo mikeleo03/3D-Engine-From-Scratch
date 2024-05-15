@@ -22,13 +22,14 @@ export class GLRenderer {
         if (mesh) {
             for (const geometry of mesh.geometries) {
                 const material = geometry.material;
-            
-                if (!material.programInfo)
-                {
+
+                if (!material.programInfo) {
                     material.programInfo = this._glContainer.getProgramInfo(material.vertexShader, material.fragmentShader);
                 }
 
                 const programInfo = material.programInfo;
+
+                this._glContainer.setProgram(programInfo);
 
                 // TODO: Set additional uniforms, pass camera as additional argument to this function if needed
                 this._glContainer.setUniforms(programInfo, material.uniforms);
