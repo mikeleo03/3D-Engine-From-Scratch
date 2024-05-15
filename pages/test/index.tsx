@@ -126,10 +126,11 @@ export default function Page() {
         cameras,
         nodes,
         scenes,
+        [],
         0
       );
 
-      // console.log(GLTFRawState.fromGLTFState(gltfState));
+      console.log(GLTFRawState.fromGLTFState(gltfState));
 
       const parser = new GLTFParser();
 
@@ -151,7 +152,7 @@ export default function Page() {
 
       const file = parser.write(gltfState);
 
-      // downloadFile(file);
+      downloadFile(file);
       // console.log(await parser.parse(file));
 
       const glRenderer = new GLRenderer(glContainer);
