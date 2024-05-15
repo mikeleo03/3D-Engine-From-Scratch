@@ -68,32 +68,19 @@ export function getByteCountForComponentType(elementType: number, accessorType: 
     }
 }
 
-/* interface ColorRaw {
-    r: number;
-    g: number;
-    b: number;
-    a: number;
-}
-
-interface Vector3Raw {
-    x: number;
-    y: number;
-    z: number;
-} */
-
 type UniformData = 
     | ['Color', number[]]
     | ['Vector3', number[]]
     | any;
 
-export type MaterialType = { 
+export type MaterialType = {
+    "type": string,
     "name": string,
     "vertexShader": string, 
     "fragmentShader": string, 
     "uniforms": {
         [key: string]: UniformData;
     },
-    "type": string
 } 
 
 export enum MeshPrimitiveAttribute {

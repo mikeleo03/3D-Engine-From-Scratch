@@ -35,10 +35,4 @@ export class BasicMaterial extends ShaderMaterial {
             vertexShader, fragmentShader, ...other, type: this.type
         };
     }
-
-    static fromRaw(json: MaterialType): ShaderMaterial {
-        const obj = new BasicMaterial(json);
-        ShaderMaterial.fromRaw(json, obj);
-        return obj;
-    }
 }
