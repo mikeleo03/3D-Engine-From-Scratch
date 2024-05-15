@@ -1,4 +1,4 @@
-import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
+import { GLBufferAttribute } from "../data/buffers/GLBufferAttribute";
 import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformMapSetters, UniformSetterWebGLType } from "./gltypes";
 
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
@@ -114,8 +114,8 @@ export class GLContainer {
     setProgram(programInfo: ProgramInfo): void {
         this._gl.useProgram(programInfo.program);
     }
-    
-    private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): (value: any) => void { 
+
+    private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): (value: any) => void {
         const loc = this._gl.getUniformLocation(program, info.name);
 
         if (!loc) {
@@ -132,10 +132,10 @@ export class GLContainer {
                 // @ts-ignore
                 this._gl[setter](loc, false, value);
             }
-            
+
             // @ts-ignore
             this._gl[setter](loc, value);
-        }   
+        }
     }
 
     private createUniformSetters(program: WebGLProgram): UniformMapSetters {
@@ -160,9 +160,9 @@ export class GLContainer {
             this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
             const v = values[0];
 
-            if (v instanceof MeshBufferAttribute) {
+            if (v instanceof GLBufferAttribute) {
                 this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
-                
+
                 this._gl.enableVertexAttribArray(loc);
                 this._gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
             } else {
@@ -191,9 +191,8 @@ export class GLContainer {
 
     private setAttribute(programInfo: ProgramInfo, attributeName: string, ...data: AttributeDataType): void {
         const setters = programInfo.attributeSetters!!;
-        
-        if (!attributeName.startsWith('a_'))
-        {
+
+        if (!attributeName.startsWith('a_')) {
             attributeName = `a_${attributeName}`;
         }
 

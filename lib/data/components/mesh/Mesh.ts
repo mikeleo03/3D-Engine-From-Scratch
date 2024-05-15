@@ -1,10 +1,10 @@
-import { Accessor } from "../buffers/Accessor";
-import { MeshBufferAttribute } from "../buffers/MeshBufferAttribute";
-import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "../buffers/MeshBufferGeometry";
-import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters";
-import { ShaderMaterial } from "./materials";
-import { MeshPrimitiveType, MeshType } from "../types/gltftypes";
-import { NodeComponent } from "./NodeComponent";
+import { Accessor } from "../../buffers/Accessor";
+import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
+import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "./geometries/MeshBufferGeometry";
+import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
+import { ShaderMaterial } from "../materials";
+import { MeshPrimitiveType, MeshType } from "../../types/gltftypes";
+import { NodeComponent } from "../NodeComponent";
 
 export class Mesh extends NodeComponent {
     static readonly COMPONENT_NAME = "mesh";
@@ -44,12 +44,12 @@ export class Mesh extends NodeComponent {
             const material = materials[primitive.material];
 
             const attribute: MeshBufferGeometryAttributes = {
-                POSITION: position ? new MeshBufferAttribute(
+                POSITION: position ? new GLBufferAttribute(
                     position,
                     MeshBufferGeometry.POSITION_SIZE,
                     new Float32ArrayConverter(),
                 ) : undefined,
-                NORMAL: normal ? new MeshBufferAttribute(
+                NORMAL: normal ? new GLBufferAttribute(
                     normal,
                     MeshBufferGeometry.NORMAL_SIZE,
                     new Float32ArrayConverter(),
@@ -59,7 +59,7 @@ export class Mesh extends NodeComponent {
             return new MeshBufferGeometry(
                 attribute,
                 material,
-                indices ? new MeshBufferAttribute(
+                indices ? new GLBufferAttribute(
                     indices,
                     MeshBufferGeometry.INDEX_SIZE,
                     new Uint16ArrayConverter(),

@@ -1,7 +1,7 @@
 import { UUID, randomUUID } from "crypto";
 import { SceneNode } from "./SceneNode";
 import { Scene } from "./Scene";
-import { Mesh } from "./components/Mesh";
+import { Mesh } from "./components/mesh/Mesh";
 import { Camera } from "./components/cameras/Camera";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { BufferView } from "./buffers/BufferView";
@@ -60,7 +60,7 @@ export class GLTFState {
     get materials(): ShaderMaterial[] {
         return this._materials;
     }
-    
+
     get meshes(): Mesh[] {
         return this._meshes;
     }

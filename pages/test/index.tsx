@@ -25,15 +25,15 @@ export default function Page() {
       const { BufferView } = await import('@/lib/data/buffers/BufferView');
       const { Accessor } = await import('@/lib/data/buffers/Accessor');
       const { SceneNode } = await import('@/lib/data/SceneNode');
-      const { MeshBufferAttribute } = await import('@/lib/data/buffers/MeshBufferAttribute');
-      const { MeshBufferGeometry } = await import('@/lib/data/buffers/MeshBufferGeometry');
-      const { Mesh } = await import('@/lib/data/components/Mesh');
+      const { GLBufferAttribute } = await import('@/lib/data/buffers/GLBufferAttribute');
+      const { MeshBufferGeometry } = await import('@/lib/data/components/mesh/geometries/MeshBufferGeometry');
+      const { Mesh } = await import('@/lib/data/components/mesh/Mesh');
       const { Scene } = await import('@/lib/data/Scene');
       const { GLTFState } = await import('@/lib/data/GLTFState');
       const { GLTFRawState } = await import('@/lib/data/GLTFRawState');
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
       const { RenderManager } = await import('@/lib/rendering/RenderManager');
-      const { BasicMaterial } = await import ('@/lib/data/components/materials/BasicMaterial');
+      const { BasicMaterial } = await import('@/lib/data/components/materials/BasicMaterial');
 
       const glContainer = new GLContainer(canvas);
 
@@ -71,23 +71,23 @@ export default function Page() {
       accessorMap.set(verticesAccessor, 1);
       accessorMap.set(normalAccessor, 2);
 
-      const positionAttribute = new MeshBufferAttribute(
+      const positionAttribute = new GLBufferAttribute(
         verticesAccessor,
         3,
         floatConverter,
       );
-      const indicesAttribute = new MeshBufferAttribute(
+      const indicesAttribute = new GLBufferAttribute(
         indicesAccessor,
         1,
         uShortConverter,
       );
-      const normalAttribute = new MeshBufferAttribute(
+      const normalAttribute = new GLBufferAttribute(
         normalAccessor,
         3,
         floatConverter,
       );
 
-      const material = new BasicMaterial({name: "test"});
+      const material = new BasicMaterial({ name: "test" });
       const materials = [material];
 
       const geometry = new MeshBufferGeometry({

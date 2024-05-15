@@ -1,6 +1,6 @@
 "use client";
 
-import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
+import { GLBufferAttribute } from "../data/buffers/GLBufferAttribute";
 
 export enum ShaderType {
     VERTEX = WebGLRenderingContext.VERTEX_SHADER,
@@ -71,7 +71,7 @@ export function getByteCountForWebGLType(type: number): number {
     }
 }
 
-export type AttributeSingleDataType = MeshBufferAttribute | Float32Array | number[];
+export type AttributeSingleDataType = GLBufferAttribute | Float32Array | number[];
 export type AttributeDataType = [AttributeSingleDataType] | number[];
 export type AttributeSetters = (...v: AttributeDataType) => void;
 export type AttributeMapSetters = { [key: string]: AttributeSetters };
@@ -85,7 +85,7 @@ export type ProgramInfo = {
     attributeSetters: AttributeMapSetters,
 };
 
-export const UniformSetterWebGLType: {[key: number]: string} = {
+export const UniformSetterWebGLType: { [key: number]: string } = {
     [WebGLRenderingContext.FLOAT]: "1f",
     [WebGLRenderingContext.FLOAT_VEC2]: "2f",
     [WebGLRenderingContext.FLOAT_VEC3]: "3f",

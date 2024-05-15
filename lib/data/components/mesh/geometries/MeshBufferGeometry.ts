@@ -1,12 +1,12 @@
-import { MeshBufferAttribute } from "./MeshBufferAttribute";
-import { Vector3 } from "../math/index";
-import { MeshPrimitiveAttribute } from "../types/gltftypes";
-import { Accessor } from "./Accessor";
-import { Float32ArrayConverter } from "./typedarrayconverters";
-import { ShaderMaterial } from "../components/materials";
+import { GLBufferAttribute } from "../../../buffers/GLBufferAttribute";
+import { Vector3 } from "../../../math/index";
+import { MeshPrimitiveAttribute } from "../../../types/gltftypes";
+import { Accessor } from "../../../buffers/Accessor";
+import { Float32ArrayConverter } from "../../../buffers/typedarrayconverters";
+import { ShaderMaterial } from "../../materials";
 
 export type MeshBufferGeometryAttributes = {
-    [name in MeshPrimitiveAttribute]?: MeshBufferAttribute;
+    [name in MeshPrimitiveAttribute]?: GLBufferAttribute;
 };
 export class MeshBufferGeometry {
     public static readonly POSITION_SIZE: number = 3;
@@ -15,12 +15,12 @@ export class MeshBufferGeometry {
 
     private _attributes: MeshBufferGeometryAttributes;
     private _material: ShaderMaterial;
-    private _indices?: MeshBufferAttribute;
+    private _indices?: GLBufferAttribute;
 
     constructor(
-        attributes: MeshBufferGeometryAttributes = {}, 
+        attributes: MeshBufferGeometryAttributes = {},
         material: ShaderMaterial,
-        indices?: MeshBufferAttribute
+        indices?: GLBufferAttribute
     ) {
         this._attributes = attributes;
         this._material = material;
@@ -40,7 +40,7 @@ export class MeshBufferGeometry {
     }
 
 
-    setIndices(indices: MeshBufferAttribute): void {
+    setIndices(indices: GLBufferAttribute): void {
         if (indices.size !== MeshBufferGeometry.INDEX_SIZE) {
             throw new Error("Indices must be a 1D array");
         }
@@ -60,7 +60,7 @@ export class MeshBufferGeometry {
     }
 
 
-    setAttribute(name: MeshPrimitiveAttribute, attribute: MeshBufferAttribute): void {
+    setAttribute(name: MeshPrimitiveAttribute, attribute: GLBufferAttribute): void {
         if (name === MeshPrimitiveAttribute.POSITION) {
             if (this.indices && attribute.count !== this.indices.count) {
                 throw new Error("Position attribute count must be the same as indices count");
@@ -75,7 +75,7 @@ export class MeshBufferGeometry {
     }
 
 
-    getAttribute(name: MeshPrimitiveAttribute): MeshBufferAttribute | null {
+    getAttribute(name: MeshPrimitiveAttribute): GLBufferAttribute | null {
         return this._attributes[name] || null;
     }
 
@@ -97,7 +97,7 @@ export class MeshBufferGeometry {
         let normal = this.getAttribute(MeshPrimitiveAttribute.NORMAL);
         if (forceNewAttribute || !normal) {
             const converter = new Float32ArrayConverter();
-            normal = new MeshBufferAttribute(accessor, MeshBufferGeometry.NORMAL_SIZE, converter);
+            normal = new GLBufferAttribute(accessor, MeshBufferGeometry.NORMAL_SIZE, converter);
         }
 
         const p = position.data;

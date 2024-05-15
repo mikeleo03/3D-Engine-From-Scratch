@@ -1,5 +1,5 @@
 import { Camera } from "./components/cameras/Camera";
-import { Mesh } from "./components/Mesh";
+import { Mesh } from "./components/mesh/Mesh";
 import { NodeComponent } from "./components/NodeComponent";
 import { Matrix4 } from "./math/Matrix4";
 import { Quaternion } from "./math/Quaternion";

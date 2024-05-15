@@ -5,7 +5,7 @@ import { Accessor } from "./buffers/Accessor";
 import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/cameras/Camera";
-import { Mesh } from "./components/Mesh";
+import { Mesh } from "./components/mesh/Mesh";
 import { AccessorType, BufferType, BufferViewType, CameraType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
 import { ShaderMaterial } from "./components/materials";
 import { CameraUtil } from "./components/cameras/CameraUtil";

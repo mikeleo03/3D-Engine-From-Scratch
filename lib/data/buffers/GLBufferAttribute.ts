@@ -1,7 +1,7 @@
 import { Accessor } from "./Accessor";
 import { TypedArrayConverter } from "./typedarrayconverters";
 
-export class MeshBufferAttribute {
+export class GLBufferAttribute {
     private _accessor: Accessor;
     private _size: number;
     private _converter: TypedArrayConverter;
