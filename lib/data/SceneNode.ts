@@ -2,7 +2,7 @@ import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/mesh/Mesh";
 import { NodeComponent } from "./components/NodeComponent";
 import { Matrix4 } from "./math/Matrix4";
-import { Quaternion } from "./math/Quaternion";
+import { Quaternion } from "@/lib/data/math";
 import { Vector3 } from "./math/Vector";
 import { SceneNodeType } from "./types/gltftypes";
 
@@ -16,7 +16,6 @@ export class SceneNode {
     private _children: SceneNode[] = []
     private _mesh?: Mesh;
     private _camera?: Camera;
-    private _name?: string;
     // visible = true
 
 
@@ -26,8 +25,7 @@ export class SceneNode {
         scale: Vector3 = new Vector3(1, 1, 1),
         parent: SceneNode | null = null,
         mesh?: Mesh,
-        camera?: Camera,
-        name?: string
+        camera?: Camera
     ) {
         this._position = position;
         this._rotation = rotation.normalize();
@@ -36,7 +34,6 @@ export class SceneNode {
         this.computeWorldMatrix();
         this._mesh = mesh;
         this._camera = camera;
-        this._name = name;
 
         if (mesh) {
             mesh.addNodes(this);
@@ -58,7 +55,6 @@ export class SceneNode {
     get children() { return this._children; }
     get camera() { return this._camera; }
     get mesh() { return this._mesh; }
-    get name() { return this._name; }
 
     // Public setter
     // Should update world matrix if parent changed

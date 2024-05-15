@@ -1,5 +1,3 @@
-// import fs from 'fs';
-import path from 'path';
 import {SceneNode} from "@/lib/data/SceneNode";
 import {Quaternion, Vector3} from "@/lib/data/math";
 import { AnimationClipType, AnimationPathType, AnimationTRS } from '../types/gltftypes';
@@ -7,9 +5,7 @@ import { AnimationClipType, AnimationPathType, AnimationTRS } from '../types/glt
 
 export type AnimationPath = {
   keyframe?: AnimationTRS;
-  children?: {
-    [childName: string]: AnimationPath;
-  }
+  children?: SceneNode[];
 }
 
 export type AnimationClip = {
@@ -52,57 +48,6 @@ export class AnimationClipUtil {
     }
   }
 }
-
-// CONTOH PENGGUNAAN DARI GUIDEBOOK
-// const testAnim: AnimationClip = {
-//   name: "Fox Walking",
-//   frames: [
-//     // 0
-//     {
-//       keyframe: {
-//         translation: [-0.5, 0, 0],
-//         rotation: [0, 0, 0],
-//       },
-//       children: {
-//         RHead: {
-//           keyframe: {
-//             translation: [0.75, 1.5, 0],
-//             rotation: [0, 0, 0],
-//           },
-//         },
-//         RTail: {
-//           keyframe: {
-//             translation: [-0.75, 1.5, 0],
-//             rotation: [0, 30, 0],
-//           },
-//           children: {
-//             RTailTip: {
-//               keyframe: {
-//                 translation: [-0.5, 0, 0],
-//                 rotation: [0, 0, 0],
-//               },
-//             }
-//           }
-//         }
-//       },
-//     },
-//     // 1
-//     {
-//       keyframe: {
-//         translation: [-0.5, 0, 0],
-//         rotation: [0, 0.5, 0],
-//       },
-//       children: {
-//         RHead: {
-//           keyframe: {
-//             translation: [0.75, 1.5, 0],
-//             rotation: [0, 0, 0],
-//           },
-//         },
-//       },
-//     },
-//   ],
-// };
 
 export class AnimationRunner {
   isPlaying: boolean = false;
@@ -164,24 +109,45 @@ export class AnimationRunner {
     }
 
     // recursive approach to apply the frame to the children
-    if (frame.children) {
-      for (const childName in frame.children) {
-        const child = node.children.find(child => child.name === childName);
-        if (child) {
-          this.traverseAndUpdate(child, frame.children[childName]);
+    if (frame.children && node.children) {
+      for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
+        const childFrame = frame.children[i];
+        if (child && childFrame) {
+          this.traverseAndUpdate(child, childFrame);
         }
       }
     }
   }
 
-  private load(animFile: string): AnimationClip | undefined {
-    try {
-      const filePath = path.resolve(__dirname, animFile);
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      return JSON.parse(fileContent);
-    } catch (e) {
-      console.error(e);
-      return undefined;
-    }
+  // TODO: find alternative way to implement this (i guess toraw and fromraw of John's code)
+  // private load(animFile: string): AnimationClip | undefined {
+  //   try {
+  //     const filePath = path.resolve(__dirname, animFile);
+  //     const fileContent = fs.readFileSync(filePath, 'utf-8');
+  //     return JSON.parse(fileContent);
+  //   } catch (e) {
+  //     console.error(e);
+  //     return undefined;
+  //   }
+  // }
+
+  // stub for now
+  private load(animFile: string): AnimationClip {
+    return {
+      name: "Stub Animation",
+      frames: [
+        // 0
+        {
+          keyframe: {
+            translation: [-0.5, 0, 0],
+            rotation: [0, 0, 0],
+          },
+          children: [
+            new SceneNode(new Vector3(0.5, 0, 0), new Quaternion(0, 0, 0, 1), new Vector3(1, 1, 1)),
+          ],
+        }
+      ],
+    };
   }
 }
