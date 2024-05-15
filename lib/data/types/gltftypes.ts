@@ -68,7 +68,7 @@ export function getByteCountForComponentType(elementType: number, accessorType: 
     }
 }
 
-interface ColorRaw {
+/* interface ColorRaw {
     r: number;
     g: number;
     b: number;
@@ -79,11 +79,11 @@ interface Vector3Raw {
     x: number;
     y: number;
     z: number;
-}
+} */
 
 type UniformData = 
-    | ['Color', ColorRaw]
-    | ['Vector3', Vector3Raw]
+    | ['Color', number[]]
+    | ['Vector3', number[]]
     | any;
 
 export type MaterialType = { 

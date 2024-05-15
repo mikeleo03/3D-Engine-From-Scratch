@@ -4,7 +4,7 @@ export class Color {
     private _b: number;
     private _a: number;
 
-    constructor(r: number, g: number, b: number, a: number) {
+    constructor(r: number = 0, g: number = 0, b: number = 0, a: number = 0) {
         this._r = r;
         this._g = g;
         this._b = b;
@@ -96,18 +96,11 @@ export class Color {
         yield this._a;
     }
 
-    toRaw() {
-        return { r: this._r, g: this._g, b: this._b, a: this._a };
+    toRaw() : number[] {
+        return this.toArray();
     }
 
-    static fromRaw(obj: { r: number, g: number, b: number, a: number }) {
-        if (typeof obj !== 'object' || obj === null) {
-            throw new Error("Invalid JSON object");
-        }
-        const { r, g, b, a } = obj;
-        if (typeof r !== 'number' || typeof g !== 'number' || typeof b !== 'number' || typeof a !== 'number') {
-            throw new Error("Invalid properties in JSON object");
-        }
-        return new Color(r, g, b, a);
+    static fromRaw(arr: number[]) : Color {
+        return new Color(...arr);
     }
 }

@@ -161,11 +161,11 @@ export class Vector3 {
         return [this.x, this.y, this.z];
     }
 
-    toRaw() {
+    toRaw() : number[] {
         return this.toArray();
     }
 
-    static fromRaw(arr: number[]) {
+    static fromRaw(arr: number[]) : Vector3 {
         return new Vector3(...arr);
     }
 }
