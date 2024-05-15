@@ -16,7 +16,9 @@ export class SceneNode {
     private _children: SceneNode[] = []
     private _mesh?: Mesh;
     private _camera?: Camera;
+    private _name?: string;
     // visible = true
+
 
     constructor(
         position: Vector3 = new Vector3(),
@@ -24,7 +26,8 @@ export class SceneNode {
         scale: Vector3 = new Vector3(1, 1, 1),
         parent: SceneNode | null = null,
         mesh?: Mesh,
-        camera?: Camera
+        camera?: Camera,
+        name?: string
     ) {
         this._position = position;
         this._rotation = rotation.normalize();
@@ -33,6 +36,7 @@ export class SceneNode {
         this.computeWorldMatrix();
         this._mesh = mesh;
         this._camera = camera;
+        this._name = name;
 
         if (mesh) {
             mesh.addNodes(this);
@@ -54,7 +58,7 @@ export class SceneNode {
     get children() { return this._children; }
     get camera() { return this._camera; }
     get mesh() { return this._mesh; }
-
+    get name() { return this._name; }
 
     // Public setter
     // Should update world matrix if parent changed
@@ -63,6 +67,19 @@ export class SceneNode {
             this._parent = parent;
             this.computeWorldMatrix(false, true);
         }
+    }
+
+    set position(position) {
+        this._position = position;
+        this.computeWorldMatrix(false, true);
+    }
+    set rotation(rotation) {
+        this._rotation = rotation.normalize();
+        this.computeWorldMatrix(false, true);
+    }
+    set scale(scale) {
+        this._scale = scale;
+        this.computeWorldMatrix(false, true);
     }
 
 
