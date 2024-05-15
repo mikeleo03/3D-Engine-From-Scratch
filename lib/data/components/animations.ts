@@ -1,4 +1,4 @@
-import fs from 'fs';
+// import fs from 'fs';
 import path from 'path';
 import {SceneNode} from "@/lib/data/SceneNode";
 import {Quaternion, Vector3} from "@/lib/data/math";

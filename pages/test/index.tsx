@@ -152,7 +152,7 @@ export default function Page() {
 
       const file = parser.write(gltfState);
 
-      downloadFile(file);
+      // downloadFile(file);
       // console.log(await parser.parse(file));
 
       const glRenderer = new GLRenderer(glContainer);
