@@ -21,6 +21,7 @@ export default function Page() {
       const { OrthographicCamera } = await import('@/lib/data/components/cameras/OrthographicCamera');
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
       const { JojoModel } = await import('@/lib/data/models/JojoModel');
+      const { RenderManager} = await import('@/lib/rendering/RenderManager');
 
       const glContainer = new GLContainer(canvas);
 
@@ -32,19 +33,19 @@ export default function Page() {
       // );
 
       const camera = new OrthographicCamera(
-        canvas.height / 2,
-        -canvas.height / 2,
-        -canvas.width / 2,
-        canvas.width / 2,
+        1,
+        -1,
+        -1,
+        1,
         0.01,
         1000
       );
 
       // const camera = new ObliqueCamera(
-      //   canvas.height / 2,
-      //   -canvas.height / 2,
-      //   -canvas.width / 2,
-      //   canvas.width / 2,
+      //   1,
+      //   -1,
+      //   -1,
+      //   1,
       //   0.01,
       //   100,
       //   20
@@ -53,7 +54,10 @@ export default function Page() {
       const model = new JojoModel(camera);
      
       const glRenderer = new GLRenderer(glContainer);
-      console.log(model.scene);
+      const renderManager = new RenderManager(model.gltfState, glRenderer);
+
+      // renderManager.loop();
+    
       glRenderer.render(model.scene);
     };
 

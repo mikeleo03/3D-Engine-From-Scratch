@@ -22,8 +22,8 @@ export abstract class Camera extends NodeComponent {
         return this._type;
     }
 
-    getProjectionMatrix(canvasWidth: number, canvasHeight: number) {
-        this.updateProjectionMatrix(canvasWidth, canvasHeight);
+    getProjectionMatrix() {
+        this.updateProjectionMatrix();
         return this._projectionMatrix;
     }
     
@@ -43,7 +43,7 @@ export abstract class Camera extends NodeComponent {
         this._zoom = zoom;
     }
 
-    protected abstract updateProjectionMatrix(canvasWidth: number, canvasHeight: number): void;
+    protected abstract updateProjectionMatrix(): void;
 
     abstract toRaw(): CameraType;
 }

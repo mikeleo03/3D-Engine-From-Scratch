@@ -81,12 +81,11 @@ export class ObliqueCamera extends Camera {
         this._angle = angle;
     }
 
-    protected override updateProjectionMatrix(canvasWidth: number, canvasHeight: number) {
-        const top = 2 * this._top / canvasHeight;
-        const bottom = 2 * this._bottom / canvasHeight;
-        const left = 2 * this._left / canvasWidth;
-        const right = 2 * this._right / canvasWidth;
-
+    protected override updateProjectionMatrix() {
+        const top = this._top;
+        const bottom = this._bottom;
+        const left = this._left;
+        const right = this._right;
         const d = [
             (right - left) / (2 * this.zoom),
             (top - bottom) / (2 * this.zoom),

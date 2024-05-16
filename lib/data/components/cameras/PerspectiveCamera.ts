@@ -51,9 +51,7 @@ export class PerspectiveCamera extends Camera {
         this._far = far;
     }
 
-    protected override updateProjectionMatrix(canvasWidth: number, canvasHeight: number) {
-        this._aspectRatio = canvasWidth / canvasHeight;
-        
+    protected override updateProjectionMatrix() {        
         this.projectionMatrix = Matrix4.perspective(
             this._aspectRatio, this._yfov, this._near, this._far,
         );
