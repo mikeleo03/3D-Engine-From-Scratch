@@ -93,10 +93,6 @@ export class Color {
         return new Color(0, 0, 0, 1);
     }
 
-    static fromRGBA(r: number, g: number, b: number, a: number): Color {
-        return new Color(r / 255, g / 255, b / 255, a / 255);
-    }
-
     *[Symbol.iterator]() {
         yield this._r;
         yield this._g;

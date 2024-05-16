@@ -97,7 +97,7 @@ export class CuboidGeometry extends MeshBufferGeometry {
 
         positionAccessor.setData(floatConverter.tobytes(vertices));
 
-        const material = new BasicMaterial({name: CuboidGeometry.MATERIAL_NAME, color: Color.fromRGBA(255, 0, 0, 255)});
+        const material = new BasicMaterial({name: CuboidGeometry.MATERIAL_NAME, color: new Color(255, 0, 0, 255)});
 
         super(attributes, material);
 
