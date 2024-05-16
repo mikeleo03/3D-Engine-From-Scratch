@@ -1,3 +1,4 @@
+import React, { useState, ChangeEvent } from 'react';
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -11,7 +12,50 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+type Axis = 'x' | 'y' | 'z';
+type TRSType = 'translation' | 'rotation' | 'scale';
+interface TRS {
+    x: number;
+    y: number;
+    z: number;
+}
+
+interface CameraState {
+    mode: string;
+    distance: number;
+    angle: number;
+}
+
 export default function Home() {
+    const [translation, setTranslation] = useState<TRS>({ x: 0, y: 0, z: 0 });
+    const [rotation, setRotation] = useState<TRS>({ x: 0, y: 0, z: 0 });
+    const [scale, setScale] = useState<TRS>({ x: 1, y: 1, z: 1 });
+    const [camera, setCamera] = useState<CameraState>({ mode: "", distance: 0, angle: 0 });
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
+        const value = parseFloat(e.target.value);
+        if (type === 'translation') {
+            setTranslation(prevState => ({ ...prevState, [axis]: value }));
+        } else if (type === 'rotation') {
+            setRotation(prevState => ({ ...prevState, [axis]: value }));
+        } else if (type === 'scale') {
+            setScale(prevState => ({ ...prevState, [axis]: value }));
+        }
+        // Process the value
+    };
+
+    const handleCameraModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
+        setCamera(prevState => ({ ...prevState, mode: (e.target as HTMLSelectElement).value }));
+    };        
+
+    const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCamera(prevState => ({ ...prevState, distance: parseInt(e.target.value) }));
+    };
+
+    const handleAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCamera(prevState => ({ ...prevState, angle: parseInt(e.target.value) }));
+    };
+
     return (
         <main className="flex flex-col w-auto h-screen items-center justify-between">
             {/* Header Section */}
@@ -103,56 +147,128 @@ export default function Home() {
                 </div>
 
                 {/* Canvas */}
-                <canvas className="h-full w-[45vw]"/>
+                <canvas className="h-full w-[50vw]"/>
 
                 {/* Right controller */}
-                <div className="w-[30vw] bg-gray-700 h-full overlow-y-auto text-white">
+                <div className="w-[25vw] bg-gray-700 h-full overlow-y-auto text-white">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
-                        <div className="text-lg font-semibold pb-2">🎯 Position, Rotation, and Scale</div>
-                        <div className="text-base font-semibold pb-1">Position</div>
+                        <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
+                        <div className="text-base font-semibold pb-1">Translation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">X</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={translation.x}
+                                        onChange={(e) => handleInputChange(e, 'translation', 'x')}
+                                    />
+                                </div>
                             </div>
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">Y</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={translation.y}
+                                        onChange={(e) => handleInputChange(e, 'translation', 'y')}
+                                    />
+                                </div>
                             </div>
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">Z</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={translation.z}
+                                        onChange={(e) => handleInputChange(e, 'translation', 'z')}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div className="text-base font-semibold pb-1">Rotation</div>
                         <div className="flex flex-row w-full pb-1">
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">X</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={rotation.x}
+                                        onChange={(e) => handleInputChange(e, 'rotation', 'x')}
+                                    />
+                                </div>
                             </div>
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">Y</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={rotation.y}
+                                        onChange={(e) => handleInputChange(e, 'rotation', 'y')}
+                                    />
+                                </div>
                             </div>
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">Z</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={rotation.z}
+                                        onChange={(e) => handleInputChange(e, 'rotation', 'z')}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div className="text-base font-semibold pb-1">Scale</div>
                         <div className="flex flex-row w-full pb-1">
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">X</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={scale.x}
+                                        onChange={(e) => handleInputChange(e, 'scale', 'x')}
+                                    />
+                                </div>
                             </div>
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">Y</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={scale.y}
+                                        onChange={(e) => handleInputChange(e, 'scale', 'y')}
+                                    />
+                                </div>
                             </div>
                             <div className="w-1/3 flex flex-row justify-center items-center text-center">
                                 <div className="w-1/4">Z</div>
-                                <div className="w-3/4"><Input className="h-8 bg-gray-800 border-none" type="number" placeholder="0"/></div>
+                                <div className="w-3/4">
+                                    <Input
+                                        className="h-8 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={scale.z}
+                                        onChange={(e) => handleInputChange(e, 'scale', 'z')}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,7 +284,7 @@ export default function Home() {
                             <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent onChange={handleCameraModeChange}>
                                 <SelectItem value="Orthographic">Orthographic</SelectItem>
                                 <SelectItem value="Oblique">Oblique</SelectItem>
                                 <SelectItem value="Perspective">Perspective</SelectItem>
@@ -176,11 +292,25 @@ export default function Home() {
                         </Select>
                         <div className="text-base font-semibold py-2 flex flex-row w-full">
                             <div className="w-1/3">Distance</div>
-                            <input className="w-2/3" type="range" id="x" step="5" />
+                            <input
+                                className="w-2/3"
+                                type="range"
+                                min="0"
+                                max="100"
+                                value={camera.distance}
+                                onChange={handleDistanceChange}
+                            />
                         </div>
                         <div className="text-base font-semibold pt-1 pb-2 flex flex-row w-full">
                             <div className="w-1/3">Angle</div>
-                            <input className="w-2/3" type="range" id="x" step="5" />
+                            <input
+                                className="w-2/3"
+                                type="range"
+                                min="0"
+                                max="360"
+                                value={camera.angle}
+                                onChange={handleAngleChange}
+                            />
                         </div>
                     </div>
 
