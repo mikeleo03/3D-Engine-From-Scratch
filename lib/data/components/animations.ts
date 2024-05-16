@@ -47,9 +47,20 @@ export class AnimationClipUtil {
   }
 }
 
+export enum EasingFunction {
+  LINEAR = 'linear',
+  SINE = 'sine',
+  QUAD = 'quad',
+  CUBIC = 'cubic',
+  QUART = 'quart',
+  EXPO = 'expo',
+  CIRC = 'circ',
+}
+
 export class AnimationRunner {
   isPlaying: boolean = false;
   fps: number = 30;
+  easeFunction: EasingFunction = EasingFunction.LINEAR;
   private root: SceneNode;
   private currentFrame: number = 0;
   private deltaFrame: number = 0;
@@ -73,9 +84,32 @@ export class AnimationRunner {
     return this.currentAnimation!.frames[this.currentFrame];
   }
 
+  private calculateEasing(currentTime: number, startValue: number, changeInValue: number, duration: number): number {
+    switch (this.easeFunction) {
+      case EasingFunction.SINE: //ease inout
+        return changeInValue * Math.sin(currentTime / duration * Math.PI / 2) + startValue;
+      case EasingFunction.QUAD: //ease inout
+        currentTime /= duration / 2;
+        if (currentTime < 1) return changeInValue / 2 * currentTime * currentTime + startValue;
+        return -changeInValue / 2 * ((--currentTime) * (currentTime - 2) - 1) + startValue;
+      case EasingFunction.CUBIC: //ease inout
+        return changeInValue * ((currentTime = currentTime / duration - 1) * currentTime * currentTime + 1) + startValue;
+      case EasingFunction.QUART: //ease inout
+        return changeInValue * ((currentTime = currentTime / duration - 1) * currentTime * currentTime * currentTime + 1) + startValue;
+      case EasingFunction.EXPO: //ease inout
+        currentTime /= duration / 2;
+        if (currentTime < 1) return changeInValue / 2 * Math.pow(2, 10 * (currentTime - 1)) + startValue;
+        return changeInValue / 2 * (-Math.pow(2, -10 * --currentTime) + 2) + startValue;
+      case EasingFunction.CIRC: //ease inout
+        return changeInValue * (1 - Math.sqrt(1 - (currentTime /= duration) * currentTime)) + startValue;
+      default: // linear
+        return changeInValue * currentTime / duration + startValue;
+    }
+  }
+
   update(deltaSecond: number) {
     if (this.isPlaying) {
-      this.deltaFrame += deltaSecond * this.fps;
+      this.deltaFrame = this.calculateEasing(this.currentFrame / this.fps, 0, 1, this.length)
       if (this.deltaFrame >= 1) {
         this.currentFrame = (this.currentFrame + Math.floor(this.deltaFrame)) % this.length;
         this.deltaFrame = this.deltaFrame % 1;
