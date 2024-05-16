@@ -19,6 +19,7 @@ export class GLTFParser {
             data.cameras,
             data.nodes,
             data.scenes,
+            data.animations,
             data.scene
         );
 
@@ -58,6 +59,7 @@ export class GLTFParser {
             cameras: raw.cameras,
             nodes: raw.nodes,
             scenes: raw.scenes,
+            animations: raw.animations,
             scene: raw.scene
         }
         const jsonContent = JSON.stringify(jsonObject);

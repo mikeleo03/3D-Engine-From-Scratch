@@ -167,5 +167,6 @@ export type GLTFType = {
     cameras: CameraType[],
     nodes: SceneNodeType[],
     scenes: SceneType[],
+    animations: AnimationClipType[],
     scene: number
 };
