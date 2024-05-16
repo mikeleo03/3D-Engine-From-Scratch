@@ -1,5 +1,6 @@
 import {SceneNode} from "@/lib/data/SceneNode";
 import {Quaternion, Vector3} from "@/lib/data/math";
+import { GLTFParser } from "@/lib/data/GLTFParser";
 import { AnimationClipType, AnimationPathType, AnimationTRS } from '../types/gltftypes';
 
 
@@ -59,6 +60,8 @@ export enum EasingFunction {
 
 export class AnimationRunner {
   isPlaying: boolean = false;
+  isReverse: boolean = false;
+  isLoop: boolean = false;
   fps: number = 30;
   easeFunction: EasingFunction = EasingFunction.LINEAR;
   private root: SceneNode;
@@ -66,8 +69,8 @@ export class AnimationRunner {
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
 
-  constructor(animFile: string, root: SceneNode, {fps=30} = {}) {
-    this.currentAnimation = this.load(animFile);
+  async constructor(animFile: File, root: SceneNode, {fps = 30} = {}) {
+    this.currentAnimation = await this.load(animFile);
     this.fps = fps;
     this.root = root;
   }
@@ -107,11 +110,47 @@ export class AnimationRunner {
     }
   }
 
+  nextFrame() {
+    if (this.currentFrame < this.length - 1) {
+      this.currentFrame++;
+      this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
+      this.updateSceneGraph();
+    }
+  }
+
+  prevFrame() {
+    if (this.currentFrame > 0) {
+      this.currentFrame--;
+      this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
+      this.updateSceneGraph();
+    }
+  }
+
+  firstFrame() {
+    this.currentFrame = 0;
+    this.updateSceneGraph();
+  }
+
+  lastFrame() {
+    this.currentFrame = this.length - 1;
+    this.updateSceneGraph();
+  }
+
   update(deltaSecond: number) {
     if (this.isPlaying) {
-      this.deltaFrame = this.calculateEasing(this.currentFrame / this.fps, 0, 1, this.length)
+      this.deltaFrame = this.calculateEasing(Math.abs(this.currentFrame / this.fps), 0, 1, this.length)
       if (this.deltaFrame >= 1) {
-        this.currentFrame = (this.currentFrame + Math.floor(this.deltaFrame)) % this.length;
+        let newFrame = this.currentFrame + (this.isReverse ? -1 : 1) * Math.floor(this.deltaFrame);
+        if (newFrame < 0 || newFrame >= this.length) {
+          if (this.isLoop) {
+            this.currentFrame = (newFrame + this.length) % this.length;
+          } else {
+            this.isPlaying = false;
+            return;
+          }
+        } else {
+          this.currentFrame = newFrame;
+        }
         this.deltaFrame = this.deltaFrame % 1;
         this.updateSceneGraph();
       }
@@ -125,6 +164,7 @@ export class AnimationRunner {
     this.traverseAndUpdate(this.root, frame);
   }
 
+  // TODO: remove the update of the child as well since the child follows the parent (wait for live environment for testing)
   private traverseAndUpdate(node: SceneNode, frame: AnimationPath) {
     // update the node based on the frame
     if (frame.keyframe) {
@@ -140,46 +180,24 @@ export class AnimationRunner {
       }
     }
 
-    // recursive approach to apply the frame to the children
-    if (frame.children && node.children) {
-      for (let i = 0; i < node.children.length; i++) {
-        const child = node.children[i];
-        const childFrame = frame.children[i];
-        if (child && childFrame) {
-          this.traverseAndUpdate(child, childFrame);
-        }
-      }
-    }
+    // // recursive approach to apply the frame to the children
+    // if (frame.children && node.children) {
+    //   for (let i = 0; i < node.children.length; i++) {
+    //     const child = node.children[i];
+    //     const childFrame = frame.children[i];
+    //     if (child && childFrame) {
+    //       this.traverseAndUpdate(child, childFrame);
+    //     }
+    //   }
+    // }
   }
 
-  // TODO: find alternative way to implement this (i guess toraw and fromraw of John's code)
-  // private load(animFile: string): AnimationClip | undefined {
-  //   try {
-  //     const filePath = path.resolve(__dirname, animFile);
-  //     const fileContent = fs.readFileSync(filePath, 'utf-8');
-  //     return JSON.parse(fileContent);
-  //   } catch (e) {
-  //     console.error(e);
-  //     return undefined;
-  //   }
-  // }
+  // TODO: test whether the load is working or not
+  private async load(animFile: File): Promise<AnimationClip> {
+    const parser = new GLTFParser();
+    const gltfState = await parser.parse(animFile);
 
-  // stub for now
-  private load(animFile: string): AnimationClip {
-    return {
-      name: "Stub Animation",
-      frames: [
-        // 0
-        {
-          keyframe: {
-            translation: [-0.5, 0, 0],
-            rotation: [0, 0, 0],
-          },
-          children: [
-            new SceneNode(new Vector3(0.5, 0, 0), new Quaternion(0, 0, 0, 1), new Vector3(1, 1, 1)),
-          ],
-        }
-      ],
-    };
+    // since in this context we only have one animation max for each gltf file
+    return gltfState.animations[0];
   }
 }
