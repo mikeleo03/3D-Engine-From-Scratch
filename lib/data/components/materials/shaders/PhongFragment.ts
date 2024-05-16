@@ -17,13 +17,13 @@ void main() {
     vec3 H = normalize(L + normalize(u_cameraPosition));
 
     float kDiff = max(dot(L, N), 0.0);
-    vec3 diffuse = kDiff * u_diffuseColor.rgb;
+    vec3 diffuse = kDiff * u_diffuseColor.rgb / 255.0;
 
     float kSpec = pow(max(dot(N, H), 0.0), u_shininess);
-    vec3 specular = kSpec * u_specularColor.rgb;
+    vec3 specular = kSpec * u_specularColor.rgb / 255.0;
 
-    gl_FragColor = v_color * vec4(
-        0.1 * u_ambientColor.a * u_ambientColor.rgb + 
+    gl_FragColor = (v_color / 255.0) * vec4(
+        0.1 * u_ambientColor.a * u_ambientColor.rgb / 255.0 + 
         u_diffuseColor.a * diffuse +
         u_specularColor.a * specular
     , 1.0);
