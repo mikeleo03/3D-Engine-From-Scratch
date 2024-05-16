@@ -79,7 +79,7 @@ export class SceneNode {
     }
 
 
-    computeLocalMatrix() {
+    private computeLocalMatrix() {
         this._localMatrix = Matrix4.mul(
             Matrix4.translation3d(this._position),
             this.rotation.toMatrix4(),
@@ -88,7 +88,7 @@ export class SceneNode {
     }
 
 
-    computeWorldMatrix(updateParent = true, updateChildren = true) {
+    private computeWorldMatrix(updateParent = true, updateChildren = true) {
         // If updateParent, update world matrix of our ancestors
         // (.parent, .parent.parent, .parent.parent.parent, ...)
         if (updateParent && this.parent)
