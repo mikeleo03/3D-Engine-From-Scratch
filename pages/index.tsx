@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -26,11 +26,21 @@ interface CameraState {
     angle: number;
 }
 
+interface ShaderState {
+    enabled: boolean;
+}
+
 export default function Home() {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [translation, setTranslation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [rotation, setRotation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [scale, setScale] = useState<TRS>({ x: 1, y: 1, z: 1 });
-    const [camera, setCamera] = useState<CameraState>({ mode: "", distance: 0, angle: 0 });
+    const [camera, setCamera] = useState<CameraState>({ mode: "Perspective", distance: 0, angle: 0 });
+    const [shader, setShader] = useState<ShaderState>({ enabled: false });
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isReversing, setIsReversing] = useState(false);
+    const [isLooping, setIsLooping] = useState(false);
+    const [easingMode, setEasingMode] = useState({ mode: "Linear" });
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         const value = parseFloat(e.target.value);
@@ -41,6 +51,10 @@ export default function Home() {
         } else if (type === 'scale') {
             setScale(prevState => ({ ...prevState, [axis]: value }));
         }
+
+        console.log(translation);
+        console.log(rotation);
+        console.log(scale);
         // Process the value
     };
 
@@ -55,6 +69,61 @@ export default function Home() {
     const handleAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setCamera(prevState => ({ ...prevState, angle: parseInt(e.target.value) }));
     };
+
+    const toggleShader = () => {
+        setShader(prevState => ({ enabled: !prevState.enabled }));
+    };
+    
+    const togglePlay = () => {
+        setIsPlaying(prevState => !prevState);
+    };
+
+    const toggleReverse = () => {
+        setIsReversing(prevState => !prevState);
+    };
+
+    const toggleLoop = () => {
+        setIsLooping(prevState => !prevState);
+    };
+
+    const handleEasingModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
+        setEasingMode({ mode: (e.target as HTMLSelectElement).value });
+    };
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+    
+        if (!canvas) {
+          return;
+        }
+    
+        const initializeGL = async () => {
+            // IMPORTANT: use dynamic import to avoid loading the entire library at server side
+            const { GLContainer } = await import('@/lib/cores/GLContainer');
+            const { OrthographicCamera } = await import('@/lib/data/components/cameras/OrthographicCamera');
+            const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
+            const { JojoModel } = await import('@/lib/data/models/JojoModel');
+        
+            const glContainer = new GLContainer(canvas);
+        
+            const camera = new OrthographicCamera(
+                canvas.height / 2,
+                -canvas.height / 2,
+                -canvas.width / 2,
+                canvas.width / 2,
+                0.01,
+                1000
+            );
+    
+            const model = new JojoModel(camera);
+            
+            const glRenderer = new GLRenderer(glContainer);
+            console.log(model.scene);
+            glRenderer.render(model.scene);
+        };
+    
+        initializeGL();
+    }, [canvasRef.current]);
 
     return (
         <main className="flex flex-col w-auto h-screen items-center justify-between">
@@ -95,13 +164,13 @@ export default function Home() {
                         <div className="text-base font-semibold pb-1">Animation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button> ▷  Play</Button>
+                                <Button onClick={togglePlay}>{isPlaying ? '⏸️ Pause' : '▶️ Play'}</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button> ◁  Reverse</Button>
+                                <Button onClick={toggleReverse}>{isReversing ? '⏭ Forward' : '⏮ Reverse'}</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button> ↺  Loop</Button>
+                                <Button onClick={toggleLoop}>{isLooping ? '🔂 Stop' : '🔁 Loop'}</Button>
                             </div>
                         </div>
                         <div className="text-base font-semibold py-1">Easing Functions</div>
@@ -109,7 +178,7 @@ export default function Home() {
                             <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Easing Functions" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent onChange={handleEasingModeChange}>
                                 <SelectItem value="Linear">Linear</SelectItem>
                                 <SelectItem value="Sine">Sine</SelectItem>
                                 <SelectItem value="Quad">Quad</SelectItem>
@@ -147,7 +216,7 @@ export default function Home() {
                 </div>
 
                 {/* Canvas */}
-                <canvas className="h-full w-[50vw]"/>
+                <canvas ref={canvasRef} className="h-full w-[50vw]"/>
 
                 {/* Right controller */}
                 <div className="w-[25vw] bg-gray-700 h-full overlow-y-auto text-white">
@@ -323,8 +392,24 @@ export default function Home() {
                         <div className="w-full justify-between flex flex-row">
                             <div className="text-lg font-semibold pb-2">🖼️ Scene</div>
                             <div className="flex items-center space-x-3">
-                                <Switch className="w-10" id="airplane-mode" />
-                                <Label htmlFor="airplane-mode">Shader</Label>
+                                <Switch
+                                    id="shader-switch"
+                                    checked={shader.enabled}
+                                    onChange={toggleShader}
+                                />
+                                {/* <Switch
+                                    id="shader-switch"
+                                    className="w-10"
+                                    checked={shader.enabled}
+                                    onChange={toggleShader}
+                                /> */}
+                                <input
+                                    type="checkbox"
+                                    id="shader-switch"
+                                    checked={shader.enabled}
+                                    onChange={toggleShader}
+                                />
+                                <Label htmlFor="shader-switch">Shader</Label>
                             </div>
                         </div>
                         {/* <div className="text-base font-semibold py-2 flex flex-row w-full">
