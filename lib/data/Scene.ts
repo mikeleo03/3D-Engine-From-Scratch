@@ -8,17 +8,17 @@ export class Scene {
     private _activeCameraNode: SceneNode | null = null;
 
     constructor(nodes: SceneNode[], activeCameraNode?: SceneNode) {
-        this._nodes = nodes.slice();
-        this._rootNodes = nodes.filter(node => node.parent === null);
-        this._cameras = nodes.filter(node => node.camera !== undefined);
+        this._nodes = [];
+        this._rootNodes = [];
+        this._cameras = [];
+
+        for (const node of nodes) {
+            this.addNode(node);
+        }
 
         if (activeCameraNode) {
             this._activeCameraNode = activeCameraNode;
         } 
-        
-        else if (this._cameras.length > 0) {
-            this._activeCameraNode = this._cameras[0];
-        }
     }
 
     get nodes(): SceneNode[] {
@@ -68,6 +68,10 @@ export class Scene {
 
         if (this._cameras.length === 1) {
             this._activeCameraNode = this._cameras[0];
+        }
+
+        for (const child of node.children) {
+            this.addNode(child);
         }
     }
 

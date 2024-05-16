@@ -18,22 +18,9 @@ export default function Page() {
     const initializeGL = async () => {
       // IMPORTANT: use dynamic import to avoid loading the entire library at server side
       const { GLContainer } = await import('@/lib/cores/GLContainer');
-      const { GLTFParser } = await import('@/lib/data/GLTFParser');
-      const { PerspectiveCamera } = await import('@/lib/data/components/cameras/PerspectiveCamera');
       const { OrthographicCamera } = await import('@/lib/data/components/cameras/OrthographicCamera');
-      const { ObliqueCamera } = await import('@/lib/data/components/cameras/ObliqueCamera');
-      const { SceneNode } = await import('@/lib/data/SceneNode');
-      const { MeshFactory } = await import('@/lib/data/components/mesh/MeshFactory');
-      const { Mesh } = await import('@/lib/data/components/mesh/Mesh');
-      const { Scene } = await import('@/lib/data/Scene');
-      const { GLTFState } = await import('@/lib/data/GLTFState');
-      const { GLTFRawState } = await import('@/lib/data/GLTFRawState');
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
-      const { RenderManager } = await import('@/lib/rendering/RenderManager');
-      const { BasicMaterial } = await import('@/lib/data/components/materials/BasicMaterial');
-      const { PhongMaterial } = await import('@/lib/data/components/materials/PhongMaterial');
-      const { Color } = await import('@/lib/cores');
-      const { AnimationClipUtil } = await import('@/lib/data/components/animations');
+      const { JojoModel } = await import('@/lib/data/models/JojoModel');
 
       const glContainer = new GLContainer(canvas);
 
@@ -49,7 +36,7 @@ export default function Page() {
         -canvas.height / 2,
         -canvas.width / 2,
         canvas.width / 2,
-        1,
+        0.01,
         1000
       );
 
@@ -63,64 +50,11 @@ export default function Page() {
       //   20
       // );
 
-      const material1 = new BasicMaterial({ name: "test", color: Color.black() });
-      const material2 = new BasicMaterial({ name: "test", color: Color.red() });
-      const material3 = new BasicMaterial({ name: "test", color: Color.green() });
-      const material4 = new BasicMaterial({ name: "test", color: Color.blue() });
-      const material5 = new BasicMaterial({ name: "test", color: new Color(255, 255, 0, 255)});
-      const material6 = new BasicMaterial({ name: "test", color: new Color(255, 0, 255, 255)});
-
-      // const material = new PhongMaterial({ name: "test", ambientColor: Color.black(), diffuseColor: Color.black(), specularColor: Color.black(), shininess: 30, lightPosition: new Vector3(400, 400, 300) });
-
-      const meshFactory = new MeshFactory();
-      const cubeMesh = meshFactory.cuboid(50, 50, 50, material1, material2, material3, material4, material5, material6);
-
-      const cubeNode = new SceneNode(
-        new Vector3(0, 0, -50),
-        new Quaternion(0, 0, 0, 1),
-        new Vector3(1, 1, 1),
-        undefined,
-        cubeMesh
-      );
-
-      cubeNode.rotateByDegrees(new Vector3(45, 45, 0));
-
-      const cameraNode = new SceneNode(
-        new Vector3(0, 0, 0),
-        new Quaternion(0, 0, 0, 1),
-        new Vector3(1, 1, 1),
-        undefined,
-        undefined,
-        camera
-      );
-
-      const nodes = [cubeNode, cameraNode];
-
-      const scene = new Scene(nodes);
-
-      function downloadFile(file: File) {
-        // Create a temporary URL for the File object
-        const url = window.URL.createObjectURL(file);
-
-        // Create a link element
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = file.name; // Use the file name from the File object
-
-        // Simulate a click on the link to trigger the download
-        link.click();
-
-        // Clean up by revoking the Object URL
-        window.URL.revokeObjectURL(url);
-      }
-
-      const gltfState = new GLTFState();
-      gltfState.addScene(scene);
-
-      console.log(GLTFRawState.fromGLTFState(gltfState));
-
+      const model = new JojoModel(camera);
+     
       const glRenderer = new GLRenderer(glContainer);
-      glRenderer.render(scene);
+      console.log(model.scene);
+      glRenderer.render(model.scene);
     };
 
     initializeGL();
