@@ -1,8 +1,3 @@
-import { Float32ArrayConverter, Uint16ArrayConverter } from "@/lib/data/buffers/typedarrayconverters";
-import { AnimationClip, AnimationPath } from "@/lib/data/components/animations";
-import { Quaternion } from "@/lib/data/math/Quaternion";
-import { Vector3 } from "@/lib/data/math/Vector";
-import { BufferType } from "@/lib/data/types/gltftypes";
 import { useEffect, useRef } from "react";
 
 export default function Page() {
