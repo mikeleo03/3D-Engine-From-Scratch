@@ -127,10 +127,16 @@ export class GLContainer {
         return (values: UniformSingleDataType) => {
             const typeString = UniformSetterWebGLType[type];
             const setter = `uniform${typeString}`;
+            console.log(typeString);
 
             if (typeString.startsWith("Matrix")) {
                 // @ts-ignore
                 this._gl[setter](loc, false, values);
+            }
+
+            else if (typeString == '1f') {
+                // @ts-ignore
+                this._gl[setter](loc, values);
             }
 
             else {
@@ -226,7 +232,6 @@ export class GLContainer {
         programInfo: ProgramInfo,
         uniforms: { [uniformName: string]: UniformSingleDataType },
     ): void {
-        // TODO: leon, Add support for number type, lihat cara checking values[0] di setattribute
         for (let uniformName in uniforms)
         {
             this.setUniform(programInfo, uniformName, uniforms[uniformName]); 

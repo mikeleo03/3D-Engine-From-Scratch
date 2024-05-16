@@ -31,11 +31,15 @@ export class GLRenderer {
                 const programInfo = material.programInfo;
 
                 this._glContainer.setProgram(programInfo);
+                console.log(this._glContainer.canvasElement.width);
+                console.log(this._glContainer.canvasElement.height);
 
                 this._glContainer.setUniforms(programInfo, { 
                     ...material.bufferUniforms, 
                     ...uniforms,
                     worldMatrix: root.worldMatrix.transpose().buffer,
+                    canvasWidth: this._glContainer.canvasElement.width + 0.0,
+                    canvasHeight: this._glContainer.canvasElement.height + 0.0
                 });
 
                 this._glContainer.setAttributes(programInfo, geometry.attributes);

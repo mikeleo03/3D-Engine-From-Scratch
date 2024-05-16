@@ -7,13 +7,17 @@ uniform mat4 u_worldMatrix;
 uniform mat4 u_viewMatrix;
 uniform vec4 u_color;
 uniform bool u_useVertexColor;
+uniform float u_canvasWidth;
+uniform float u_canvasHeight;
 
 varying vec4 v_color;
 
 void main() {
-    vec4 wPos = u_viewMatrix * u_worldMatrix * a_position;
+    vec4 wPos = u_worldMatrix * a_position;
 
-    gl_Position = wPos;
+    vec2 normalizedPos = vec2(wPos.x / u_canvasWidth, wPos.y / u_canvasHeight);
+    
+    gl_Position = vec4(normalizedPos * 2.0 - 1.0, wPos.zw);
     v_color = mix(vec4(1,1,1,1), a_color, float(u_useVertexColor)) * u_color;
 }
 `;
