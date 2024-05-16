@@ -59,6 +59,8 @@ export enum EasingFunction {
 
 export class AnimationRunner {
   isPlaying: boolean = false;
+  isReverse: boolean = false;
+  isLoop: boolean = false;
   fps: number = 30;
   easeFunction: EasingFunction = EasingFunction.LINEAR;
   private root: SceneNode;
@@ -107,11 +109,47 @@ export class AnimationRunner {
     }
   }
 
+  nextFrame() {
+    if (this.currentFrame < this.length - 1) {
+      this.currentFrame++;
+      this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
+      this.updateSceneGraph();
+    }
+  }
+
+  prevFrame() {
+    if (this.currentFrame > 0) {
+      this.currentFrame--;
+      this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
+      this.updateSceneGraph();
+    }
+  }
+
+  firstFrame() {
+    this.currentFrame = 0;
+    this.updateSceneGraph();
+  }
+
+  lastFrame() {
+    this.currentFrame = this.length - 1;
+    this.updateSceneGraph();
+  }
+
   update(deltaSecond: number) {
     if (this.isPlaying) {
-      this.deltaFrame = this.calculateEasing(this.currentFrame / this.fps, 0, 1, this.length)
+      this.deltaFrame = this.calculateEasing(Math.abs(this.currentFrame / this.fps), 0, 1, this.length)
       if (this.deltaFrame >= 1) {
-        this.currentFrame = (this.currentFrame + Math.floor(this.deltaFrame)) % this.length;
+        let newFrame = this.currentFrame + (this.isReverse ? -1 : 1) * Math.floor(this.deltaFrame);
+        if (newFrame < 0 || newFrame >= this.length) {
+          if (this.isLoop) {
+            this.currentFrame = (newFrame + this.length) % this.length;
+          } else {
+            this.isPlaying = false;
+            return;
+          }
+        } else {
+          this.currentFrame = newFrame;
+        }
         this.deltaFrame = this.deltaFrame % 1;
         this.updateSceneGraph();
       }
