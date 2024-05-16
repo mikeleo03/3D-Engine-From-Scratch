@@ -13,8 +13,8 @@ export class PerspectiveCamera extends Camera {
     constructor(aspectRatio: number, yfov: number, near: number, far: number) {
         super(Camera.COMPONENT_NAME);
 
-        this._yfov = yfov;
         this._aspectRatio = aspectRatio;
+        this._yfov = yfov;
         this._near = near;
         this._far = far;
     }

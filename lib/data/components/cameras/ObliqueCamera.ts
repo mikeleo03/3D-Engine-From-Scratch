@@ -94,10 +94,15 @@ export class ObliqueCamera extends Camera {
             (top - bottom) / 2,
         ];
 
+        // this.projectionMatrix = Matrix4.oblique(
+        //     -(d[2] + d[0]) / 2, (d[2] + d[0]) / 2, -(d[3] + d[1]) / 2, (d[3] + d[1]) / 2,
+        //     this._near, this._far,
+        //     this._angle, 0.5,
+        // );
+
         this.projectionMatrix = Matrix4.oblique(
-            -(d[2] + d[0]) / 2, (d[2] + d[0]) / 2, -(d[3] + d[1]) / 2, (d[3] + d[1]) / 2,
-            this._near, this._far,
-            this._angle, 0.5,
+            top, bottom, left, right,
+            this._near, this._far, this._angle, 0.5
         );
     }
     
