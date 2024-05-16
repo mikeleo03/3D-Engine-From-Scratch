@@ -70,7 +70,9 @@ export class AnimationRunner {
   private currentAnimation?: AnimationClip;
 
   constructor(animFile: File, root: SceneNode, {fps = 30} = {}) {
-    this.currentAnimation = this.load(animFile);
+    this.load(animFile).then(animation => {
+      this.currentAnimation = animation;
+    })
     this.fps = fps;
     this.root = root;
   }
