@@ -257,6 +257,6 @@ export default function Page() {
   }, [canvasRef.current]);
 
   return (
-    <canvas ref={canvasRef} className="h-80 w-80"></canvas>
+    <canvas ref={canvasRef} style={{width: '100vmin', height: '100vmin', border: '1px solid #000'}}></canvas>
   );
 }
