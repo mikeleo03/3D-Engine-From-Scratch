@@ -35,11 +35,9 @@ export class GLRenderer {
                 this._glContainer.setUniforms(programInfo, { 
                     ...material.bufferUniforms, 
                     ...uniforms,
-                    worldMatrix: root.worldMatrix.buffer,
+                    worldMatrix: root.worldMatrix.transpose().buffer,
                 });
 
-                console.log(root.worldMatrix.buffer);
-                
                 this._glContainer.setAttributes(programInfo, geometry.attributes);
 
                 // draw triangles
@@ -66,21 +64,17 @@ export class GLRenderer {
             return;
         }
 
+        const cameraPosition = cameraNode.position.buffer;
+
         const nodes = scene.roots;
         for (const node of nodes) {
-            node.computeWorldMatrix();
-            console.log(node.worldMatrix);
             const invWorldMatrix = Matrix4.inv(node.worldMatrix);
-            console.log(invWorldMatrix);
             const viewMatrix = Matrix4.mul(camera.projectionMatrix, invWorldMatrix);
 
             const defaultUniform = {
                 viewMatrix: viewMatrix.buffer,
-                cameraPosition: cameraNode.position.buffer
+                cameraPosition
             }
-
-            console.log(viewMatrix);
-            console.log(cameraNode.position);
 
             this.renderRoot(node, defaultUniform);
         }

@@ -67,6 +67,10 @@ export class Vector3 {
         return new Vector3(x, y, z);
     }
 
+    static mulElements(v1: Vector3, v2: Vector3): Vector3 {
+        return new Vector3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+    }
+    
     get data(): number[] {
         return [this.x, this.y, this.z];
     }
@@ -106,6 +110,44 @@ export class Vector3 {
         }
 
         return new Vector3(this.x * s, this.y * s, this.z * s);
+    }
+
+    mulX(s: number, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.x *= s;
+            return this;
+        }
+
+        return new Vector3(this.x * s, this.y, this.z);
+    }
+
+    mulY(s: number, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.y *= s;
+            return this;
+        }
+
+        return new Vector3(this.x, this.y * s, this.z);
+    }
+
+    mulZ(s: number, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.z *= s;
+            return this;
+        }
+
+        return new Vector3(this.x, this.y, this.z * s);
+    }
+
+    mulElements(v: Vector3, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.x *= v.x;
+            this.y *= v.y;
+            this.z *= v.z;
+            return this;
+        }
+
+        return new Vector3(this.x * v.x, this.y * v.y, this.z * v.z);
     }
 
     div(s: number, inplace: Boolean = false): Vector3 {

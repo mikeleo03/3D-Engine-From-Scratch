@@ -78,8 +78,32 @@ export class SceneNode {
         this.computeWorldMatrix(false, true);
     }
 
+    translate(translation: Vector3) {
+        this.position = Vector3.add(this.position, translation);
+        this.computeWorldMatrix(false, true);
+    }
 
-    computeLocalMatrix() {
+    rotate(rotation: Quaternion) {
+        this.rotation = Quaternion.mul(rotation, this.rotation);
+        this.computeWorldMatrix(false, true);
+    }
+
+    rotateByEuler(euler: Vector3) {
+        this.rotation = Quaternion.mul(this.rotation, Quaternion.fromEuler(euler));
+        this.computeWorldMatrix(false, true);
+    }
+
+    rotateByDegrees(degrees: Vector3) {
+        const euler = Vector3.mul(degrees, Math.PI / 180);
+        this.rotateByEuler(euler);
+    }
+
+    scaleBy(scale: Vector3) {
+        this.scale = Vector3.mulElements(this.scale, scale);
+        this.computeWorldMatrix(false, true);
+    }
+
+    private computeLocalMatrix() {
         this._localMatrix = Matrix4.mul(
             Matrix4.translation3d(this._position),
             this.rotation.toMatrix4(),
@@ -88,7 +112,7 @@ export class SceneNode {
     }
 
 
-    computeWorldMatrix(updateParent = true, updateChildren = true) {
+    private computeWorldMatrix(updateParent = true, updateChildren = true) {
         // If updateParent, update world matrix of our ancestors
         // (.parent, .parent.parent, .parent.parent.parent, ...)
         if (updateParent && this.parent)

@@ -114,6 +114,15 @@ export class Quaternion {
         }
     }
 
+    static mul(q1: Quaternion, q2: Quaternion): Quaternion {
+        const x = q1._x * q2._w + q1._y * q2._z - q1._z * q2._y + q1._w * q2._x;
+        const y = -q1._x * q2._z + q1._y * q2._w + q1._z * q2._x + q1._w * q2._y;
+        const z = q1._x * q2._y - q1._y * q2._x + q1._z * q2._w + q1._w * q2._z;
+        const w = -q1._x * q2._x - q1._y * q2._y - q1._z * q2._z + q1._w * q2._w;
+
+        return new Quaternion(x, y, z, w);
+    }
+
     set(x: number, y: number, z: number, w: number): void {
         this._x = x;
         this._y = y;
@@ -218,6 +227,11 @@ export class Quaternion {
         return new Vector3(X, Y, Z);
     }
 
+    toDegrees(): Vector3 {
+        const v = this.toEuler();
+        return new Vector3(v.X * 180 / Math.PI, v.Y * 180 / Math.PI, v.Z * 180 / Math.PI);
+    }
+
     toMatrix4(): Matrix4 {
         const x = this._x;
         const y = this._y;
@@ -238,5 +252,71 @@ export class Quaternion {
 
     toArray(): [number, number, number, number] {
         return [this._x, this._y, this._z, this._w];
+    }
+
+    conjugate(inplace: Boolean = false): Quaternion {
+        if (inplace) {
+            this._x = -this._x;
+            this._y = -this._y;
+            this._z = -this._z;
+            return this;
+        }
+
+        return new Quaternion(-this._x, -this._y, -this._z, this._w);
+    }
+
+    mul(q: Quaternion, inplace: Boolean = false): Quaternion {
+        const x = this._x * q._w + this._y * q._z - this._z * q._y + this._w * q._x;
+        const y = -this._x * q._z + this._y * q._w + this._z * q._x + this._w * q._y;
+        const z = this._x * q._y - this._y * q._x + this._z * q._w + this._w * q._z;
+        const w = -this._x * q._x - this._y * q._y - this._z * q._z + this._w * q._w;
+
+        if (inplace) {
+            this._x = x;
+            this._y = y;
+            this._z = z;
+            this._w = w;
+            return this;
+        }
+
+        return new Quaternion(x, y, z, w);
+    }
+
+    rotate(v: Vector3, inplace: Boolean = false): Vector3 {
+        const q = this.normalize();
+        const p = new Quaternion(v.X, v.Y, v.Z, 0);
+        const qInv = q.conjugate();
+
+        const result = q.mul(p).mul(qInv);
+
+        if (inplace) {
+            v.X = result._x;
+            v.Y = result._y;
+            v.Z = result._z;
+            return v;
+        }
+
+        return new Vector3(result._x, result._y, result._z);
+    }
+
+    rotateX(angle: number, inplace: Boolean = false): Quaternion {
+        const halfAngle = angle / 2;
+        const q = new Quaternion(Math.sin(halfAngle), 0, 0, Math.cos(halfAngle));
+
+        return this.mul(q, inplace);
+    }
+
+    rotateY(angle: number, inplace: Boolean = false): Quaternion {
+        const halfAngle = angle / 2;
+        const q = new Quaternion(0, Math.sin(halfAngle), 0, Math.cos(halfAngle));
+
+        return this.mul(q, inplace);
+    }
+
+    rotateZ(angle: number, inplace: Boolean = false): Quaternion {
+        const halfAngle = angle / 2;
+        const q = new Quaternion(0, 0, Math.sin(halfAngle), Math.cos(halfAngle));
+
+        return this.mul(q, inplace);
     }
 }
