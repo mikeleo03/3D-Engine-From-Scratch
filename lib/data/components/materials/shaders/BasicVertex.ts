@@ -13,7 +13,7 @@ uniform float u_canvasHeight;
 varying vec4 v_color;
 
 void main() {
-    vec4 wPos = u_worldMatrix * a_position;
+    vec4 wPos = u_viewMatrix * u_worldMatrix * a_position;
 
     vec2 normalizedPos = vec2(wPos.x / u_canvasWidth + 0.5, wPos.y / u_canvasHeight + 0.5);
     

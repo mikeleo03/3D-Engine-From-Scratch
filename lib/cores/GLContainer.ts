@@ -127,8 +127,7 @@ export class GLContainer {
         return (values: UniformSingleDataType) => {
             const typeString = UniformSetterWebGLType[type];
             const setter = `uniform${typeString}`;
-            console.log(typeString);
-
+            
             if (typeString.startsWith("Matrix")) {
                 // @ts-ignore
                 this._gl[setter](loc, false, values);
@@ -149,7 +148,7 @@ export class GLContainer {
     private createUniformSetters(program: WebGLProgram): UniformMapSetters {
         const uniformSetters: UniformMapSetters = {};
         const numUniforms = this._gl.getProgramParameter(program, this._gl.ACTIVE_UNIFORMS);
-
+ 
         for (let i = 0; i < numUniforms; i++) {
             const info = this._gl.getActiveUniform(program, i);
             if (!info) continue;
