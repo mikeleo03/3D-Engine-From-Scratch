@@ -69,10 +69,8 @@ export class AnimationRunner {
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
 
-  constructor(animFile: File, root: SceneNode, {fps = 30} = {}) {
-    this.load(animFile).then(animation => {
-      this.currentAnimation = animation;
-    })
+  constructor(animation: AnimationClip, root: SceneNode, {fps = 30} = {}) {
+    this.currentAnimation = animation;
     this.fps = fps;
     this.root = root;
   }
@@ -192,13 +190,5 @@ export class AnimationRunner {
     //     }
     //   }
     // }
-  }
-
-  // TODO: test whether the load is working or not
-  private load(animFile: File): Promise<AnimationClip> {
-    const parser = new GLTFParser();
-    return parser.parse(animFile).then(gltfState => {
-      return gltfState.animations[0];
-    })
   }
 }
