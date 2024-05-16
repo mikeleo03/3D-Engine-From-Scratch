@@ -14,17 +14,15 @@ export type AnimationClip = {
 }
 
 export class AnimationPathUtil {
-  static fromRaw(raw: AnimationPathType): AnimationPath {
+  static fromRaw(raw: AnimationPathType, nodes: SceneNode[]): AnimationPath {
       return {
         keyframe: raw.keyframe,
+        children: raw.children ? raw.children.map(child => nodes[child]) : undefined,
       }
   }
 
-  static toRaw(path: AnimationPath, animationPathMap: Map<AnimationPath, number>): AnimationPathType {
-    const children = path.children ? Object.fromEntries(
-      Object.entries(path.children).map(([key, value]) => [key, animationPathMap.get(value)!!]
-    )) : undefined;
-
+  static toRaw(path: AnimationPath, nodeMap: Map<SceneNode, number>): AnimationPathType {
+    const children = path.children ? path.children.map(child => nodeMap.get(child)!!) : undefined;
     return {
       keyframe: path.keyframe,
       children: children
@@ -34,17 +32,17 @@ export class AnimationPathUtil {
 }
 
 export class AnimationClipUtil {
-  static fromRaw(raw: AnimationClipType): AnimationClip {
+  static fromRaw(raw: AnimationClipType, nodes: SceneNode[]): AnimationClip {
     return {
       name: raw.name,
-      frames: raw.frames.map(frame => AnimationPathUtil.fromRaw(frame)),
+      frames: raw.frames.map(frame => AnimationPathUtil.fromRaw(frame, nodes)),
     }
   }
 
-  static toRaw(clip: AnimationClip, animationPathMap: Map<AnimationPath, number>): AnimationClipType {
+  static toRaw(clip: AnimationClip, nodeMap: Map<SceneNode, number>): AnimationClipType {
     return {
       name: clip.name,
-      frames: clip.frames.map(frame => AnimationPathUtil.toRaw(frame, animationPathMap)),
+      frames: clip.frames.map(frame => AnimationPathUtil.toRaw(frame, nodeMap)),
     }
   }
 }

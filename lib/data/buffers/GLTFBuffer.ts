@@ -20,6 +20,10 @@ export class GLTFBuffer implements ArrayBuffer {
 
     get dtype() { return Uint8Array; }
 
+    static empty(size: number): GLTFBuffer {
+        return new GLTFBuffer(new Uint8Array(size));
+    }
+    
     setData(data: Uint8Array, byteOffset: number = 0): void {
         if (byteOffset < 0) {
             throw new Error(`Offset must be greater than or equal to zero.`);
