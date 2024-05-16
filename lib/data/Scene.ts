@@ -21,6 +21,10 @@ export class Scene {
         }
     }
 
+    get nodes(): SceneNode[] {
+        return this._nodes.slice();
+    }
+    
     get roots(): SceneNode[] {
         return this._rootNodes.slice();
     }

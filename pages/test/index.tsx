@@ -83,7 +83,7 @@ export default function Page() {
         cubeMesh
       );
 
-      cubeNode.rotateByDegrees(new Vector3(0, -135, 0));
+      cubeNode.rotateByDegrees(new Vector3(45, 45, 0));
 
       const cameraNode = new SceneNode(
         new Vector3(0, 0, 0),
@@ -113,6 +113,11 @@ export default function Page() {
         // Clean up by revoking the Object URL
         window.URL.revokeObjectURL(url);
       }
+
+      const gltfState = new GLTFState();
+      gltfState.addScene(scene);
+
+      console.log(GLTFRawState.fromGLTFState(gltfState));
 
       const glRenderer = new GLRenderer(glContainer);
       glRenderer.render(scene);

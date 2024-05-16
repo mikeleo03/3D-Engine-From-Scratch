@@ -22,16 +22,16 @@ export class GLTFState {
     private _animations: AnimationClip[];
     private _scene: number = -1;
     constructor(
-        buffers: GLTFBuffer[],
-        bufferViews: BufferView[],
-        accessors: Accessor[],
-        materials: ShaderMaterial[],
-        meshes: Mesh[],
-        cameras: Camera[],
-        nodes: SceneNode[],
-        scenes: Scene[],
-        animations: AnimationClip[],
-        scene: number
+        buffers: GLTFBuffer[] = [],
+        bufferViews: BufferView[] = [],
+        accessors: Accessor[] = [],
+        materials: ShaderMaterial[] = [],
+        meshes: Mesh[] = [],
+        cameras: Camera[] = [],
+        nodes: SceneNode[] = [],
+        scenes: Scene[] = [],
+        animations: AnimationClip[] = [],
+        scene: number = -1
     ) {
         if (scene < -1 || scene >= scenes.length) {
             throw new Error("Invalid scene index");
@@ -50,39 +50,39 @@ export class GLTFState {
     }
 
     get buffers(): GLTFBuffer[] {
-        return this._buffers;
+        return this._buffers.slice();
     }
 
     get bufferViews(): BufferView[] {
-        return this._bufferViews;
+        return this._bufferViews.slice();
     }
 
     get accessors(): Accessor[] {
-        return this._accessors;
+        return this._accessors.slice();
     }
 
     get materials(): ShaderMaterial[] {
-        return this._materials;
+        return this._materials.slice();
     }
 
     get meshes(): Mesh[] {
-        return this._meshes;
+        return this._meshes.slice();
     }
 
     get cameras(): Camera[] {
-        return this._cameras;
+        return this._cameras.slice();
     }
 
     get nodes(): SceneNode[] {
-        return this._nodes;
+        return this._nodes.slice();
     }
 
     get scenes(): Scene[] {
-        return this._scenes;
+        return this._scenes.slice();
     }
 
     get animations(): AnimationClip[] {
-        return this._animations;
+        return this._animations.slice();
     }
 
     get scene(): number {
@@ -95,5 +95,115 @@ export class GLTFState {
         }
 
         return this._scenes[this._scene];
+    }
+
+
+    addCamera(camera: Camera) {
+        if (this._cameras.indexOf(camera) != -1) {
+            return;
+        }
+
+        this._cameras.push(camera);
+    }
+
+    addBuffer(buffer: GLTFBuffer) {
+        if (this._buffers.indexOf(buffer) != -1) {
+            return;
+        }
+
+        this._buffers.push(buffer);
+    }
+
+    addBufferView(bufferView: BufferView) {
+        if (this._bufferViews.indexOf(bufferView) != -1) {
+            return;
+        }
+
+        this.addBuffer(bufferView.buffer);
+
+        this._bufferViews.push(bufferView);
+    }
+
+    addAccessor(accessor: Accessor) {
+        if (this._accessors.indexOf(accessor) != -1) {
+            return;
+        }
+
+        this.addBufferView(accessor.bufferView);
+
+        this._accessors.push(accessor);
+    }
+
+    addMesh(mesh: Mesh) {
+        if (this._meshes.indexOf(mesh) != -1) {
+            return;
+        }
+
+        const geometries = mesh.geometries;
+
+        for (let i = 0; i < geometries.length; i++) {
+            const geometry = geometries[i];
+
+            if (geometry.material && this._materials.indexOf(geometry.material) == -1) {
+                this._materials.push(geometry.material);
+            }
+        }
+
+        const accessors: Accessor[] = [];
+
+        for (let i = 0; i < geometries.length; i++) {
+            if (geometries[i].attributes.position)
+            {
+                accessors.push(geometries[i].attributes.position!.accessor);
+            }
+            
+            if (geometries[i].attributes.normal)
+            {
+                accessors.push(geometries[i].attributes.normal!.accessor);
+            }
+
+            if (geometries[i].indices)
+            {
+                accessors.push(geometries[i].indices!.accessor);
+            }
+        }
+
+        for (let i = 0; i < accessors.length; i++) {
+            this.addAccessor(accessors[i]);
+        }
+
+        this._meshes.push(mesh);
+    }
+
+    addNode(node: SceneNode) {
+        if (this._nodes.indexOf(node) != -1) {
+            return;
+        }
+
+        if (node.camera && this._cameras.indexOf(node.camera) == -1) {
+            this._cameras.push(node.camera);
+        }
+
+        if (node.mesh) {
+            this.addMesh(node.mesh);
+        }
+
+        this._nodes.push(node);
+    }
+
+    addScene(scene: Scene) {
+        if (this._scenes.indexOf(scene) != -1) {
+            return;
+        }
+
+        for (let i = 0; i < scene.nodes.length; i++) {
+            this.addNode(scene.nodes[i]);
+        }
+
+        this._scenes.push(scene);
+
+        if (this._scene == -1) {
+            this._scene = 0;
+        }
     }
 }
