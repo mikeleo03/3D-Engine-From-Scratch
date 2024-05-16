@@ -15,7 +15,7 @@ varying vec4 v_color;
 void main() {
     vec4 wPos = u_worldMatrix * a_position;
 
-    vec2 normalizedPos = vec2(wPos.x / u_canvasWidth, wPos.y / u_canvasHeight);
+    vec2 normalizedPos = vec2(wPos.x / u_canvasWidth + 0.5, wPos.y / u_canvasHeight + 0.5);
     
     gl_Position = vec4(normalizedPos * 2.0 - 1.0, wPos.zw);
     v_color = mix(vec4(1,1,1,1), a_color, float(u_useVertexColor)) * u_color;

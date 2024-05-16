@@ -47,9 +47,20 @@ export class AnimationClipUtil {
   }
 }
 
+export enum EasingFunction {
+  LINEAR = 'linear',
+  SINE = 'sine',
+  QUAD = 'quad',
+  CUBIC = 'cubic',
+  QUART = 'quart',
+  EXPO = 'expo',
+  CIRC = 'circ',
+}
+
 export class AnimationRunner {
   isPlaying: boolean = false;
   fps: number = 30;
+  easeFunction: EasingFunction = EasingFunction.LINEAR;
   private root: SceneNode;
   private currentFrame: number = 0;
   private deltaFrame: number = 0;
@@ -73,9 +84,29 @@ export class AnimationRunner {
     return this.currentAnimation!.frames[this.currentFrame];
   }
 
+  // TODO: verify the implementation of this function
+  private calculateEasing(currentTime: number, startValue: number, changeInValue: number, duration: number): number {
+    switch (this.easeFunction) {
+      case EasingFunction.SINE:
+        return changeInValue * Math.sin(currentTime / duration * Math.PI / 2) + startValue;
+      case EasingFunction.QUAD:
+        return changeInValue * (currentTime /= duration) * currentTime + startValue;
+      case EasingFunction.CUBIC:
+        return changeInValue * ((currentTime = currentTime / duration - 1) * currentTime * currentTime + 1) + startValue;
+      case EasingFunction.QUART:
+        return changeInValue * ((currentTime = currentTime / duration - 1) * currentTime * currentTime * currentTime + 1) + startValue;
+      case EasingFunction.EXPO:
+        return changeInValue * Math.pow(2, 10 * (currentTime / duration - 1)) + startValue;
+      case EasingFunction.CIRC:
+        return changeInValue * (1 - Math.sqrt(1 - (currentTime /= duration) * currentTime)) + startValue;
+      default: // linear
+        return changeInValue * currentTime / duration + startValue;
+    }
+  }
+
   update(deltaSecond: number) {
     if (this.isPlaying) {
-      this.deltaFrame += deltaSecond * this.fps;
+      this.deltaFrame = this.calculateEasing(this.deltaFrame + deltaSecond, 0, 1, this.length)
       if (this.deltaFrame >= 1) {
         this.currentFrame = (this.currentFrame + Math.floor(this.deltaFrame)) % this.length;
         this.deltaFrame = this.deltaFrame % 1;
