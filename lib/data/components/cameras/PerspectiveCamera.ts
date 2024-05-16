@@ -38,21 +38,25 @@ export class PerspectiveCamera extends Camera {
 
     set aspectRatio(aspectRatio: number) {
         this._aspectRatio = aspectRatio;
+        this.updateProjectionMatrix();
     }
 
     set yfov(yfov: number) {
         this._yfov = yfov;
+        this.updateProjectionMatrix();
     }
 
     set near(near: number) {
         this._near = near;
+        this.updateProjectionMatrix();
     }
 
     set far(far: number) {
         this._far = far;
+        this.updateProjectionMatrix();
     }
 
-    updateProjectionMatrix() {
+    protected override updateProjectionMatrix() {
         this.projectionMatrix = Matrix4.perspective(
             this._yfov, this._aspectRatio, this._near, this._far,
         );

@@ -19,7 +19,6 @@ const cameraPerspective = (canvas: HTMLCanvasElement): CameraWrapper => {
         cam,
         resizer: (ev: Event) => {
             cam.aspectRatio = canvas.width / canvas.height;
-            cam.updateProjectionMatrix();
         }
     };
 };
@@ -40,7 +39,6 @@ const cameraOrthographic = (canvas: HTMLCanvasElement): CameraWrapper => {
             cam.right = canvas.width / 2;
             cam.top = canvas.height / 2;
             cam.bottom = -canvas.height / 2;
-            cam.updateProjectionMatrix();
         }
     };
 };
@@ -61,7 +59,6 @@ const cameraOblique = (canvas: HTMLCanvasElement): CameraWrapper => {
             cam.right = canvas.width / 2;
             cam.top = canvas.height / 2;
             cam.bottom = -canvas.height / 2;
-            cam.updateProjectionMatrix();
         }
     };
 };

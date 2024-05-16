@@ -142,6 +142,9 @@ export default function Page() {
       mesh.geometries[0].attributes.position?.set(2, new Vector3(0, 0.5, 0).buffer);
       node.translate(new Vector3(0, 0, 0));
       node.rotateByDegrees(new Vector3(0, 0, 45));
+      node.scaleBy(new Vector3(2, 2, 2));
+
+      console.log(node.rotation.toDegrees());
 
       const cameraNode = new SceneNode(
         new Vector3(0, 0, 0),

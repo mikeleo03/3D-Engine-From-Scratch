@@ -41,9 +41,7 @@ export abstract class Camera extends NodeComponent {
         this._zoom = zoom;
     }
 
-    updateProjectionMatrix() {
-        throw new Error("updateProjectionMatrix() must be implemented in derived classes.");
-    }
+    protected abstract updateProjectionMatrix(): void;
 
     abstract toRaw(): CameraType;
 }

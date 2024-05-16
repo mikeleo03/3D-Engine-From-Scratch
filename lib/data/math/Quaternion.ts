@@ -227,6 +227,11 @@ export class Quaternion {
         return new Vector3(X, Y, Z);
     }
 
+    toDegrees(): Vector3 {
+        const v = this.toEuler();
+        return new Vector3(v.X * 180 / Math.PI, v.Y * 180 / Math.PI, v.Z * 180 / Math.PI);
+    }
+
     toMatrix4(): Matrix4 {
         const x = this._x;
         const y = this._y;
