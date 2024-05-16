@@ -269,12 +269,22 @@ export class Matrix4 {
     }
 
     static perspective(yfov: number, aspectRatio: number, near: number, far: number) {
-        const f = Math.tan(0.5 * Math.PI * (1 - yfov/180));
+        /* const f = Math.tan(0.5 * Math.PI * (1 - yfov/180));
         const nf = 1 / (near - far);
 
         return new Matrix4([
             [f / aspectRatio, 0, 0, 0],
             [0, f, 0,  0],
+            [0, 0, (far + near) * nf, -1],
+            [0, 0, 2 * far * near * nf,  0],
+        ]); */
+        const top = near * Math.tan(0.5 * Math.PI / 180 * yfov);
+        const right = top * aspectRatio;
+        const nf = 1 / (near - far);
+
+        return new Matrix4([
+            [near / right, 0, 0, 0],
+            [0, near / top, 0,  0],
             [0, 0, (far + near) * nf, -1],
             [0, 0, 2 * far * near * nf,  0],
         ]);
@@ -294,7 +304,7 @@ export class Matrix4 {
 
     static oblique(left: number, right: number, bottom: number, top: number, near: number, far: number, angle: number, scale=0.5) {
         angle *= Math.PI / 180;
-        return Matrix4.ortographic(left, right, bottom, top, near, far).mul(
+        return Matrix4.mul(Matrix4.ortographic(left, right, bottom, top, near, far),
             new Matrix4([
                 [1, 0, 0, 0],
                 [0, 1, 0, 0],

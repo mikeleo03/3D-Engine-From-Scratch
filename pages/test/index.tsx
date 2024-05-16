@@ -49,21 +49,39 @@ export default function Page() {
       );
 
       /* const camera = new OrthographicCamera(
-        -canvas.width / 2,
-        canvas.width / 2,
-        canvas.height / 2,
         -canvas.height / 2,
+        canvas.height / 2,
+        canvas.width / 2,
+        -canvas.width / 2,
+        -1000,
+        1000
+      ); */
+
+      /* const camera = new OrthographicCamera(
+        0,
+        canvas.height,
+        0,
+        canvas.width,
+        -400,
+        400
+      ); */
+
+      /* const camera = new ObliqueCamera(
+        -canvas.height / 2,
+        canvas.height / 2,
+        canvas.width / 2,
+        -canvas.width / 2,
         -1000,
         1000
       ); */
 
       /* const camera = new ObliqueCamera(
-        -canvas.width / 2,
-        canvas.width / 2,
-        canvas.height / 2,
-        -canvas.height / 2,
-        -1000,
-        1000
+        0,
+        canvas.height,
+        0,
+        canvas.width,
+        -400,
+        400
       ); */
 
       const cameras = [camera];
