@@ -55,7 +55,7 @@ export class PerspectiveCamera extends Camera {
         this._aspectRatio = canvasWidth / canvasHeight;
         
         this.projectionMatrix = Matrix4.perspective(
-            this._yfov, this._aspectRatio, this._near, this._far,
+            this._aspectRatio, this._yfov, this._near, this._far,
         );
 
     }

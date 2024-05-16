@@ -268,7 +268,7 @@ export class Matrix4 {
         return this._data[row][col];
     }
 
-    static perspective(yfov: number, aspectRatio: number, near: number, far: number) {
+    static perspective(aspectRatio: number, yfov: number, near: number, far: number) {
         /* const f = Math.tan(0.5 * Math.PI * (1 - yfov/180));
         const nf = 1 / (near - far);
 

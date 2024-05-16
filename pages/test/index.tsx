@@ -44,30 +44,21 @@ export default function Page() {
 
       const glContainer = new GLContainer(canvas);
 
-      // const camera = new PerspectiveCamera(
-      //   canvas.width / canvas.height,
-      //   60,
-      //   0,
-      //   100
-      // );
+      const camera = new PerspectiveCamera(
+        canvas.width / canvas.height,
+        60,
+        0,
+        1000
+      );
 
       // const camera = new OrthographicCamera(
       //   canvas.height / 2,
       //   -canvas.height / 2,
       //   -canvas.width / 2,
       //   canvas.width / 2,
-      //   0.01,
+      //   0,
       //   1000
       // );
-
-      const camera = new OrthographicCamera(
-        0,
-        canvas.height,
-        0,
-        canvas.width,
-        -400,
-        400
-      );
 
       /* const camera = new ObliqueCamera(
         -canvas.height / 2,
@@ -169,7 +160,7 @@ export default function Page() {
       node.scaleBy(new Vector3(0.5, 0.5, 0.5));
 
       const cubeNode = new SceneNode(
-        new Vector3(0, 0, 100),
+        new Vector3(0, 0, -100),
         new Quaternion(0, 0, 0, 1),
         new Vector3(1, 1, 1),
         undefined,
