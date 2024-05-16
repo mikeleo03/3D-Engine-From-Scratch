@@ -84,7 +84,6 @@ export class AnimationRunner {
     return this.currentAnimation!.frames[this.currentFrame];
   }
 
-  // TODO: verify the implementation of this function
   private calculateEasing(currentTime: number, startValue: number, changeInValue: number, duration: number): number {
     switch (this.easeFunction) {
       case EasingFunction.SINE: //ease inout
@@ -110,7 +109,7 @@ export class AnimationRunner {
 
   update(deltaSecond: number) {
     if (this.isPlaying) {
-      this.deltaFrame = this.calculateEasing(this.deltaFrame + deltaSecond, 0, 1, this.length)
+      this.deltaFrame = this.calculateEasing(this.currentFrame / this.fps, 0, 1, this.length)
       if (this.deltaFrame >= 1) {
         this.currentFrame = (this.currentFrame + Math.floor(this.deltaFrame)) % this.length;
         this.deltaFrame = this.deltaFrame % 1;
