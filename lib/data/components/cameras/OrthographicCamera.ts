@@ -95,7 +95,7 @@ export class OrthographicCamera extends Camera {
             (top - bottom) / 2,
         ];
 
-        // TODO: kenapa pakai d malah bikin mirror, sedangkan tanpa d malah rotate 180 derajat 
+        // TODO: leon, kenapa pakai d malah bikin mirror, sedangkan tanpa d malah rotate 180 derajat 
         // this.projectionMatrix = Matrix4.orthographic(
         //     -(d[2] + d[0]) / 2, (d[2] + d[0]) / 2, -(d[3] + d[1]) / 2, (d[3] + d[1]) / 2,
         //     this._near, this._far
