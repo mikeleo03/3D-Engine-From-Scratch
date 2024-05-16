@@ -68,11 +68,6 @@ export class GLRenderer {
 
         const cameraPosition = cameraNode.position.buffer;
 
-        const defaultUniform = {
-            viewMatrix: camera.projectionMatrix.buffer,
-            
-        }
-
         const nodes = scene.roots;
         for (const node of nodes) {
             const invWorldMatrix = Matrix4.inv(node.worldMatrix);
