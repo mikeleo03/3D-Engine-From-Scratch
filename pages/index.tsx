@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
     return (
@@ -21,8 +22,62 @@ export default function Home() {
             {/* Navigation section */}
             <div className="h-[93vh] w-full flex flex-row">
                 {/* Left controller */}
-                <div className="w-[30vw] bg-gray-700 h-full">
+                <div className="w-[30vw] bg-gray-700 h-full overlow-y-auto text-white">
+                    {/* Animation */}
+                    <div className="w-full p-6 py-4 pt-4">
+                        <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
+                        <div className="text-base font-semibold pb-1">Animation</div>
+                        <div className="flex flex-row w-full pb-1 space-x-2">
+                            <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                                <Button> ▷  Play</Button>
+                            </div>
+                            <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                                <Button> ◁  Reverse</Button>
+                            </div>
+                            <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                                <Button> ↺  Loop</Button>
+                            </div>
+                        </div>
+                        <div className="text-base font-semibold py-1">Easing Functions</div>
+                        <Select>
+                            <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
+                                <SelectValue placeholder="Choose Easing Functions" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Linear">Linear</SelectItem>
+                                <SelectItem value="Sine">Sine</SelectItem>
+                                <SelectItem value="Quad">Quad</SelectItem>
+                                <SelectItem value="Cubic">Cubic</SelectItem>
+                                <SelectItem value="Quart">Quart</SelectItem>
+                                <SelectItem value="Expo">Expo</SelectItem>
+                                <SelectItem value="Circ">Circ</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
+                        <div className="flex flex-row w-full pb-1 space-x-2">
+                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                                <Button>Next</Button>
+                            </div>
+                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                                <Button>Prev</Button>
+                            </div>
+                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                                <Button>First</Button>
+                            </div>
+                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                                <Button>Last</Button>
+                            </div>
+                        </div>
+                    </div>
 
+                    {/* Separator */}
+                    <Separator className="w-full"/>
+
+                    {/* Tree */}
+                    <div className="w-full p-6 py-4 pt-4">
+                        <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
+                        
+                    </div>
                 </div>
 
                 {/* Canvas */}
