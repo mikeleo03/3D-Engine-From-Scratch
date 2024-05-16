@@ -22,15 +22,8 @@ export default function Page() {
       const { PerspectiveCamera } = await import('@/lib/data/components/cameras/PerspectiveCamera');
       const { OrthographicCamera } = await import('@/lib/data/components/cameras/OrthographicCamera');
       const { ObliqueCamera } = await import('@/lib/data/components/cameras/ObliqueCamera');
-      const { CameraView, BufferViewTarget, AccessorComponentType } = await import('@/lib/data/types/gltftypes');
-      const { WebGLType } = await import('@/lib/cores/gltypes');
-      const { GLTFBuffer } = await import('@/lib/data/buffers/GLTFBuffer');
-      const { BufferView } = await import('@/lib/data/buffers/BufferView');
-      const { Accessor } = await import('@/lib/data/buffers/Accessor');
       const { SceneNode } = await import('@/lib/data/SceneNode');
-      const { GLBufferAttribute } = await import('@/lib/data/buffers/GLBufferAttribute');
-      const { MeshBufferGeometry } = await import('@/lib/data/components/mesh/geometries/MeshBufferGeometry');
-      const { CuboidGeometry } = await import('@/lib/data/components/mesh/geometries/CuboidGeometry');
+      const { MeshFactory } = await import('@/lib/data/components/mesh/MeshFactory');
       const { Mesh } = await import('@/lib/data/components/mesh/Mesh');
       const { Scene } = await import('@/lib/data/Scene');
       const { GLTFState } = await import('@/lib/data/GLTFState');
@@ -51,39 +44,47 @@ export default function Page() {
       //   1000
       // );
 
-      // const camera = new OrthographicCamera(
-      //   canvas.height / 2,
-      //   -canvas.height / 2,
-      //   -canvas.width / 2,
-      //   canvas.width / 2,
-      //   0,
-      //   1000
-      // );
-
-      const camera = new ObliqueCamera(
+      const camera = new OrthographicCamera(
         canvas.height / 2,
         -canvas.height / 2,
         -canvas.width / 2,
         canvas.width / 2,
-        0.01,
-        100,
-        20
+        1,
+        1000
       );
-    
-      const material = new BasicMaterial({ name: "test", color: Color.black() });
+
+      // const camera = new ObliqueCamera(
+      //   canvas.height / 2,
+      //   -canvas.height / 2,
+      //   -canvas.width / 2,
+      //   canvas.width / 2,
+      //   0.01,
+      //   100,
+      //   20
+      // );
+
+      const material1 = new BasicMaterial({ name: "test", color: Color.black() });
+      const material2 = new BasicMaterial({ name: "test", color: Color.red() });
+      const material3 = new BasicMaterial({ name: "test", color: Color.green() });
+      const material4 = new BasicMaterial({ name: "test", color: Color.blue() });
+      const material5 = new BasicMaterial({ name: "test", color: new Color(255, 255, 0, 255)});
+      const material6 = new BasicMaterial({ name: "test", color: new Color(255, 0, 255, 255)});
+
       // const material = new PhongMaterial({ name: "test", ambientColor: Color.black(), diffuseColor: Color.black(), specularColor: Color.black(), shininess: 30, lightPosition: new Vector3(400, 400, 300) });
-  
-      const cubeMesh = new Mesh([new CuboidGeometry(50, 50, 50)])
+
+      const meshFactory = new MeshFactory();
+      const cubeMesh = meshFactory.cuboid(50, 50, 50, material1, material2, material3, material4, material5, material6);
 
       const cubeNode = new SceneNode(
-        new Vector3(0, 0, -26),
+        new Vector3(0, 0, -50),
         new Quaternion(0, 0, 0, 1),
         new Vector3(1, 1, 1),
         undefined,
         cubeMesh
       );
 
-      cubeNode.rotateByDegrees(new Vector3(0, 0, 0));
+      cubeNode.rotateByDegrees(new Vector3(0, -135, 0));
+
       const cameraNode = new SceneNode(
         new Vector3(0, 0, 0),
         new Quaternion(0, 0, 0, 1),
@@ -92,10 +93,11 @@ export default function Page() {
         undefined,
         camera
       );
-      const nodes = [cubeNode,cameraNode];
+
+      const nodes = [cubeNode, cameraNode];
 
       const scene = new Scene(nodes);
-   
+
       function downloadFile(file: File) {
         // Create a temporary URL for the File object
         const url = window.URL.createObjectURL(file);
@@ -112,7 +114,7 @@ export default function Page() {
         window.URL.revokeObjectURL(url);
       }
 
-      const glRenderer = new GLRenderer(glContainer);;
+      const glRenderer = new GLRenderer(glContainer);
       glRenderer.render(scene);
     };
 

@@ -1,6 +1,6 @@
 import { Accessor } from "../../buffers/Accessor";
 import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
-import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "./geometries/MeshBufferGeometry";
+import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "./MeshBufferGeometry";
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
 import { ShaderMaterial } from "../materials";
 import { MeshPrimitiveType, MeshType } from "../../types/gltftypes";

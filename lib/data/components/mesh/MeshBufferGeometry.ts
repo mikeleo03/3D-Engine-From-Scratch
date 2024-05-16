@@ -1,9 +1,9 @@
-import { GLBufferAttribute } from "../../../buffers/GLBufferAttribute";
-import { Vector3 } from "../../../math/index";
-import { MeshPrimitiveAttribute } from "../../../types/gltftypes";
-import { Accessor } from "../../../buffers/Accessor";
-import { Float32ArrayConverter } from "../../../buffers/typedarrayconverters";
-import { ShaderMaterial } from "../../materials";
+import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
+import { Vector3 } from "../../math/index";
+import { MeshPrimitiveAttribute } from "../../types/gltftypes";
+import { Accessor } from "../../buffers/Accessor";
+import { Float32ArrayConverter } from "../../buffers/typedarrayconverters";
+import { ShaderMaterial } from "../materials";
 
 export type MeshBufferGeometryAttributes = {
     [name in MeshPrimitiveAttribute]?: GLBufferAttribute;
