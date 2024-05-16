@@ -31,8 +31,6 @@ export class GLRenderer {
                 const programInfo = material.programInfo;
 
                 this._glContainer.setProgram(programInfo);
-                console.log(this._glContainer.canvasElement.width);
-                console.log(this._glContainer.canvasElement.height);
 
                 this._glContainer.setUniforms(programInfo, { 
                     ...material.bufferUniforms, 
@@ -58,6 +56,7 @@ export class GLRenderer {
         this.clearCanvas();
 
         const cameraNode = scene.getActiveCameraNode();
+        const canvas = this._glContainer.canvasElement;
 
         if (!cameraNode) {
             return;
@@ -72,11 +71,8 @@ export class GLRenderer {
 
         const nodes = scene.roots;
         for (const node of nodes) {
-            const invWorldMatrix = Matrix4.inv(node.worldMatrix);
-            const viewMatrix = Matrix4.mul(camera.projectionMatrix, invWorldMatrix);
-
             const defaultUniform = {
-                viewMatrix: viewMatrix.buffer,
+                viewMatrix: camera.getProjectionMatrix(canvas.width, canvas.height).buffer,
                 cameraPosition
             }
 

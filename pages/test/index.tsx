@@ -45,29 +45,20 @@ export default function Page() {
       const glContainer = new GLContainer(canvas);
 
       const camera = new PerspectiveCamera(
-        60,
         canvas.width / canvas.height,
-        0.01,
-        9999
+        60,
+        0,
+        1000
       );
 
-      /* const camera = new OrthographicCamera(
-        -canvas.height / 2,
-        canvas.height / 2,
-        canvas.width / 2,
-        -canvas.width / 2,
-        -1000,
-        1000
-      ); */
-
-      /* const camera = new OrthographicCamera(
-        0,
-        canvas.height,
-        0,
-        canvas.width,
-        -400,
-        400
-      ); */
+      // const camera = new OrthographicCamera(
+      //   canvas.height / 2,
+      //   -canvas.height / 2,
+      //   -canvas.width / 2,
+      //   canvas.width / 2,
+      //   0,
+      //   1000
+      // );
 
       /* const camera = new ObliqueCamera(
         -canvas.height / 2,
@@ -146,7 +137,7 @@ export default function Page() {
       // geometry.calculateNormals(normalAccessor);
 
       const mesh = new Mesh([geometry]);
-      const cubeMesh = new Mesh([new CuboidGeometry(0.5, 0.5, 0.5)])
+      const cubeMesh = new Mesh([new CuboidGeometry(50, 50, 50)])
 
       const meshes = [mesh, cubeMesh];
       const meshMap = new Map();
@@ -160,6 +151,8 @@ export default function Page() {
         mesh,
       );
 
+      node.translate(new Vector3(0, 0, -1));
+
       mesh.geometries[0].attributes.position?.set(1, new Vector3(500, 0, 0).buffer);
       mesh.geometries[0].attributes.position?.set(2, new Vector3(0, 500, 0).buffer);
       node.translate(new Vector3(0, 0, 0));
@@ -167,14 +160,14 @@ export default function Page() {
       node.scaleBy(new Vector3(0.5, 0.5, 0.5));
 
       const cubeNode = new SceneNode(
-        new Vector3(0, 0, 0),
+        new Vector3(0, 0, -100),
         new Quaternion(0, 0, 0, 1),
         new Vector3(1, 1, 1),
         undefined,
         cubeMesh
       );
 
-      cubeNode.rotateByDegrees(new Vector3(2, 20, 25));
+      cubeNode.rotateByDegrees(new Vector3(45, 45, 45));
       const cameraNode = new SceneNode(
         new Vector3(0, 0, 0),
         new Quaternion(0, 0, 0, 1),
@@ -183,7 +176,7 @@ export default function Page() {
         undefined,
         camera
       );
-      const nodes = [node, cubeNode, cameraNode];
+      const nodes = [cubeNode,cameraNode];
       const nodeMap = new Map();
       nodeMap.set(node, 0);
       nodeMap.set(cubeNode, 1);
@@ -230,7 +223,7 @@ export default function Page() {
       // console.log(await parser.parse(file));
 
       const glRenderer = new GLRenderer(glContainer);
-      // const renderManager = new RenderManager(gltfState, glRenderer);
+      const renderManager = new RenderManager(gltfState, glRenderer);
 
       // renderManager.loop(30);
       glRenderer.render(scene);
@@ -248,8 +241,6 @@ export default function Page() {
         name: "test",
         frames: [animationPath]
       };
-      
-      console.log(AnimationClipUtil.fromRaw(AnimationClipUtil.toRaw(animationClip, nodeMap), nodes));
 
     };
 
@@ -257,6 +248,6 @@ export default function Page() {
   }, [canvasRef.current]);
 
   return (
-    <canvas ref={canvasRef} style={{width: '100vmin', height: '100vmin', border: '1px solid #000'}}></canvas>
+    <canvas ref={canvasRef} className="h-screen w-screen"></canvas>
   );
 }

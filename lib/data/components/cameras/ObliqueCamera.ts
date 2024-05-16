@@ -23,7 +23,6 @@ export class ObliqueCamera extends Camera {
         this._near = near;
         this._far = far;
         this._angle = angle;
-        this.updateProjectionMatrix();
     }
 
     get top(): number {
@@ -56,45 +55,43 @@ export class ObliqueCamera extends Camera {
 
     set top(top: number) {
         this._top = top;
-        this.updateProjectionMatrix();
     }
 
     set bottom(bottom: number) {
         this._bottom = bottom;
-        this.updateProjectionMatrix();
     }
 
     set left(left: number) {
         this._left = left;
-        this.updateProjectionMatrix();
     }
 
     set right(right: number) {
         this._right = right;
-        this.updateProjectionMatrix();
     }
 
     set near(near: number) {
         this._near = near;
-        this.updateProjectionMatrix();
     }
 
     set far(far: number) {
         this._far = far;
-        this.updateProjectionMatrix();
     }
 
     set angle(angle: number) {
         this._angle = angle;
-        this.updateProjectionMatrix();
     }
 
-    protected override updateProjectionMatrix() {
+    protected override updateProjectionMatrix(canvasWidth: number, canvasHeight: number) {
+        const top = 2 * this._top / canvasHeight;
+        const bottom = 2 * this._bottom / canvasHeight;
+        const left = 2 * this._left / canvasWidth;
+        const right = 2 * this._right / canvasWidth;
+
         const d = [
-            (this._right - this._left) / (2 * this.zoom),
-            (this._top - this._bottom) / (2 * this.zoom),
-            (this._right - this._left) / 2,
-            (this._top - this._bottom) / 2,
+            (right - left) / (2 * this.zoom),
+            (top - bottom) / (2 * this.zoom),
+            (right - left) / 2,
+            (top - bottom) / 2,
         ];
 
         this.projectionMatrix = Matrix4.oblique(
