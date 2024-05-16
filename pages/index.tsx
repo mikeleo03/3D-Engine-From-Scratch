@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Inter } from "next/font/google";
+import Page from './test/index';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -144,7 +145,8 @@ export default function Home() {
       </div>
 
       <div className="canvas flex-grow p-4 " style={{ flex: 3, margin: 10, backgroundColor: "#fff" }}>
-        <canvas id="webgl-canvas" className=" outline w-[95%] h-[70%]"></canvas>
+        {/* <canvas id="webgl-canvas" className=" outline w-[95%] h-[70%]"></canvas> */}
+        <Page />
       </div>
 
       <div className="sidebar right-sidebar w-1/4 bg-gray-800 text-white p-4 overflow-y-auto" style={{ flex: 1, margin: 10 }}>
