@@ -14,27 +14,49 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
     return (
         <main className="flex flex-col w-auto h-screen items-center justify-between">
-            {/* Title */}
-            <div className="h-[7vh] bg-gray-800 w-full text-white">
-                Hai
+            {/* Header Section */}
+            <div className="h-[8vh] bg-gray-800 w-full text-white flex justify-between">
+                {/* Title Section */}
+                <div className="flex items-center space-x-10 text-xl font-bold pl-3">⚙️  3D Engine from Scratch</div>
+
+                {/* Save and Load Section */}
+                <div className="flex items-center">
+                    {/* Separator */}
+                    <Separator className="h-full w-[0.5px]"/>
+
+                    {/* Clear Button */}
+                    <Button className="h-full w-full border-none rounded-0">🧹 Clear</Button>
+
+                    {/* Separator */}
+                    <Separator className="h-full w-[0.5px]"/>
+
+                    {/* Load Button */}
+                    <Button className="h-full w-full border-none rounded-0">⬆️ Load</Button>
+
+                    {/* Separator */}
+                    <Separator className="h-full w-[0.5px]"/>
+
+                    {/* Clear Button */}
+                    <Button className="h-full w-full border-none rounded-0">💾 Save</Button>
+                </div>
             </div>
 
             {/* Navigation section */}
-            <div className="h-[93vh] w-full flex flex-row">
+            <div className="h-[92vh] w-full flex flex-row">
                 {/* Left controller */}
-                <div className="w-[30vw] bg-gray-700 h-full overlow-y-auto text-white">
+                <div className="w-[25vw] bg-gray-700 h-full overlow-y-auto text-white">
                     {/* Animation */}
                     <div className="w-full p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
                         <div className="text-base font-semibold pb-1">Animation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
-                            <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button> ▷  Play</Button>
                             </div>
-                            <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button> ◁  Reverse</Button>
                             </div>
-                            <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button> ↺  Loop</Button>
                             </div>
                         </div>
@@ -55,16 +77,16 @@ export default function Home() {
                         </Select>
                         <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
-                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button>Next</Button>
                             </div>
-                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button>Prev</Button>
                             </div>
-                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button>First</Button>
                             </div>
-                            <div className="w-1/4 flex flex-row justify-center items-center text-center">
+                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button>Last</Button>
                             </div>
                         </div>
@@ -81,10 +103,10 @@ export default function Home() {
                 </div>
 
                 {/* Canvas */}
-                <canvas className="h-full w-auto"/>
+                <canvas className="h-full w-[45vw]"/>
 
                 {/* Right controller */}
-                <div className="w-[40vw] bg-gray-700 h-[93vh] overlow-y-auto text-white">
+                <div className="w-[30vw] bg-gray-700 h-full overlow-y-auto text-white">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
                         <div className="text-lg font-semibold pb-2">🎯 Position, Rotation, and Scale</div>
