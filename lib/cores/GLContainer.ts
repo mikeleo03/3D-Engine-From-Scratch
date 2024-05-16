@@ -32,8 +32,7 @@ export class GLContainer {
             throw new Error("WebGL is not supported");
         }
 
-        // todo: NAPA GA BISA PAKE DEPTH TEST
-        // gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
         
         

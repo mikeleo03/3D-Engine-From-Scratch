@@ -13,7 +13,8 @@ export class GLRenderer {
         const gl = this._glContainer.glContext;
 
         gl.clearColor(1, 1, 1, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clearDepth(1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
     private renderRoot(root: SceneNode, uniforms: { viewMatrix: Float32Array, cameraPosition: Float32Array}) {

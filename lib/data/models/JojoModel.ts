@@ -18,7 +18,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(251, 231, 239) });
 
-        const bodyMesh = meshFactory.cuboid(50, 70, 20, [bodyMaterial]);
+        const bodyMesh = meshFactory.cuboid(50, 70, 30, [bodyMaterial]);
 
         return new SceneNode(undefined, undefined, undefined, undefined, bodyMesh);
     }
@@ -27,7 +27,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const handMaterial = new BasicMaterial({ name: "hand", color: new Color(251, 231, 239) });
 
-        const handMesh = meshFactory.cuboid(15, 60, 20, [handMaterial], { offset: [0, -27, 0] });
+        const handMesh = meshFactory.cuboid(15, 60, 25, [handMaterial], { offset: [0, -27, 0] });
 
         return new SceneNode(undefined, undefined, undefined, undefined, handMesh);
     }
@@ -45,16 +45,16 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const legMaterial = new BasicMaterial({ name: "leg", color: new Color(108, 122, 137) });
 
-        const legMesh = meshFactory.cuboid(23, 50, 20, [legMaterial], { offset: [0, -25, 0] });
+        const legMesh = meshFactory.cuboid(23, 50, 25, [legMaterial], { offset: [0, -25, 0] });
 
         return new SceneNode(undefined, undefined, undefined, undefined, legMesh);
     }
 
-    private getEyeConver(): SceneNode {
+    private getEyeCover(): SceneNode {
         const meshFactory = new MeshFactory();
-        const eyeConverMaterial = new BasicMaterial({ name: "eyeConver", color: Color.red() });
+        const eyeConverMaterial = new BasicMaterial({ name: "eyeCover", color: Color.red() });
 
-        const eyeConverMesh = meshFactory.cuboid(28, 10, 23, [eyeConverMaterial]);
+        const eyeConverMesh = meshFactory.cuboid(28, 10, 28, [eyeConverMaterial]);
 
         return new SceneNode(undefined, undefined, undefined, undefined, eyeConverMesh);
     }
@@ -74,7 +74,7 @@ export class JojoModel extends Model {
         const body = this.getBody();
         const leftHand = this.getHand();
         const rightHand = this.getHand();
-        const eyeConver = this.getEyeConver();
+        const eyeConver = this.getEyeCover();
         const mouth = this.getMouth();
         const head = this.getHead();
         const leftLeg = this.getLeg();
@@ -83,15 +83,15 @@ export class JojoModel extends Model {
         leftHand.translate(new Vector3(-32.5, 32, 0));
         rightHand.translate(new Vector3(32.5, 32, 0));
         eyeConver.translate(new Vector3(0, 15, 0));
-        mouth.translate(new Vector3(0, 5, 0));
+        mouth.translate(new Vector3(0, 5, 13));
         head.translate(new Vector3(0, 35, 0));
         leftLeg.translate(new Vector3(-11.5, -35, 0));
         rightLeg.translate(new Vector3(11.5, -35, 0));
 
         leftHand.rotateByDegrees(new Vector3(0, 0, 0));
-        rightHand.rotateByDegrees(new Vector3(10, 0, 0));
+        rightHand.rotateByDegrees(new Vector3(-10, 0, 0));
 
-        leftLeg.rotateByDegrees(new Vector3(10, 0, 0));
+        leftLeg.rotateByDegrees(new Vector3(-10, 0, 0));
         rightLeg.rotateByDegrees(new Vector3(0, 0, 0));
         
         head.add(eyeConver);
@@ -106,7 +106,7 @@ export class JojoModel extends Model {
         parent.add(rightLeg);
 
         parent.translate(new Vector3(0, 0, -100));
-        parent.rotateByDegrees(new Vector3(0, -30, 0));
+        parent.rotateByDegrees(new Vector3(30, 30, 0));
 
         const cameraNode = new SceneNode(
             new Vector3(0, 0, 0),

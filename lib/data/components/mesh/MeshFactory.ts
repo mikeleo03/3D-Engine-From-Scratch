@@ -147,6 +147,12 @@ export class MeshFactory {
             [halfWidth, -halfHeight, halfDepth],
         ];
 
+        for (let i = 0; i < data4.length; i++) {
+            data4[i][0] += offset[0];
+            data4[i][1] += offset[1];
+            data4[i][2] += offset[2];
+        }
+
         this.addGeometry(data4, materials[materialIndex]);
 
         if (materials.length > 4) {
