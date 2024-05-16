@@ -29,6 +29,7 @@ export default function Page() {
       const { SceneNode } = await import('@/lib/data/SceneNode');
       const { GLBufferAttribute } = await import('@/lib/data/buffers/GLBufferAttribute');
       const { MeshBufferGeometry } = await import('@/lib/data/components/mesh/geometries/MeshBufferGeometry');
+      const { CuboidGeometry } = await import('@/lib/data/components/mesh/geometries/CuboidGeometry');
       const { Mesh } = await import('@/lib/data/components/mesh/Mesh');
       const { Scene } = await import('@/lib/data/Scene');
       const { GLTFState } = await import('@/lib/data/GLTFState');
@@ -125,8 +126,9 @@ export default function Page() {
       // geometry.calculateNormals(normalAccessor);
 
       const mesh = new Mesh([geometry]);
+      const cubeMesh = new Mesh([new CuboidGeometry(0.5, 0.5, 0.5)])
 
-      const meshes = [mesh];
+      const meshes = [mesh, cubeMesh];
       const meshMap = new Map();
       meshMap.set(mesh, 0);
 
@@ -144,8 +146,15 @@ export default function Page() {
       node.rotateByDegrees(new Vector3(0, 0, 45));
       node.scaleBy(new Vector3(2, 2, 2));
 
-      console.log(node.rotation.toDegrees());
+      const cubeNode = new SceneNode(
+        new Vector3(0, 0, 0),
+        new Quaternion(0, 0, 0, 1),
+        new Vector3(1, 1, 1),
+        undefined,
+        cubeMesh
+      );
 
+      cubeNode.rotateByDegrees(new Vector3(2, 20, 25));
       const cameraNode = new SceneNode(
         new Vector3(0, 0, 0),
         new Quaternion(0, 0, 0, 1),
@@ -154,7 +163,7 @@ export default function Page() {
         undefined,
         camera
       );
-      const nodes = [node, cameraNode];
+      const nodes = [node, cubeNode, cameraNode];
       const nodeMap = new Map();
       nodeMap.set(node, 0);
 
@@ -174,7 +183,6 @@ export default function Page() {
         0
       );
 
-      console.log(GLTFRawState.fromGLTFState(gltfState));
 
       const parser = new GLTFParser();
 
@@ -194,7 +202,7 @@ export default function Page() {
         window.URL.revokeObjectURL(url);
       }
 
-      const file = parser.write(gltfState);
+      // const file = parser.write(gltfState);
 
       // downloadFile(file);
       // console.log(await parser.parse(file));
