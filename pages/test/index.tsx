@@ -136,9 +136,19 @@ export default function Page() {
         new Vector3(1, 1, 1),
         undefined,
         mesh,
-        camera,
       );
-      const nodes = [node];
+
+      node.translate(new Vector3(0.07, 0.2, 0));
+
+      const cameraNode = new SceneNode(
+        new Vector3(0, 0, 0),
+        new Quaternion(0, 0, 0, 1),
+        new Vector3(1, 1, 1),
+        undefined,
+        undefined,
+        camera
+      );
+      const nodes = [node, cameraNode];
       const nodeMap = new Map();
       nodeMap.set(node, 0);
 

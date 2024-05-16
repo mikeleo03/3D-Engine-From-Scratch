@@ -78,6 +78,25 @@ export class SceneNode {
         this.computeWorldMatrix(false, true);
     }
 
+    translate(translation: Vector3) {
+        this.position = Vector3.add(this.position, translation);
+        this.computeWorldMatrix(false, true);
+    }
+
+    rotate(rotation: Quaternion) {
+        this.rotation = Quaternion.mul(rotation, this.rotation);
+        this.computeWorldMatrix(false, true);
+    }
+
+    rotateByEuler(euler: Vector3) {
+        this.rotation = Quaternion.mul(this.rotation, Quaternion.fromEuler(euler));
+        this.computeWorldMatrix(false, true);
+    }
+
+    scaleBy(scale: Vector3) {
+        this.scale = Vector3.mulElements(this.scale, scale);
+        this.computeWorldMatrix(false, true);
+    }
 
     private computeLocalMatrix() {
         this._localMatrix = Matrix4.mul(

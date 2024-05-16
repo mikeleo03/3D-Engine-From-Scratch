@@ -35,11 +35,9 @@ export class GLRenderer {
                 this._glContainer.setUniforms(programInfo, { 
                     ...material.bufferUniforms, 
                     ...uniforms,
-                    worldMatrix: root.worldMatrix.buffer,
+                    worldMatrix: root.worldMatrix.transpose().buffer,
                 });
 
-                console.log(root.worldMatrix.buffer);
-                
                 this._glContainer.setAttributes(programInfo, geometry.attributes);
 
                 // draw triangles
