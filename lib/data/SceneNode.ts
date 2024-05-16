@@ -93,6 +93,11 @@ export class SceneNode {
         this.computeWorldMatrix(false, true);
     }
 
+    rotateByDegrees(degrees: Vector3) {
+        const euler = Vector3.mul(degrees, Math.PI / 180);
+        this.rotateByEuler(euler);
+    }
+
     scaleBy(scale: Vector3) {
         this.scale = Vector3.mulElements(this.scale, scale);
         this.computeWorldMatrix(false, true);
