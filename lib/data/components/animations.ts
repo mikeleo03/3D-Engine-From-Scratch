@@ -69,8 +69,8 @@ export class AnimationRunner {
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
 
-  async constructor(animFile: File, root: SceneNode, {fps = 30} = {}) {
-    this.currentAnimation = await this.load(animFile);
+  constructor(animFile: File, root: SceneNode, {fps = 30} = {}) {
+    this.currentAnimation = this.load(animFile);
     this.fps = fps;
     this.root = root;
   }
@@ -193,11 +193,10 @@ export class AnimationRunner {
   }
 
   // TODO: test whether the load is working or not
-  private async load(animFile: File): Promise<AnimationClip> {
+  private load(animFile: File): Promise<AnimationClip> {
     const parser = new GLTFParser();
-    const gltfState = await parser.parse(animFile);
-
-    // since in this context we only have one animation max for each gltf file
-    return gltfState.animations[0];
+    return parser.parse(animFile).then(gltfState => {
+      return gltfState.animations[0];
+    })
   }
 }
