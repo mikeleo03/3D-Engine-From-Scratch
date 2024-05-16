@@ -32,6 +32,7 @@ export class GLRenderer {
 
                 this._glContainer.setProgram(programInfo);
 
+                // TODO: leon, handle cameraposition
                 this._glContainer.setUniforms(programInfo, { 
                     ...material.bufferUniforms, 
                     ...uniforms,

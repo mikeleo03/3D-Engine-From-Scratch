@@ -206,4 +206,29 @@ export class GLTFState {
             this._scene = 0;
         }
     }
+
+    addAnimation(animation: AnimationClip) {
+        if (this._animations.indexOf(animation) != -1) {
+            return;
+        }
+
+        const nodes: SceneNode[] = [];
+
+        for (let i = 0; i < animation.frames.length; i++) {
+            const frame = animation.frames[i];
+
+            if (frame.children)
+            {
+                for (let j = 0; j < frame.children.length; j++) {
+                    const child = frame.children[j];
+
+                    if (nodes.indexOf(child) == -1) {
+                        nodes.push(child);
+                    }
+                }
+            }
+        }
+
+        this._animations.push(animation);
+    }
 }

@@ -47,7 +47,15 @@ export class MeshFactory {
         return mesh;
     }
 
-    cuboid(width: number, height: number, depth: number, ...materials: ShaderMaterial[]): Mesh {
+    cuboid(
+        width: number, 
+        height: number, 
+        depth: number, 
+        materials: ShaderMaterial[],
+        options: {
+            offset?: [number, number, number],
+        } = {}
+    ): Mesh {
         if (materials.length === 0) {
             throw new Error("At least one material is required");
         }
@@ -61,85 +69,129 @@ export class MeshFactory {
         // make sure to follow the right-hand rule
         // 6 vertex per square face
 
-        // front face
-        this.addGeometry([
+        const offset = options.offset || [0, 0, 0];
+
+        const data1: [number, number, number][] = [
             [-halfWidth, -halfHeight, halfDepth],
             [halfWidth, -halfHeight, halfDepth],
             [halfWidth, halfHeight, halfDepth],
             [-halfWidth, halfHeight, halfDepth],
             [-halfWidth, -halfHeight, halfDepth],
             [halfWidth, halfHeight, halfDepth],
-        ], materials[materialIndex]);
+        ];
+
+        for (let i = 0; i < data1.length; i++) {
+            data1[i][0] += offset[0];
+            data1[i][1] += offset[1];
+            data1[i][2] += offset[2];
+        }
+
+        // front face
+        this.addGeometry(data1, materials[materialIndex]);
 
         if (materials.length > 1) {
             materialIndex++;
         }
 
         // back face
-        this.addGeometry([
+        const data2: [number, number, number][] = [
             [halfWidth, -halfHeight, -halfDepth],
             [-halfWidth, -halfHeight, -halfDepth],
             [-halfWidth, halfHeight, -halfDepth],
             [halfWidth, halfHeight, -halfDepth],
             [halfWidth, -halfHeight, -halfDepth],
             [-halfWidth, halfHeight, -halfDepth],
-        ], materials[materialIndex]);
+        ];
+
+        for (let i = 0; i < data2.length; i++) {
+            data2[i][0] += offset[0];
+            data2[i][1] += offset[1];
+            data2[i][2] += offset[2];
+        }
+
+        this.addGeometry(data2, materials[materialIndex]);
 
         if (materials.length > 2) {
             materialIndex++;
         }
 
         // top face
-        this.addGeometry([
+        const data3: [number, number, number][] = [
             [-halfWidth, halfHeight, halfDepth],
             [halfWidth, halfHeight, halfDepth],
             [halfWidth, halfHeight, -halfDepth],
             [-halfWidth, halfHeight, -halfDepth],
             [-halfWidth, halfHeight, halfDepth],
             [halfWidth, halfHeight, -halfDepth],
-        ], materials[materialIndex]);
+        ];
+
+        for (let i = 0; i < data3.length; i++) {
+            data3[i][0] += offset[0];
+            data3[i][1] += offset[1];
+            data3[i][2] += offset[2];
+        }
+
+        this.addGeometry(data3, materials[materialIndex]);
 
         if (materials.length > 3) {
             materialIndex++;
         }
 
         // bottom face
-        this.addGeometry([
+        const data4: [number, number, number][] = [
             [-halfWidth, -halfHeight, -halfDepth],
             [halfWidth, -halfHeight, -halfDepth],
             [halfWidth, -halfHeight, halfDepth],
             [-halfWidth, -halfHeight, halfDepth],
             [-halfWidth, -halfHeight, -halfDepth],
             [halfWidth, -halfHeight, halfDepth],
-        ], materials[materialIndex]);
+        ];
+
+        this.addGeometry(data4, materials[materialIndex]);
 
         if (materials.length > 4) {
             materialIndex++;
         }
 
         // right face
-        this.addGeometry([
+        const data5: [number, number, number][] = [
             [halfWidth, -halfHeight, halfDepth],
             [halfWidth, -halfHeight, -halfDepth],
             [halfWidth, halfHeight, -halfDepth],
             [halfWidth, halfHeight, halfDepth],
             [halfWidth, -halfHeight, halfDepth],
             [halfWidth, halfHeight, -halfDepth],
-        ], materials[materialIndex]);
+        ];
+
+        for (let i = 0; i < data5.length; i++) {
+            data5[i][0] += offset[0];
+            data5[i][1] += offset[1];
+            data5[i][2] += offset[2];
+        }
+
+        this.addGeometry(data5, materials[materialIndex]);
 
         if (materials.length > 5) {
             materialIndex++;
         }
 
         // left face
-        this.addGeometry([
+        const data6: [number, number, number][] = [
             [-halfWidth, -halfHeight, -halfDepth],
             [-halfWidth, -halfHeight, halfDepth],
             [-halfWidth, halfHeight, halfDepth],
             [-halfWidth, halfHeight, -halfDepth],
             [-halfWidth, -halfHeight, -halfDepth],
             [-halfWidth, halfHeight, halfDepth],
-        ], materials[materialIndex]);
+        ];
+
+        for (let i = 0; i < data6.length; i++) {
+            data6[i][0] += offset[0];
+            data6[i][1] += offset[1];
+            data6[i][2] += offset[2];
+        }
+
+        this.addGeometry(data6, materials[materialIndex]);
 
         return this.createMesh();
     }
