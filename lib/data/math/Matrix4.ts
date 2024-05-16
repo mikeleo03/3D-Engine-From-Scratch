@@ -269,6 +269,8 @@ export class Matrix4 {
     }
 
     static perspective(aspectRatio: number, yfov: number, near: number, far: number) {
+        // TODO: perspective utk z axisnya besar banget D:
+        
         /* const f = Math.tan(0.5 * Math.PI * (1 - yfov/180));
         const nf = 1 / (near - far);
 
@@ -303,13 +305,15 @@ export class Matrix4 {
     }
 
     static oblique(top: number, bottom: number, left: number, right: number, near: number, far: number, angle: number, scale = 0.5) {
+        // TODO: LEON, check matrix kedua harus transpose atau engga, (M * N)^T = N^T * M^T
+
         angle *= Math.PI / 180;
-        return Matrix4.mul(Matrix4.orthographic(left, right, bottom, top, near, far),
+        return Matrix4.mul(Matrix4.orthographic(top, bottom, left, right, near, far),
             new Matrix4([
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [-1 * scale * Math.cos(angle), scale * Math.sin(angle), 1, 0],
-                [0, 0, 0, 1],
+                [1, 0, scale * Math.cos(angle), 0],
+                [0, 1, scale * Math.sin(angle), 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
             ])
         );
     }

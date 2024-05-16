@@ -32,6 +32,8 @@ export class GLContainer {
             throw new Error("WebGL is not supported");
         }
 
+        gl.enable(gl.CULL_FACE)
+        
         return gl;
     }
 
