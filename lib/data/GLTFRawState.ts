@@ -101,7 +101,6 @@ export class GLTFRawState {
         const meshMap = new Map<Mesh, number>();
         const cameraMap = new Map<Camera, number>();
         const nodeMap = new Map<SceneNode, number>();
-        const animationPathMap = new Map<AnimationPath, number>();
 
         const bufferRaws = state.buffers.map((buffer, idx) => {
             const raw = buffer.toRaw();
@@ -159,16 +158,7 @@ export class GLTFRawState {
             return raw;
         });
 
-        const animationRaws: AnimationClipType[] = [];
-
-        state.animations.forEach(animation => {
-            animation.frames.forEach((frame, idx) => {
-                animationPathMap.set(frame, idx);
-            });
-
-            const raw = AnimationClipUtil.toRaw(animation, animationPathMap);
-            animationRaws.push(raw);
-        });
+        const animationRaws = state.animations.map(animation => AnimationClipUtil.toRaw(animation, nodeMap));
         
         const scene = state.scene;
 
@@ -204,27 +194,7 @@ export class GLTFRawState {
 
         const scenes = this._scenes.map(scene => Scene.fromRaw(scene, nodes));
 
-        const animations = this._animations.map(animation => AnimationClipUtil.fromRaw(animation));
-
-        for (let i = 0; i < animations.length; i++) {
-            const animation = animations[i];
-            for (let j = 0; j < this._animations[i].frames.length; j++) {
-                const frame = animation.frames[j];
-
-                if (!this._animations[i].frames[j].children)
-                {
-                    continue;
-                }
-
-                if (!frame.children) {
-                    frame.children = {};
-                };
-
-                for (const childName in this._animations[i].frames[j].children) {
-                    frame.children[childName] = animation.frames[this._animations[i].frames[j].children![childName]];
-                }
-            }
-        }
+        const animations = this._animations.map(animation => AnimationClipUtil.fromRaw(animation, nodes));
 
         return new GLTFState(
             buffers, 

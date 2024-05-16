@@ -1,4 +1,5 @@
 import { Float32ArrayConverter, Uint16ArrayConverter } from "@/lib/data/buffers/typedarrayconverters";
+import { AnimationClip, AnimationPath } from "@/lib/data/components/animations";
 import { Quaternion } from "@/lib/data/math/Quaternion";
 import { Vector3 } from "@/lib/data/math/Vector";
 import { BufferType } from "@/lib/data/types/gltftypes";
@@ -39,6 +40,7 @@ export default function Page() {
       const { BasicMaterial } = await import('@/lib/data/components/materials/BasicMaterial');
       const { PhongMaterial } = await import('@/lib/data/components/materials/PhongMaterial');
       const { Color } = await import('@/lib/cores');
+      const { AnimationClipUtil } = await import('@/lib/data/components/animations');
 
       const glContainer = new GLContainer(canvas);
 
@@ -184,6 +186,8 @@ export default function Page() {
       const nodes = [node, cubeNode, cameraNode];
       const nodeMap = new Map();
       nodeMap.set(node, 0);
+      nodeMap.set(cubeNode, 1);
+      nodeMap.set(cameraNode, 2);
 
       const scene = new Scene(nodes);
       const scenes = [scene];
@@ -230,6 +234,23 @@ export default function Page() {
 
       // renderManager.loop(30);
       glRenderer.render(scene);
+
+      const animationPath: AnimationPath = {
+        keyframe: {
+          translation: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+        },
+        children: [cubeNode]
+      };
+
+      const animationClip: AnimationClip = {
+        name: "test",
+        frames: [animationPath]
+      };
+      
+      console.log(AnimationClipUtil.fromRaw(AnimationClipUtil.toRaw(animationClip, nodeMap), nodes));
+
     };
 
     initializeGL();
