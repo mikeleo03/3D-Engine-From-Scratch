@@ -207,28 +207,28 @@ export default function Home() {
     }, [canvasRef.current]);
 
     return (
-        <main className="flex flex-col w-auto h-screen items-center justify-between">
+        <main className="flex flex-col min-h-screen w-full bg-[#F2FBFA]">
             {/* Header Section */}
-            <div className="h-[8vh] bg-gray-800 w-full text-white flex justify-between">
+            <div className="bg-gray-800 w-full h-[8vh] sticky top-0 z-50 text-white flex justify-between">
                 {/* Title Section */}
                 <div className="flex items-center space-x-10 text-xl font-bold pl-3">⚙️  3D Engine from Scratch</div>
 
                 {/* Save and Load Section */}
                 <div className="flex items-center">
                     {/* Separator */}
-                    <Separator className="h-full w-[0.5px]"/>
+                    <Separator className="h-auto w-[0.5px]"/>
 
                     {/* Clear Button */}
-                    <Button className="h-full w-full border-none rounded-0">🧹 Clear</Button>
+                    <Button className="h-auto w-full border-none rounded-0">🧹 Clear</Button>
 
                     {/* Separator */}
-                    <Separator className="h-full w-[0.5px]"/>
+                    <Separator className="h-auto w-[0.5px]"/>
 
                     {/* Load Button */}
                     <Button onClick={importFile} className="h-full w-full border-none rounded-0">⬆️ Load</Button>
 
                     {/* Separator */}
-                    <Separator className="h-full w-[0.5px]"/>
+                    <Separator className="h-auto w-[0.5px]"/>
 
                     {/* Clear Button */}
                     <Button onClick={exportFile} className="h-full w-full border-none rounded-0">💾 Save</Button>
@@ -236,23 +236,17 @@ export default function Home() {
             </div>
 
             {/* Navigation section */}
-            <div className="h-[92vh] w-full flex flex-row">
+            <div className="w-full flex flex-row h-full overlow-y-auto">
                 {/* Left controller */}
-                <div className="w-[25vw] bg-gray-700 h-full overlow-y-auto text-white">
+                <div className="w-1/4 bg-gray-700 h-auto overlow-y-auto text-white">
                     {/* Animation */}
                     <div className="w-full p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
                         <div className="text-base font-semibold pb-1">Animation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
-                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button onClick={togglePlay}>{isPlaying ? '⏸️ Pause' : '▶️ Play'}</Button>
-                            </div>
-                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button onClick={toggleReverse}>{isReversing ? '⏭ Forward' : '⏮ Reverse'}</Button>
-                            </div>
-                            <div className="flex flex-row justify-center items-center text-center">
                                 <Button onClick={toggleLoop}>{isLooping ? '🔂 Stop' : '🔁 Loop'}</Button>
-                            </div>
                         </div>
                         <div className="text-base font-semibold py-1">Easing Functions</div>
                         <Select>
@@ -290,17 +284,17 @@ export default function Home() {
                     <Separator className="w-full"/>
 
                     {/* Tree */}
-                    <div className="w-full p-6 py-4 pt-4">
+                    <div className="w-full h-auto p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
                         
                     </div>
                 </div>
 
                 {/* Canvas */}
-                <canvas ref={canvasRef} className="h-full w-[50vw]"/>
+                <canvas ref={canvasRef} className="w-1/2 h-auto"/>
 
                 {/* Right controller */}
-                <div className="w-[25vw] bg-gray-700 h-full overlow-y-auto text-white">
+                <div className="w-1/4 bg-gray-700 overlow-y-auto text-white h-auto">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
@@ -468,38 +462,30 @@ export default function Home() {
                     <Separator className="w-full"/>
 
                     {/* Scene */}
-                    <div className="w-full p-6 py-4">
-                    <div className="text-base font-semibold py-2 flex flex-col w-full">
-                        <div className="w-full justify-between flex flex-row">
-                            <div className="text-lg font-semibold pb-2">🖼️ Scene</div>
-                            <div className="flex items-center space-x-3">
-                                <Switch
-                                    id="shader-switch"
-                                    checked={shader.enabled}
-                                    onChange={toggleShader}
-                                />
-                                {/* <Switch
-                                    id="shader-switch"
-                                    className="w-10"
-                                    checked={shader.enabled}
-                                    onChange={toggleShader}
-                                /> */}
-                                <input
-                                    type="checkbox"
-                                    id="shader-switch"
-                                    checked={shader.enabled}
-                                    onChange={toggleShader}
-                                />
-                                <Label htmlFor="shader-switch">Shader</Label>
-                            </div>
+                    <div className="text-base font-semibold py-2 flex flex-row justify-between w-full p-6 py-4">
+                        <div className="text-lg font-semibold pb-2">🖼️ Scene</div>
+                        <div className="flex items-center space-x-3">
+                            <Switch
+                                id="shader-switch"
+                                checked={shader.enabled}
+                                onChange={toggleShader}
+                            />
+                            {/* <Switch
+                                id="shader-switch"
+                                className="w-10"
+                                checked={shader.enabled}
+                                onChange={toggleShader}
+                            /> */}
+                            <input
+                                type="checkbox"
+                                id="shader-switch"
+                                checked={shader.enabled}
+                                onChange={toggleShader}
+                            />
+                            <Label htmlFor="shader-switch">Shader</Label>
                         </div>
-                        {/* <div className="text-base font-semibold py-2 flex flex-row w-full">
-                            <div className="w-1/3">Color</div>
-                            <input type="color" className="color-option w-2/3" id="color-option" value="#000000"/>
-                        </div> */}
                     </div>
                 </div>
-            </div>
             </div>
         </main>
     );
