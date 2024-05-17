@@ -46,7 +46,9 @@ export abstract class Model {
         gLTFState.addScene(scene);
 
         const animations = this._animations;
-        // todo: add animations
+        animations.forEach(animation => {
+            gLTFState.addAnimation(animation);
+        })
 
         const parser = new GLTFParser();
         const file = parser.write(gLTFState);
