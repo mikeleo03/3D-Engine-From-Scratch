@@ -236,9 +236,9 @@ export default function Home() {
             </div>
 
             {/* Navigation section */}
-            <div className="w-full flex flex-row h-auto overlow-y-auto">
+            <div className="w-full flex flex-row h-[92vh]">
                 {/* Left controller */}
-                <div className="w-1/4 bg-gray-700 h-full min-h-[92vh] max-h-[120vh] overlow-y-auto text-white">
+                <div className="w-1/4 bg-gray-700 h-full text-white overflow-y-auto overflow-x-hidden">
                     {/* Animation */}
                     <div className="w-full p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
@@ -291,10 +291,10 @@ export default function Home() {
                 </div>
 
                 {/* Canvas */}
-                <canvas ref={canvasRef} className="w-1/2 h-full min-h-[92vh] max-h-[120vh]"/>
+                <canvas ref={canvasRef} className="w-1/2 h-full"/>
 
                 {/* Right controller */}
-                <div className="w-1/4 bg-gray-700 overlow-y-auto text-white h-full min-h-[92vh] max-h-[120vh]">
+                <div className="w-1/4 bg-gray-700 overflow-y-auto overflow-x-hidden h-full text-white ">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
