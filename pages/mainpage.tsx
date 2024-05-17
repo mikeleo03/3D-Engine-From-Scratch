@@ -463,13 +463,13 @@ export default function Home() {
                         <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleNextFrame()}>Next</Button>
+                                <Button onClick={() => handleFirstFrame()}>First</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
                                 <Button onClick={() => handlePrevFrame()}>Prev</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleFirstFrame()}>First</Button>
+                                <Button onClick={() => handleNextFrame()}>Next</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
                                 <Button onClick={() => handleLastFrame()}>Last</Button>
