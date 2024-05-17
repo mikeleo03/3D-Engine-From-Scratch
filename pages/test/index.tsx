@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from "react";
 
 export default function Page() {
@@ -17,6 +18,7 @@ export default function Page() {
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
       const { LeonModel } = await import('@/lib/data/models/LeonModel');
       const { RenderManager} = await import('@/lib/rendering/RenderManager');
+      const { JojoModel } = await import('@/lib/data/models/JojoModel');
 
       const glContainer = new GLContainer(canvas);
 
@@ -46,11 +48,11 @@ export default function Page() {
       //   20
       // );
 
-      const model = new LeonModel();
+      const model = new JojoModel();
 
       console.log(model.scene.nodes)
     
-      // model.download();
+      model.download();
     };
 
     initializeGL();

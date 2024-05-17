@@ -60,7 +60,6 @@ export class AnimationRunner {
   isLoop: boolean = false;
   fps: number = 30;
   easeFunction: EasingFunction = EasingFunction.LINEAR;
-  root: SceneNode;
   private currentFrame: number = 0;
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
@@ -74,15 +73,14 @@ export class AnimationRunner {
   }
 
   get length() {
-    return this.currentAnimation!.frames.length;
+    return this.currentAnimation ? this.currentAnimation.frames.length : 0;
   }
 
-  public setAnimation(animation: AnimationClip, root: SceneNode) {
+  public setAnimation(animation: AnimationClip) {
     this.currentAnimation = animation;
-    this.root = root;
     this.currentFrame = 0;
     this.deltaFrame = 0;
-    this.updateSceneGraph();
+    this.updateCurrentNode();
   }
 
   private get frame() {
@@ -116,7 +114,7 @@ export class AnimationRunner {
     if (this.currentFrame < this.length - 1) {
       this.currentFrame++;
       this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
-      this.updateSceneGraph();
+      this.updateCurrentNode();
     }
   }
 
@@ -124,21 +122,21 @@ export class AnimationRunner {
     if (this.currentFrame > 0) {
       this.currentFrame--;
       this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
-      this.updateSceneGraph();
+      this.updateCurrentNode();
     }
   }
 
   firstFrame() {
     this.currentFrame = 0;
-    this.updateSceneGraph();
+    this.updateCurrentNode();
   }
 
   lastFrame() {
     this.currentFrame = this.length - 1;
-    this.updateSceneGraph();
+    this.updateCurrentNode();
   }
 
-  update(deltaSecond: number) {
+  update() {
     if (this.isPlaying) {
       this.deltaFrame = this.calculateEasing(Math.abs(this.currentFrame / this.fps), 0, 1, this.length)
       if (this.deltaFrame >= 1) {
@@ -154,19 +152,18 @@ export class AnimationRunner {
           this.currentFrame = newFrame;
         }
         this.deltaFrame = this.deltaFrame % 1;
-        this.updateSceneGraph();
+        this.updateCurrentNode();
       }
     }
   }
 
-  private updateSceneGraph() {
+  private updateCurrentNode() {
     // update the scene graph based on the current frame
     const frame = this.frame;
-    // use root as the parent and traverse according to the frame
-    this.traverseAndUpdate(frame);
+    this.updateFrame(frame);
   }
 
-  private traverseAndUpdate(frame: AnimationPath) {
+  private updateFrame(frame: AnimationPath) {
     if (frame.nodeKeyframePairs) {
       for (let pair of frame.nodeKeyframePairs) {
         const node = pair.node;

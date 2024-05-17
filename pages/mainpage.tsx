@@ -60,7 +60,7 @@ export default function Home() {
     const renderManagerRef = useRef<RenderManager>();
     const gltfStateRef = useRef<GLTFState>();
     const cameraNodesRef = useRef<SceneNode[]>([]);
-    const animationRunnerRef = useRef<AnimationRunner>();
+    const animationRunnersRef = useRef<AnimationRunner[]>([]);
     const currentNodeRef = useRef<SceneNode>();
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
@@ -223,8 +223,10 @@ export default function Home() {
         setCamera(prevState => ({ ...prevState, type: camera.type }));
     }
 
-    const setNewState = async (newState: GLTFState) => {
+    const setNewState = (newState: GLTFState) => {
         gltfStateRef.current = newState;
+
+        console.log(newState);
 
         const currentScene = newState.CurrentScene;
 
@@ -256,16 +258,12 @@ export default function Home() {
         renderManagerRef.current = new RenderManager(newState, glRendererRef.current!!);
         renderManagerRef.current.loop();
 
-
-        const animationRunner = animationRunnerRef.current;
-        const scene = newState.CurrentScene;
-        const rootNode = scene?.getRoot(0);
         const animations = newState.animations;
 
-        if (rootNode && animations && animations.length > 0) {
-            if (animationRunner) {
-                await animationRunner.setAnimation(animations[0], rootNode);
-            }
+        for (const animation of animations) {
+            const animationRunner = new AnimationRunner();
+            animationRunnersRef.current.push(animationRunner);
+            animationRunner.setAnimation(animation);
         }
     }
 
@@ -365,42 +363,33 @@ export default function Home() {
             glContainerRef.current = glContainer;
             glRendererRef.current = glRenderer;
             cameraNodesRef.current = cameraNodes;
-            animationRunnerRef.current = animationRunner;
         };
 
         initializeGL();
     }, [canvasRef.current]);
 
     const handleNextFrame = () => {
-        const animationRunner = animationRunnerRef.current;
-        if (!animationRunner) {
-            return;
+        for (const animationRunner of animationRunnersRef.current) {
+            animationRunner.nextFrame();
         }
-        animationRunner.nextFrame();
     }
 
     const handlePrevFrame = () => {
-        const animationRunner = animationRunnerRef.current;
-        if (!animationRunner) {
-            return;
+        for (const animationRunner of animationRunnersRef.current) {
+            animationRunner.prevFrame();
         }
-        animationRunner.prevFrame();
     }
 
     const handleFirstFrame = () => {
-        const animationRunner = animationRunnerRef.current;
-        if (!animationRunner) {
-            return;
+        for (const animationRunner of animationRunnersRef.current) {
+            animationRunner.firstFrame();
         }
-        animationRunner.firstFrame();
     }
 
     const handleLastFrame = () => {
-        const animationRunner = animationRunnerRef.current;
-        if (!animationRunner) {
-            return;
+        for (const animationRunner of animationRunnersRef.current) {
+            animationRunner.lastFrame();
         }
-        animationRunner.lastFrame();
     }
 
     return (

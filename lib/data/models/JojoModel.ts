@@ -1,15 +1,21 @@
 import { Color } from "@/lib/cores";
 import { Scene } from "../Scene";
 import { SceneNode } from "../SceneNode";
-import { AnimationClip } from "../components/animations";
+import { AnimationClip, AnimationPath } from "../components/animations";
 import { BasicMaterial } from "../components/materials";
 import { MeshFactory } from "../components/mesh/MeshFactory";
 import { Model } from "./Model";
-import { Quaternion, Vector3 } from "../math";
-import { OrthographicCamera } from "../components/cameras";
-import { Camera } from "../components/cameras/Camera";
+import { Vector3 } from "../math";
+import { AnimationTRS } from "../types/gltftypes";
+import { AssertionError } from "assert";
 
 export class JojoModel extends Model {
+    private _head?: SceneNode;
+    private _leftHand?: SceneNode;
+    private _rightHand?: SceneNode;
+    private _leftLeg?: SceneNode;
+    private _rightLeg?: SceneNode;
+
     constructor() {
         super();
     }
@@ -110,10 +116,158 @@ export class JojoModel extends Model {
 
         nodes.push(parent);
 
+        this._head = head;
+        this._leftHand = leftHand;
+        this._rightHand = rightHand;
+        this._leftLeg = leftLeg;
+        this._rightLeg = rightLeg;
+
         return new Scene(nodes);
     }
 
+    private getHeadMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [0, 5, 0]
+            },
+            {
+                rotation: [0, 10, 0]
+            },
+            {
+                rotation: [0, 15, 0]
+            },
+            {
+                rotation: [0, 20, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getLeftHandMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getRightHandMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getLeftLegMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+        ]        
+
+        return keyFrames;
+    }
+
+    private getRightLegMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+        ]
+        
+        return keyFrames;
+    }
+
+
     override getAnimations(): AnimationClip[] {
-        return [];
+        const headMovements = this.getHeadMovements();
+        const leftHandMovements = this.getLeftHandMovements();
+        const rightHandMovements = this.getRightHandMovements();
+        const leftLegMovements = this.getLeftLegMovements();
+        const rightLegMovements = this.getRightLegMovements();
+
+        // assert all keyframes have the same length
+        const length = headMovements.length;
+        if (leftHandMovements.length !== length || rightHandMovements.length !== length || leftLegMovements.length !== length || rightLegMovements.length !== length) {
+            throw AssertionError;
+        }
+
+        const frames: AnimationPath[] = [];
+
+        for (let i = 0; i < length; i++) {
+            const pairs: {node: SceneNode, keyframe: AnimationTRS}[] = [];
+
+            pairs.push({node: this._head!!, keyframe: headMovements[i]});
+            pairs.push({node: this._leftHand!!, keyframe: leftHandMovements[i]});
+            pairs.push({node: this._rightHand!!, keyframe: rightHandMovements[i]});
+            pairs.push({node: this._leftLeg!!, keyframe: leftLegMovements[i]});
+            pairs.push({node: this._rightLeg!!, keyframe: rightLegMovements[i]});
+
+            frames.push({nodeKeyframePairs: pairs});
+        }
+
+        const animation = {
+            name: "walk",
+            frames: frames
+        }
+
+        return [animation];
     }
 }
