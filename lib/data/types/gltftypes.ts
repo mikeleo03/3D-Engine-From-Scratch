@@ -137,7 +137,7 @@ export type CameraType = {
 };
 
 export type SceneNodeType = {
-    transalation: [number, number, number],
+    translation: [number, number, number],
     rotation: [number, number, number, number],
     scale: [number, number, number]
     children: number[],
