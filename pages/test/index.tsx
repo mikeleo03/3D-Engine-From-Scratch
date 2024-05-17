@@ -46,14 +46,7 @@ export default function Page() {
       //   20
       // );
 
-      const model = new JojoModel(camera);
-     
-      const glRenderer = new GLRenderer(glContainer);
-      const renderManager = new RenderManager(model.gltfState, glRenderer);
-
-      // renderManager.loop();
-    
-      glRenderer.render(model.scene);
+      const model = new JojoModel();
     };
 
     initializeGL();

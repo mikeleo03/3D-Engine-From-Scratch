@@ -10,8 +10,8 @@ import { OrthographicCamera } from "../components/cameras";
 import { Camera } from "../components/cameras/Camera";
 
 export class JojoModel extends Model {
-    constructor(camera: Camera) {
-        super(camera);
+    constructor() {
+        super();
     }
 
     private getBody(): SceneNode {
@@ -108,18 +108,7 @@ export class JojoModel extends Model {
         parent.translate(new Vector3(0, 0, -100));
         parent.rotateByDegrees(new Vector3(30, 30, 0));
 
-        const cameraNode = new SceneNode(
-            new Vector3(0, 0, 0),
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            this.camera
-        );
-
-
         nodes.push(parent);
-        nodes.push(cameraNode);
 
         return new Scene(nodes);
     }

@@ -8,9 +8,7 @@ export abstract class Model {
     private _scene: Scene;
     private _gltfState: GLTFState;
     private _animations: AnimationClip[] = [];
-    private _camera: Camera;
-    constructor(camera: Camera) {
-        this._camera = camera;
+    constructor() {
         this._scene = this.getScene();
         this._animations = this.getAnimations();
         this._gltfState = this.getGLTFState();
@@ -22,10 +20,6 @@ export abstract class Model {
 
     get gltfState(): GLTFState {
         return this._gltfState;
-    }
-
-    protected get camera(): Camera {
-        return this._camera;
     }
 
     getGLTFState(): GLTFState {
