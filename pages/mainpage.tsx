@@ -223,7 +223,7 @@ export default function Home() {
         setCamera(prevState => ({ ...prevState, type: camera.type }));
     }
 
-    const setNewState = (newState: GLTFState) => {
+    const setNewState = async (newState: GLTFState) => {
         gltfStateRef.current = newState;
 
         const currentScene = newState.CurrentScene;
@@ -255,6 +255,18 @@ export default function Home() {
 
         renderManagerRef.current = new RenderManager(newState, glRendererRef.current!!);
         renderManagerRef.current.loop();
+
+
+        const animationRunner = animationRunnerRef.current;
+        const scene = newState.CurrentScene;
+        const rootNode = scene?.getRoot(0);
+        const animations = newState.animations;
+
+        if (rootNode && animations && animations.length > 0) {
+            if (animationRunner) {
+                await animationRunner.setAnimation(animations[0], rootNode);
+            }
+        }
     }
 
     const importFile = async () => {
@@ -287,21 +299,7 @@ export default function Home() {
                 renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
                 renderManagerRef.current.loop();
 
-                // TODO: add animation to the runner
-                const animationRunner = animationRunnerRef.current;
-
-                const scene = gltfState.CurrentScene;
-                const rootNode = scene?.getRoot(0);
-                const animations = gltfState.animations;
-
-                if (!rootNode || !animations) {
-                    return;
-                }
-
-                if (rootNode && animations && animations.length > 0) {
-                    animationRunner?.setAnimation(animations[0], rootNode);
-                }
-                setNewState(gltfState);
+                await setNewState(gltfState);
             }
         }
 
