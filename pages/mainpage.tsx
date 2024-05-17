@@ -140,6 +140,21 @@ export default function Home() {
         input.click();
     }
 
+    const exportFile = async () => {
+        const gltfState = gltfStateRef.current;
+        if (!gltfState) {
+            return;
+        }
+
+        const gltf = gltfParser.write(gltfState);
+        const blob = new Blob([gltf], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "scene.gltf";
+        a.click();
+    }
+
     useEffect(() => {
         const canvas = canvasRef.current;
     
@@ -217,7 +232,7 @@ export default function Home() {
                     <Separator className="h-full w-[0.5px]"/>
 
                     {/* Clear Button */}
-                    <Button className="h-full w-full border-none rounded-0">💾 Save</Button>
+                    <Button onClick={exportFile} className="h-full w-full border-none rounded-0">💾 Save</Button>
                 </div>
             </div>
 
