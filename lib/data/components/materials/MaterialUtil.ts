@@ -5,7 +5,6 @@ import { PhongMaterial } from "./PhongMaterial";
 
 export class MaterialUtil {
     static fromRaw(raw: MaterialType): ShaderMaterial { 
-        console.log(raw);
         if (raw.type === "Basic Material") {
             const obj = new BasicMaterial(raw);
             ShaderMaterial.fromRaw(raw, obj);

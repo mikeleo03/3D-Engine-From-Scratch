@@ -134,6 +134,14 @@ export class GLTFState {
         this._accessors.push(accessor);
     }
 
+    addMaterial(material: ShaderMaterial) {
+        if (this._materials.indexOf(material) != -1) {
+            return;
+        }
+
+        this._materials.push(material);
+    }
+
     addMesh(mesh: Mesh) {
         if (this._meshes.indexOf(mesh) != -1) {
             return;
@@ -144,8 +152,8 @@ export class GLTFState {
         for (let i = 0; i < geometries.length; i++) {
             const geometry = geometries[i];
 
-            if (geometry.material && this._materials.indexOf(geometry.material) == -1) {
-                this._materials.push(geometry.material);
+            if (geometry.material) {
+                this.addMaterial(geometry.material);
             }
         }
 
@@ -175,13 +183,14 @@ export class GLTFState {
         this._meshes.push(mesh);
     }
 
+    
     addNode(node: SceneNode) {
         if (this._nodes.indexOf(node) != -1) {
             return;
         }
 
-        if (node.camera && this._cameras.indexOf(node.camera) == -1) {
-            this._cameras.push(node.camera);
+        if (node.camera) {
+            this.addCamera(node.camera);
         }
 
         if (node.mesh) {
@@ -236,5 +245,220 @@ export class GLTFState {
         this.addNode(node);
         this.addScene(scene);
         scene.addNode(node);
+    }
+
+    removeCamera(camera: Camera) {
+        const index = this._cameras.indexOf(camera);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._nodes.length; i++) {
+            if (this._nodes[i].camera == camera) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._cameras.splice(index, 1);
+        
+    }
+
+    removeBuffer(buffer: GLTFBuffer) {
+        const index = this._buffers.indexOf(buffer);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._bufferViews.length; i++) {
+            if (this._bufferViews[i].buffer == buffer) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._buffers.splice(index, 1);
+    }
+
+    removeBufferView(bufferView: BufferView) {
+        const index = this._bufferViews.indexOf(bufferView);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._accessors.length; i++) {
+            if (this._accessors[i].bufferView == bufferView) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._bufferViews.splice(index, 1);
+        this.removeBuffer(bufferView.buffer);
+    }
+
+    removeAccessor(accessor: Accessor) {
+        const index = this._accessors.indexOf(accessor);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._meshes.length; i++) {
+            const geometries = this._meshes[i].geometries;
+
+            for (let j = 0; j < geometries.length; j++) {
+                if (geometries[j].attributes.position?.accessor == accessor ||
+                    geometries[j].attributes.normal?.accessor == accessor ||
+                    geometries[j].indices?.accessor == accessor) {
+                    remove = false;
+                    break;
+                }
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._accessors.splice(index, 1);
+        this.removeBufferView(accessor.bufferView);
+    }
+
+    removeMaterial(material: ShaderMaterial) {
+        const index = this._materials.indexOf(material);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._meshes.length; i++) {
+            const geometries = this._meshes[i].geometries;
+
+            for (let j = 0; j < geometries.length; j++) {
+                if (geometries[j].material == material) {
+                    remove = false;
+                    break;
+                }
+            }
+        }
+
+        if (remove) {
+            this._materials.splice(index, 1);
+        }
+    }
+
+    removeMesh(mesh: Mesh) {
+        const index = this._meshes.indexOf(mesh);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._nodes.length; i++) {
+            if (this._nodes[i].mesh == mesh) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._meshes.splice(index, 1);
+
+        const geometries = mesh.geometries;
+
+        for (let i = 0; i < geometries.length; i++) {
+            const geometry = geometries[i];
+
+            if (geometry.material) {
+                this.removeMaterial(geometry.material);
+            }
+        }
+    }
+
+    removeNode(node: SceneNode) {
+        const index = this._nodes.indexOf(node);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._scenes.length; i++) {
+            if (this._scenes[i].nodes.indexOf(node) != -1) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._nodes.splice(index, 1);
+
+        if (node.camera) {
+            this.removeCamera(node.camera);
+        }
+    }
+
+    removeScene(scene: Scene) {
+        const index = this._scenes.indexOf(scene);
+
+        if (index == -1) {
+            return;
+        }
+
+        this._scenes.splice(index, 1);
+
+        for (let i = 0; i < scene.nodes.length; i++) {
+            this.removeNode(scene.nodes[i]);
+        }
+    }
+
+    removeAnimation(animation: AnimationClip) {
+        const index = this._animations.indexOf(animation);
+
+        if (index == -1) {
+            return;
+        }
+
+        this._animations.splice(index, 1);
+    }
+
+    removeNodeFromScene(node: SceneNode, scene: Scene) {
+        scene.removeNode(node);
+        this.removeNode(node);
     }
 }

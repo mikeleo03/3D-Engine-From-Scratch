@@ -97,8 +97,15 @@ export enum CameraView {
     PERSPECTIVE = "perspective",
     ORTHOGRAPHIC = "orthographic"
 }
+
+export enum CameraTypeString {
+    PERSPECTIVE = "perspective",
+    ORTHOGRAPHIC = "orthographic",
+    OBLIQUE = "oblique"
+
+}
 export type CameraType = {
-    "type": "perspective",
+    "type": CameraTypeString.PERSPECTIVE,
     "perspective": {
         "aspectRatio": number,
         "yfov": number,
@@ -106,7 +113,7 @@ export type CameraType = {
         "zfar": number
     }
 } | {
-    "type": "orthographic",
+    "type": CameraTypeString.ORTHOGRAPHIC,
     "orthographic": {
         "top": number,
         "bottom": number,
@@ -117,7 +124,7 @@ export type CameraType = {
         "angle": number
     }
 } | {
-    "type": "oblique",
+    "type": CameraTypeString.OBLIQUE,
     "oblique": {
         "top": number,
         "bottom": number,

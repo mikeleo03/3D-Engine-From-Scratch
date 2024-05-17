@@ -86,9 +86,12 @@ export class Scene {
     removeNode(node: SceneNode) {
         const index = this._nodes.indexOf(node);
 
-        if (index >= 0) {
-            this._nodes.splice(index, 1);
+        if (index === -1) {
+            return;
         }
+        
+        this._nodes.splice(index, 1);
+        
 
         if (this._rootNodes.includes(node)) {
             this._rootNodes.splice(this._rootNodes.indexOf(node), 1);
@@ -106,7 +109,10 @@ export class Scene {
         for (const child of node.children) {
             this.removeNode(child);
         }
-        
+    }
+
+    hasCamera(type: string) {
+        return this._cameras.some(camera => camera.camera?.type === type);
     }
 
     static fromRaw(raw: SceneType, nodes: SceneNode[]): Scene {
