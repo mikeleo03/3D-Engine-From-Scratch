@@ -21,6 +21,7 @@ import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
+import { CameraTypeString } from '@/lib/data/types/gltftypes';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -31,7 +32,7 @@ interface TRS {
 }
 
 interface CameraState {
-    mode: string;
+    type: CameraTypeString;
     distance: number;
     angle: number;
 }
@@ -47,7 +48,7 @@ export default function Home() {
     const [translation, setTranslation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [rotation, setRotation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [scale, setScale] = useState<TRS>({ x: 1, y: 1, z: 1 });
-    const [camera, setCamera] = useState<CameraState>({ mode: "Perspective", distance: 0, angle: 0 });
+    const [camera, setCamera] = useState<CameraState>({ type: CameraTypeString.PERSPECTIVE, distance: 0, angle: 0 });
     const [shader, setShader] = useState<ShaderState>({ enabled: false });
     const [isPlaying, setIsPlaying] = useState(false);
     const [isReversing, setIsReversing] = useState(false);
@@ -64,37 +65,40 @@ export default function Home() {
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         if (e.target.value !== null && e.target.value !== undefined) {
-            const value = parseFloat(e.target.value);
+            let value = parseFloat(e.target.value);
 
             let newValue = { x: 0, y: 0, z: 0 };
 
-            if (e.target.value !== '') {
-                if (type === 'translation') {
-                    setTranslation(prevState => {
-                        newValue = { ...prevState, [axis]: value };
-                        return newValue; 
-                    });
-                } 
-                
-                else if (type === 'rotation') {
-                    setRotation(prevState => {
-                        newValue = { ...prevState, [axis]: value };
-                        return newValue;
-                    });
-                } 
-                
-                else if (type === 'scale') {
-                    setScale(prevState => {
-                        newValue = { ...prevState, [axis]: value };
-                        return newValue;
-                    });
-                }
-    
-                else {
-                    throw new Error("Invalid TRS type");
-                }
+            if (type === 'translation') {
+                setTranslation(prevState => {
+                    newValue = { ...prevState, [axis]: value };
+                    return newValue; 
+                });
+            } 
+            
+            else if (type === 'rotation') {
+                setRotation(prevState => {
+                    newValue = { ...prevState, [axis]: value };
+                    return newValue;
+                });
+            } 
+            
+            else if (type === 'scale') {
+                setScale(prevState => {
+                    newValue = { ...prevState, [axis]: value };
+                    return newValue;
+                });
             }
 
+            else {
+                throw new Error("Invalid TRS type");
+            }
+
+            if (isNaN(value))
+            {
+                return;
+            }
+            
             // Process the value
             if (!currentNodeRef.current) {
                 return;
@@ -114,8 +118,32 @@ export default function Home() {
         }
     };
 
-    const handleCameraModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
-        setCamera(prevState => ({ ...prevState, mode: (e.target as HTMLSelectElement).value }));
+    const changeCurrentCamera = (type: CameraTypeString) => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        const cameras = currentScene.cameras;
+
+        for (const cameraNode of cameras) {
+            if (cameraNode.camera && cameraNode.camera.type === type) {
+                currentScene.setActiveCameraNode(cameraNode);
+                break;
+            }
+        }
+
+        console.log(currentScene.getActiveCameraNode()?.camera)
+    }
+
+    const handleCameraModeChange = (type: string) => {
+       
+        const value = type as CameraTypeString;
+
+        setCamera(prevState => ({ ...prevState, type: value }));
+
+        changeCurrentCamera(value);
     };
 
     const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -172,7 +200,30 @@ export default function Home() {
         });
     }
 
-    const setNewState = (newState: GLTFState) => {
+    const setCurrentCamera = () => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        const cameraNode = currentScene.getActiveCameraNode();
+
+        if (!cameraNode) {
+            return;
+        }
+
+        const camera = cameraNode.camera;
+
+        if (!camera) {
+            return;
+        }
+
+        // todo: UPDATE distance dan angle
+        setCamera(prevState => ({ ...prevState, type: camera.type }));
+    }
+
+    const setNewState = async (newState: GLTFState) => {
         gltfStateRef.current = newState;
 
         const currentScene = newState.CurrentScene;
@@ -188,6 +239,8 @@ export default function Home() {
             }
         }
 
+        setCurrentCamera();
+
         for (const root of currentScene.roots) {
             if (!root.camera) {
                 currentNodeRef.current = root;
@@ -202,6 +255,18 @@ export default function Home() {
 
         renderManagerRef.current = new RenderManager(newState, glRendererRef.current!!);
         renderManagerRef.current.loop();
+
+
+        const animationRunner = animationRunnerRef.current;
+        const scene = newState.CurrentScene;
+        const rootNode = scene?.getRoot(0);
+        const animations = newState.animations;
+
+        if (rootNode && animations && animations.length > 0) {
+            if (animationRunner) {
+                await animationRunner.setAnimation(animations[0], rootNode);
+            }
+        }
     }
 
     const importFile = async () => {
@@ -234,21 +299,7 @@ export default function Home() {
                 renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
                 renderManagerRef.current.loop();
 
-                // TODO: add animation to the runner
-                const animationRunner = animationRunnerRef.current;
-
-                const scene = gltfState.CurrentScene;
-                const rootNode = scene?.getRoot(0);
-                const animations = gltfState.animations;
-
-                if (!rootNode || !animations) {
-                    return;
-                }
-
-                if (rootNode && animations && animations.length > 0) {
-                    animationRunner?.setAnimation(animations[0], rootNode);
-                }
-                setNewState(gltfState);
+                await setNewState(gltfState);
             }
         }
 
@@ -449,7 +500,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={translation.x}
+                                        value={isNaN(translation.x) ? '' : translation.x}
                                         onChange={(e) => handleInputChange(e, 'translation', 'x')}
                                     />
                                 </div>
@@ -461,7 +512,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={translation.y}
+                                        value={isNaN(translation.y) ? '' : translation.y}
                                         onChange={(e) => handleInputChange(e, 'translation', 'y')}
                                     />
                                 </div>
@@ -473,7 +524,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={translation.z}
+                                        value={isNaN(translation.z) ? '' : translation.z}
                                         onChange={(e) => handleInputChange(e, 'translation', 'z')}
                                     />
                                 </div>
@@ -488,7 +539,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={rotation.x}
+                                        value={isNaN(rotation.x) ? '' : rotation.x}
                                         onChange={(e) => handleInputChange(e, 'rotation', 'x')}
                                     />
                                 </div>
@@ -500,7 +551,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={rotation.y}
+                                        value={isNaN(rotation.y) ? '' : rotation.y}
                                         onChange={(e) => handleInputChange(e, 'rotation', 'y')}
                                     />
                                 </div>
@@ -512,7 +563,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={rotation.z}
+                                        value={isNaN(rotation.z) ? '' : rotation.z}
                                         onChange={(e) => handleInputChange(e, 'rotation', 'z')}
                                     />
                                 </div>
@@ -527,7 +578,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={scale.x}
+                                        value={isNaN(scale.x) ? '' : scale.x}
                                         onChange={(e) => handleInputChange(e, 'scale', 'x')}
                                     />
                                 </div>
@@ -539,7 +590,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={scale.y}
+                                        value={isNaN(scale.y) ? '' : scale.y}
                                         onChange={(e) => handleInputChange(e, 'scale', 'y')}
                                     />
                                 </div>
@@ -551,7 +602,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={scale.z}
+                                        value={isNaN(scale.z) ? '' : scale.z}
                                         onChange={(e) => handleInputChange(e, 'scale', 'z')}
                                     />
                                 </div>
@@ -566,14 +617,14 @@ export default function Home() {
                     <div className="w-full p-6 py-4">
                         <div className="text-lg font-semibold pb-2">📷 Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
-                        <Select>
+                        <Select value={camera.type} onValueChange={handleCameraModeChange}>
                             <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
-                            <SelectContent onChange={handleCameraModeChange}>
-                                <SelectItem value="Orthographic">Orthographic</SelectItem>
-                                <SelectItem value="Oblique">Oblique</SelectItem>
-                                <SelectItem value="Perspective">Perspective</SelectItem>
+                            <SelectContent>
+                                <SelectItem value={CameraTypeString.ORTHOGRAPHIC}>Orthographic</SelectItem>
+                                <SelectItem value={CameraTypeString.OBLIQUE}>Oblique</SelectItem>
+                                <SelectItem value={CameraTypeString.PERSPECTIVE}>Perspective</SelectItem>
                             </SelectContent>
                         </Select>
                         <div className="text-base font-semibold py-2 flex flex-row w-full">

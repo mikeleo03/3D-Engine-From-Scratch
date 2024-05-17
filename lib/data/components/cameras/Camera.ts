@@ -1,5 +1,5 @@
 import { Matrix4 } from "../../math/Matrix4";
-import { CameraType } from "../../types/gltftypes";
+import { CameraType, CameraTypeString } from "../../types/gltftypes";
 import { NodeComponent } from "../NodeComponent";
 
 export abstract class Camera extends NodeComponent {
@@ -7,9 +7,9 @@ export abstract class Camera extends NodeComponent {
 
     private _projectionMatrix: Matrix4;
     private _zoom: number;
-    private _type: string;
+    private _type: CameraTypeString;
 
-    constructor(type: string) {
+    constructor(type: CameraTypeString) {
         super(Camera.COMPONENT_NAME);
 
         this._projectionMatrix = Matrix4.identity();
@@ -18,7 +18,7 @@ export abstract class Camera extends NodeComponent {
     }
 
 
-    get type(): string {
+    get type(): CameraTypeString {
         return this._type;
     }
 
@@ -31,7 +31,7 @@ export abstract class Camera extends NodeComponent {
         return this._zoom;
     }
 
-    set type(type: string) {
+    set type(type: CameraTypeString) {
         this._type = type;
     }
 

@@ -212,25 +212,47 @@ export class Quaternion {
     }
 
     toEuler(): Vector3 {
+        const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
         const x = this._x;
         const y = this._y;
         const z = this._z;
         const w = this._w;
 
-        const t0 = 2 * (w * x + y * z);
-        const t1 = 1 - 2 * (x * x + y * y);
-        const X = Math.atan2(t0, t1);
+        const matrix = new Float32Array(16);
 
-        let t2 = 2 * (w * y - z * x);
-        t2 > 1 && (t2 = 1);
-        t2 < -1 && (t2 = -1);
-        const Y = Math.asin(t2);
+        const xx = x * x, yy = y * y, zz = z * z;
+        const xy = x * y, zw = z * w, zx = z * x, yw = y * w, yz = y * z, xw = x * w;
 
-        const t3 = 2 * (w * z + x * y);
-        const t4 = 1 - 2 * (y * y + z * z);
-        const Z = Math.atan2(t3, t4);
+        matrix[ 0 ] = 1 - 2 * ( yy + zz );
+        matrix[ 4 ] = 2 * ( xy - zw );
+        matrix[ 8 ] = 2 * ( zx + yw );
+        matrix[ 1 ] = 2 * ( xy + zw );
+        matrix[ 5 ] = 1 - 2 * ( zz + xx );
+        matrix[ 9 ] = 2 * ( yz - xw );
+        matrix[ 2 ] = 2 * ( zx - yw );
+        matrix[ 6 ] = 2 * ( yz + xw );
+        matrix[ 10 ] = 1 - 2 * ( yy + xx );
 
-        return new Vector3(X, Y, Z);
+        // Extract Euler angles from the rotation matrix in XYZ order
+        const te = matrix;
+        const m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ];
+        const m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ];
+        const m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
+
+        let _x, _y, _z;
+
+        _y = Math.asin(clamp(m13, -1, 1));
+
+        if (Math.abs(m13) < 0.9999999) {
+            _x = Math.atan2(-m23, m33);
+            _z = Math.atan2(-m12, m11);
+        } else {
+            _x = Math.atan2(m32, m22);
+            _z = 0;
+        }
+
+        return new Vector3(_x, _y, _z);
     }
 
     toDegrees(): Vector3 {

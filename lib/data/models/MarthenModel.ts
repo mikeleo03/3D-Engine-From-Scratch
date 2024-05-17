@@ -95,6 +95,266 @@ export class MarthenModel extends Model {
   }
 
   override getAnimations(): AnimationClip[] {
-    return [];
+    const headRef = this.scene.nodes[0].children[0];
+    return [
+      {
+        name: "idle",
+        frames: [
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 0],
+                  translation: [0, 0, 0]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  translation: [0, 0, 15],
+                  rotation: [0, 0, 15]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  translation: [0, 0, 30],
+                  rotation: [0, 0, 30]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  translation: [0, 0, 45]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 60]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 75]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 90]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 105]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 120]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 135]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 150]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 165]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 180]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 195]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 210]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 225]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 240]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 255]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 270]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 285]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 300]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 315]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 330]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 345]
+                }
+              }
+            ]
+          },
+          {
+            nodeKeyframePairs: [
+              {
+                node: headRef,
+                keyframe: {
+                  rotation: [0, 0, 360]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ];
   }
 }
