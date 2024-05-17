@@ -276,6 +276,8 @@ export default function Home() {
             animationRunnersRef.current.push(animationRunner);
             animationRunner.setAnimation(animation);
         }
+
+        console.log(currentScene.nodes)
     }
 
     const importFile = async () => {
@@ -483,7 +485,7 @@ export default function Home() {
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
                         <div className="flex flex-col w-full h-auto px-3 overflow-x-hidden">
                             {gltfStateRef.current && gltfStateRef.current.CurrentScene && gltfStateRef.current.CurrentScene.roots.map((root, index) => (
-                                <NodeView key={index} node={root} selectedNode={currentNode} clickCallback={handleNodeChange} />
+                                !root.camera && <NodeView key={index} node={root} selectedNode={currentNode} clickCallback={handleNodeChange} />
                             ))}
                         </div>
                     </div>

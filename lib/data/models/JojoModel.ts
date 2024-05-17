@@ -26,7 +26,7 @@ export class JojoModel extends Model {
 
         const bodyMesh = meshFactory.cuboid(50, 70, 30, [bodyMaterial]);
 
-        return new SceneNode({mesh: bodyMesh});
+        return new SceneNode({name: 'Body', mesh: bodyMesh});
     }
 
     private getHand(): SceneNode {
@@ -35,7 +35,7 @@ export class JojoModel extends Model {
 
         const handMesh = meshFactory.cuboid(15, 60, 25, [handMaterial], { offset: [0, -27, 0] });
 
-        return new SceneNode({mesh: handMesh});
+        return new SceneNode({name: 'Hand', mesh: handMesh});
     }
 
     private getHead(): SceneNode {
@@ -44,7 +44,7 @@ export class JojoModel extends Model {
 
         const headMesh = meshFactory.cuboid(25, 25, 25, [headMaterial], { offset: [0, 12.5, 0] });
 
-        return new SceneNode({mesh: headMesh});
+        return new SceneNode({name: 'Head', mesh: headMesh});
     }
 
     private getLeg(): SceneNode {
@@ -53,7 +53,7 @@ export class JojoModel extends Model {
 
         const legMesh = meshFactory.cuboid(23, 50, 25, [legMaterial], { offset: [0, -25, 0] });
 
-        return new SceneNode({mesh: legMesh});
+        return new SceneNode({name: 'Leg', mesh: legMesh});
     }
 
     private getEyeCover(): SceneNode {
@@ -62,7 +62,7 @@ export class JojoModel extends Model {
 
         const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, [eyeConverMaterial]);
 
-        return new SceneNode({mesh: eyeCoverMesh});
+        return new SceneNode({name: 'EyeConver', mesh: eyeCoverMesh});
     }
 
     private getMouth(): SceneNode {
@@ -71,7 +71,7 @@ export class JojoModel extends Model {
 
         const mouthMesh = meshFactory.cuboid(7, 1, 1, [mouthMaterial]);
 
-        return new SceneNode({mesh: mouthMesh});
+        return new SceneNode({name: 'Mouth', mesh: mouthMesh});
     }
 
     protected override getScene(): Scene {
@@ -85,6 +85,11 @@ export class JojoModel extends Model {
         const head = this.getHead();
         const leftLeg = this.getLeg();
         const rightLeg = this.getLeg();
+
+        leftHand.name = 'LeftHand';
+        rightHand.name = 'RightHand';
+        leftLeg.name = 'LeftLeg';
+        rightLeg.name = 'RightLeg';
 
         leftHand.translate(new Vector3(-32.5, 32, 0));
         rightHand.translate(new Vector3(32.5, 32, 0));

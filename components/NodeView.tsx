@@ -28,7 +28,7 @@ export default function NodeView({
             {isOpen && (
                 <div>
                     {node.children.map(child => (
-                        <NodeView key={node.id} node={child} clickCallback={clickCallback} selectedNode={selectedNode} />
+                        <NodeView key={child.id} node={child} clickCallback={clickCallback} selectedNode={selectedNode} />
                     ))}
                 </div>
             )}
