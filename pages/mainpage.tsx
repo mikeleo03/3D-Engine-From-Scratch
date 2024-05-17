@@ -17,6 +17,9 @@ import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from '@/lib/data
 import { SceneNode } from '@/lib/data/SceneNode';
 import { GLRenderer } from '@/lib/rendering/GLRenderer';
 import { JojoModel } from '@/lib/data/models/JojoModel';
+import { Scene } from '@/lib/data/Scene';
+import { GLTFParser } from '@/lib/data/GLTFParser';
+import { RenderManager } from '@/lib/rendering/RenderManager';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -36,6 +39,8 @@ interface ShaderState {
     enabled: boolean;
 }
 
+const gltfParser = new GLTFParser();
+
 export default function Home() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [translation, setTranslation] = useState<TRS>({ x: 0, y: 0, z: 0 });
@@ -48,8 +53,11 @@ export default function Home() {
     const [isLooping, setIsLooping] = useState(false);
     const [easingMode, setEasingMode] = useState({ mode: "Linear" });
 
-    
-    const [gltfState, setGltfState] = useState<GLTFState>();
+    const glContainerRef = useRef<GLContainer>();
+    const glRendererRef = useRef<GLRenderer>();
+    const renderManagerRef = useRef<RenderManager>();
+    const gltfStateRef = useRef<GLTFState>();
+    const cameraNodesRef = useRef<SceneNode[]>([]);
 
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
@@ -100,6 +108,53 @@ export default function Home() {
         setEasingMode({ mode: (e.target as HTMLSelectElement).value });
     };
 
+    const importFile = async () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".gltf";
+        input.onchange = async () => {
+            if (!input.files || input.files.length === 0) {
+                return;
+            }
+
+            else {
+                const file = input.files[0];
+                const gltfState = await gltfParser.parse(file)
+                gltfStateRef.current = gltfState;
+
+                const currentScene = gltfState.CurrentScene;
+
+                if (!currentScene) {
+                    return;
+                }
+
+                for (const node in cameraNodesRef.current) {
+                    gltfState.addNodeToScene(cameraNodesRef.current[node], currentScene);
+                }
+
+                renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
+                renderManagerRef.current.loop();
+            }
+        }
+
+        input.click();
+    }
+
+    const exportFile = async () => {
+        const gltfState = gltfStateRef.current;
+        if (!gltfState) {
+            return;
+        }
+
+        const gltf = gltfParser.write(gltfState);
+        const blob = new Blob([gltf], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "scene.gltf";
+        a.click();
+    }
+
     useEffect(() => {
         const canvas = canvasRef.current;
     
@@ -108,9 +163,6 @@ export default function Home() {
         }
     
         const initializeGL = async () => {
-            // IMPORTANT: use dynamic import to avoid loading the entire library at server side
-    
-        
             const glContainer = new GLContainer(canvas);
         
             const orthographicCamera = new OrthographicCamera(
@@ -144,17 +196,12 @@ export default function Home() {
                 new SceneNode(undefined, undefined, undefined, undefined, undefined, perspectiveCamera),
                 new SceneNode(undefined, undefined, undefined, undefined, undefined, obliqueCamera)
             ]
-
-            const jojoModel = new JojoModel();
             
             const glRenderer = new GLRenderer(glContainer);
 
-            const scene = jojoModel.scene;
-
-            scene.addNode(cameraNodes[0]);
-
-            glRenderer.render(scene);
-        
+            glContainerRef.current = glContainer;
+            glRendererRef.current = glRenderer;
+            cameraNodesRef.current = cameraNodes;
         };
     
         initializeGL();
@@ -179,13 +226,13 @@ export default function Home() {
                     <Separator className="h-auto w-[0.5px]"/>
 
                     {/* Load Button */}
-                    <Button className="h-auto w-full border-none rounded-0">⬆️ Load</Button>
+                    <Button onClick={importFile} className="h-full w-full border-none rounded-0">⬆️ Load</Button>
 
                     {/* Separator */}
                     <Separator className="h-auto w-[0.5px]"/>
 
                     {/* Clear Button */}
-                    <Button className="h-auto w-full border-none rounded-0">💾 Save</Button>
+                    <Button onClick={exportFile} className="h-full w-full border-none rounded-0">💾 Save</Button>
                 </div>
             </div>
 

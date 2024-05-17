@@ -231,4 +231,10 @@ export class GLTFState {
 
         this._animations.push(animation);
     }
+
+    addNodeToScene(node: SceneNode, scene: Scene) {
+        this.addNode(node);
+        this.addScene(scene);
+        scene.addNode(node);
+    }
 }
