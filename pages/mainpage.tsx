@@ -69,6 +69,11 @@ export default function Home() {
         if (e.target.value !== null && e.target.value !== undefined) {
             let value = parseFloat(e.target.value);
 
+            if (type === 'rotation') {
+                // limit the value to -360 to 360
+                value = value % 360;
+            }
+
             let newValue = { x: 0, y: 0, z: 0 };
 
             if (type === 'translation') {
