@@ -198,6 +198,38 @@ export default function Home() {
             else {
                 const file = input.files[0];
                 const gltfState = await gltfParser.parse(file)
+                gltfStateRef.current = gltfState;
+
+                const currentScene = gltfState.CurrentScene;
+
+                if (!currentScene) {
+                    return;
+                }
+
+                for (const node of cameraNodesRef.current) {
+                    const currentScene = gltfState.CurrentScene;
+                    if (!currentScene.hasCamera(node.camera!!.type)) {
+                        gltfState.addNodeToScene(node, currentScene);
+                    }
+                }
+
+                renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
+                renderManagerRef.current.loop();
+
+                // TODO: add animation to the runner
+                const animationRunner = animationRunnerRef.current;
+
+                const scene = gltfState.CurrentScene;
+                const rootNode = scene?.getRoot(0);
+                const animations = gltfState.animations;
+
+                if (!rootNode || !animations) {
+                    return;
+                }
+
+                if (rootNode && animations && animations.length > 0) {
+                    animationRunner?.setAnimation(animations[0], rootNode);
+                }
                 setNewState(gltfState);
             }
         }
@@ -270,27 +302,37 @@ export default function Home() {
         initializeGL();
     }, [canvasRef.current]);
 
-    useEffect(() => {
-        // change the animation and rootNode of animationRunner
+    const handleNextFrame = () => {
         const animationRunner = animationRunnerRef.current;
-        const gltfState = gltfStateRef.current;
-
-        if (!gltfState) {
+        if (!animationRunner) {
             return;
         }
+        animationRunner.nextFrame();
+    }
 
-        const scene = gltfState.CurrentScene;
-        const rootNode = scene?.getRoot(0);
-        const animations = gltfState.animations;
-
-        if (!rootNode || !animations) {
+    const handlePrevFrame = () => {
+        const animationRunner = animationRunnerRef.current;
+        if (!animationRunner) {
             return;
         }
+        animationRunner.prevFrame();
+    }
 
-        if (rootNode && animations && animations.length > 0) {
-            animationRunner?.setAnimation(animations[0], rootNode);
+    const handleFirstFrame = () => {
+        const animationRunner = animationRunnerRef.current;
+        if (!animationRunner) {
+            return;
         }
-    }, [gltfStateRef])
+        animationRunner.firstFrame();
+    }
+
+    const handleLastFrame = () => {
+        const animationRunner = animationRunnerRef.current;
+        if (!animationRunner) {
+            return;
+        }
+        animationRunner.lastFrame();
+    }
 
     return (
         <main className="flex flex-col h-screen w-full bg-[#F2FBFA]">
@@ -346,16 +388,16 @@ export default function Home() {
                         <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button>Next</Button>
+                                <Button onClick={() => handleNextFrame()}>Next</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button>Prev</Button>
+                                <Button onClick={() => handlePrevFrame()}>Prev</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button>First</Button>
+                                <Button onClick={() => handleFirstFrame()}>First</Button>
                             </div>
                             <div className="flex flex-row justify-center items-center text-center">
-                                <Button>Last</Button>
+                                <Button onClick={() => handleLastFrame()}>Last</Button>
                             </div>
                         </div>
                     </div>
