@@ -2,7 +2,7 @@ import { GLTFParser } from "../GLTFParser";
 import { GLTFState } from "../GLTFState";
 import { Scene } from "../Scene";
 import { AnimationClip } from "../components/animations";
-import { Camera } from "../components/cameras/Camera";
+import { FileUtil } from "@/lib/utils/FileUtil";
 
 export abstract class Model {
     private _scene: Scene;

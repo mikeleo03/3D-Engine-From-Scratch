@@ -1,4 +1,4 @@
-class FileUtil {
+export class FileUtil {
   static downloadFile(file: File) {
     // Create a temporary URL for the File object
     const url = window.URL.createObjectURL(file);

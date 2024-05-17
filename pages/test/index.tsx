@@ -47,6 +47,9 @@ export default function Page() {
       // );
 
       const model = new JojoModel();
+
+      console.log(model.scene.nodes)
+      // model.download();
     };
 
     initializeGL();

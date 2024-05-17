@@ -8,17 +8,19 @@ export class ShaderMaterial {
 
     private _name: string;
     private _id: string = "M" + (ShaderMaterial.idCounter++).toString();
+    private _type: string;
     private _vertexShader: string;
     private _fragmentShader: string;
     private _uniforms: { [key: string]: any } = {};
     private _programInfo: ProgramInfo | null = null;
 
     constructor(options: MaterialType) {
-        const { name, vertexShader, fragmentShader, uniforms } = options;
+        const { name, vertexShader, fragmentShader, uniforms, type } = options;
         this._name = name || "Shader Material";
         this._vertexShader = vertexShader || '';
         this._fragmentShader = fragmentShader || '';
         this._uniforms = uniforms || {};
+        this._type = type;
     }
 
     get id() {
@@ -64,7 +66,7 @@ export class ShaderMaterial {
     }
 
     get type() {
-        return 'Shader Material';
+        return this._type;
     }
 
     set programInfo(programInfo: ProgramInfo) {
