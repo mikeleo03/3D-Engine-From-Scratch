@@ -173,7 +173,7 @@ export class SceneNode {
         // NOTE: children are not set here
 
         const node = new SceneNode(
-            new Vector3(raw.transalation[0], raw.transalation[1], raw.transalation[2]),
+            new Vector3(raw.translation[0], raw.translation[1], raw.translation[2]),
             new Quaternion(raw.rotation[0], raw.rotation[1], raw.rotation[2], raw.rotation[3]),
             new Vector3(raw.scale[0], raw.scale[1], raw.scale[2]),
             null,
@@ -203,7 +203,7 @@ export class SceneNode {
         }
 
         return {
-            transalation: this._position.toArray(),
+            translation: this._position.toArray(),
             rotation: this.rotation.toArray(),
             scale: this._scale.toArray(),
             children: this._children.map(child => nodeMap.get(child)!!),
