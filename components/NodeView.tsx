@@ -17,7 +17,7 @@ export default function NodeView({
     };
 
     return (
-        <div className='ml-4'>
+        <div className='ml-4' key={node.id}>
             <div className='flex flex-row gap-1'>
                 <button onClick={handleToggle} style={{ cursor: 'pointer' }}>
                     {isOpen ? '▼' : '▶'}
