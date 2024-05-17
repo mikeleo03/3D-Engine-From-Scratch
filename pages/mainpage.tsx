@@ -118,8 +118,32 @@ export default function Home() {
         }
     };
 
-    const handleCameraModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
-        setCamera(prevState => ({ ...prevState, type: (e.target as HTMLSelectElement).value as CameraTypeString }));
+    const changeCurrentCamera = (type: CameraTypeString) => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        const cameras = currentScene.cameras;
+
+        for (const cameraNode of cameras) {
+            if (cameraNode.camera && cameraNode.camera.type === type) {
+                currentScene.setActiveCameraNode(cameraNode);
+                break;
+            }
+        }
+
+        console.log(currentScene.getActiveCameraNode()?.camera)
+    }
+
+    const handleCameraModeChange = (type: string) => {
+       
+        const value = type as CameraTypeString;
+
+        setCamera(prevState => ({ ...prevState, type: value }));
+
+        changeCurrentCamera(value);
     };
 
     const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -176,6 +200,29 @@ export default function Home() {
         });
     }
 
+    const setCurrentCamera = () => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        const cameraNode = currentScene.getActiveCameraNode();
+
+        if (!cameraNode) {
+            return;
+        }
+
+        const camera = cameraNode.camera;
+
+        if (!camera) {
+            return;
+        }
+
+        // todo: UPDATE distance dan angle
+        setCamera(prevState => ({ ...prevState, type: camera.type }));
+    }
+
     const setNewState = (newState: GLTFState) => {
         gltfStateRef.current = newState;
 
@@ -191,6 +238,8 @@ export default function Home() {
                 newState.addNodeToScene(node, currentScene);
             }
         }
+
+        setCurrentCamera();
 
         for (const root of currentScene.roots) {
             if (!root.camera) {
@@ -570,11 +619,11 @@ export default function Home() {
                     <div className="w-full p-6 py-4">
                         <div className="text-lg font-semibold pb-2">📷 Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
-                        <Select value={camera.type}>
+                        <Select value={camera.type} onValueChange={handleCameraModeChange}>
                             <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
-                            <SelectContent onChange={handleCameraModeChange}>
+                            <SelectContent>
                                 <SelectItem value={CameraTypeString.ORTHOGRAPHIC}>Orthographic</SelectItem>
                                 <SelectItem value={CameraTypeString.OBLIQUE}>Oblique</SelectItem>
                                 <SelectItem value={CameraTypeString.PERSPECTIVE}>Perspective</SelectItem>

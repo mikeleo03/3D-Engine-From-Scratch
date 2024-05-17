@@ -1,4 +1,5 @@
 import { SceneNode } from "./SceneNode";
+import { Camera } from "./components/cameras/Camera";
 import { SceneType } from "./types/gltftypes";
 
 export class Scene {
