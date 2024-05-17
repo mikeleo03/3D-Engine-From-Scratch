@@ -76,8 +76,10 @@ export class GLRenderer {
         for (const node of nodes) {
             const defaultUniform = {
                 viewMatrix: camera.getProjectionMatrix().buffer,
-                cameraPosition
+                cameraPosition: cameraPosition
             }
+
+            console.log(camera.getProjectionMatrix());
 
             this.renderRoot(node, defaultUniform);
         }
