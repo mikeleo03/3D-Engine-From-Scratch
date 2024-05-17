@@ -176,8 +176,7 @@ export class AnimationRunner {
           node.position = new Vector3(keyframe.translation[0], keyframe.translation[1], keyframe.translation[2]);
         }
         if (keyframe.rotation) {
-          const eulerVec = new Vector3(keyframe.rotation[0], keyframe.rotation[1], keyframe.rotation[2]);
-          node.rotation = Quaternion.fromEuler(eulerVec);
+          node.rotation = Quaternion.fromDegrees(keyframe.rotation[0], keyframe.rotation[1], keyframe.rotation[2]);
         }
         if (keyframe.scale) {
           node.scale = new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2]);
