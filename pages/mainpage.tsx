@@ -208,7 +208,7 @@ export default function Home() {
     }, [canvasRef.current]);
 
     return (
-        <main className="flex flex-col min-h-screen w-full bg-[#F2FBFA]">
+        <main className="flex flex-col h-screen w-full bg-[#F2FBFA]">
             {/* Header Section */}
             <div className="bg-gray-800 w-full h-[8vh] sticky top-0 z-50 text-white flex justify-between">
                 {/* Title Section */}
@@ -237,9 +237,9 @@ export default function Home() {
             </div>
 
             {/* Navigation section */}
-            <div className="w-full flex flex-row h-full overlow-y-auto">
+            <div className="w-full flex flex-row h-auto overlow-y-auto">
                 {/* Left controller */}
-                <div className="w-1/4 bg-gray-700 h-auto overlow-y-auto text-white">
+                <div className="w-1/4 bg-gray-700 h-full min-h-[92vh] max-h-[120vh] overlow-y-auto text-white">
                     {/* Animation */}
                     <div className="w-full p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
@@ -295,7 +295,7 @@ export default function Home() {
                 <canvas ref={canvasRef} className="w-1/2 h-auto"/>
 
                 {/* Right controller */}
-                <div className="w-1/4 bg-gray-700 overlow-y-auto text-white h-auto">
+                <div className="w-1/4 bg-gray-700 overlow-y-auto text-white h-full min-h-[92vh] max-h-[120vh]">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
