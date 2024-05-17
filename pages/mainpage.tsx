@@ -20,6 +20,7 @@ import { JojoModel } from '@/lib/data/models/JojoModel';
 import { Scene } from '@/lib/data/Scene';
 import { GLTFParser } from '@/lib/data/GLTFParser';
 import { RenderManager } from '@/lib/rendering/RenderManager';
+import { FileUtil } from '@/lib/utils/FileUtil';
 import {AnimationRunner} from "@/lib/data/components/animations";
 
 type Axis = 'x' | 'y' | 'z';
@@ -60,7 +61,6 @@ export default function Home() {
     const gltfStateRef = useRef<GLTFState>();
     const cameraNodesRef = useRef<SceneNode[]>([]);
     const animationRunnerRef = useRef<AnimationRunner>();
-
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         const value = parseFloat(e.target.value);
@@ -130,8 +130,11 @@ export default function Home() {
                     return;
                 }
 
-                for (const node in cameraNodesRef.current) {
-                    gltfState.addNodeToScene(cameraNodesRef.current[node], currentScene);
+                for (const node of cameraNodesRef.current) {
+                    const currentScene = gltfState.CurrentScene;
+                    if (!currentScene.hasCamera(node.camera!!.type)) {
+                        gltfState.addNodeToScene(node, currentScene);
+                    }
                 }
 
                 renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
@@ -149,12 +152,8 @@ export default function Home() {
         }
 
         const gltf = gltfParser.write(gltfState);
-        const blob = new Blob([gltf], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "scene.gltf";
-        a.click();
+
+        FileUtil.downloadFile(gltf);
     }
 
     useEffect(() => {
@@ -234,7 +233,7 @@ export default function Home() {
     }, [gltfStateRef])
 
     return (
-        <main className="flex flex-col min-h-screen w-full bg-[#F2FBFA]">
+        <main className="flex flex-col h-screen w-full bg-[#F2FBFA]">
             {/* Header Section */}
             <div className="bg-gray-800 w-full h-[8vh] sticky top-0 z-50 text-white flex justify-between">
                 {/* Title Section */}
@@ -263,9 +262,9 @@ export default function Home() {
             </div>
 
             {/* Navigation section */}
-            <div className="w-full flex flex-row h-full overlow-y-auto">
+            <div className="w-full flex flex-row h-auto overlow-y-auto">
                 {/* Left controller */}
-                <div className="w-1/4 bg-gray-700 h-auto overlow-y-auto text-white">
+                <div className="w-1/4 bg-gray-700 h-full min-h-[92vh] max-h-[120vh] overlow-y-auto text-white">
                     {/* Animation */}
                     <div className="w-full p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
@@ -318,10 +317,10 @@ export default function Home() {
                 </div>
 
                 {/* Canvas */}
-                <canvas ref={canvasRef} className="w-1/2 h-auto"/>
+                <canvas ref={canvasRef} className="w-1/2 h-full min-h-[92vh] max-h-[120vh]"/>
 
                 {/* Right controller */}
-                <div className="w-1/4 bg-gray-700 overlow-y-auto text-white h-auto">
+                <div className="w-1/4 bg-gray-700 overlow-y-auto text-white h-full min-h-[92vh] max-h-[120vh]">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>

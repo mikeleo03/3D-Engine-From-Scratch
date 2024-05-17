@@ -1,4 +1,4 @@
-import { CameraType } from "../../types/gltftypes";
+import { CameraType, CameraTypeString } from "../../types/gltftypes";
 import { Camera } from "./Camera";
 import { ObliqueCamera } from "./ObliqueCamera";
 import { OrthographicCamera } from "./OrthographicCamera";
@@ -6,7 +6,7 @@ import { PerspectiveCamera } from "./PerspectiveCamera";
 
 export class CameraUtil {
     static fromRaw(raw: CameraType): Camera { 
-        if (raw.type === "perspective") {
+        if (raw.type === CameraTypeString.PERSPECTIVE) {
             return new PerspectiveCamera(
                 raw.perspective.aspectRatio,
                 raw.perspective.yfov,
@@ -14,7 +14,7 @@ export class CameraUtil {
                 raw.perspective.zfar
             );
         }
-        else if (raw.type === "orthographic") {
+        else if (raw.type === CameraTypeString.ORTHOGRAPHIC) {
             return new OrthographicCamera(
                 raw.orthographic.top,
                 raw.orthographic.bottom,
@@ -25,7 +25,7 @@ export class CameraUtil {
                 raw.orthographic.angle
             );
         }
-        else if (raw.type === "oblique") {
+        else if (raw.type === CameraTypeString.OBLIQUE) {
             return new ObliqueCamera(
                 raw.oblique.top,
                 raw.oblique.bottom,

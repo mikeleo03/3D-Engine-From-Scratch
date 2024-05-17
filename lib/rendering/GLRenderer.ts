@@ -72,7 +72,7 @@ export class GLRenderer {
         const cameraPosition = cameraNode.position.buffer;
 
         const nodes = scene.roots;
-        console.log(canvas.width, canvas.height)
+    
         for (const node of nodes) {
             const defaultUniform = {
                 viewMatrix: camera.getProjectionMatrix().buffer,
