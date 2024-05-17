@@ -15,7 +15,7 @@ export default function Page() {
       const { GLContainer } = await import('@/lib/cores/GLContainer');
       const { OrthographicCamera } = await import('@/lib/data/components/cameras/OrthographicCamera');
       const { GLRenderer } = await import('@/lib/rendering/GLRenderer');
-      const { JojoModel } = await import('@/lib/data/models/JojoModel');
+      const { LeonModel } = await import('@/lib/data/models/LeonModel');
       const { RenderManager} = await import('@/lib/rendering/RenderManager');
 
       const glContainer = new GLContainer(canvas);
@@ -46,7 +46,7 @@ export default function Page() {
       //   20
       // );
 
-      const model = new JojoModel();
+      const model = new LeonModel();
 
       console.log(model.scene.nodes)
     

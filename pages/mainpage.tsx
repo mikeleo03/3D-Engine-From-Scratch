@@ -63,52 +63,54 @@ export default function Home() {
     const currentNodeRef = useRef<SceneNode>();
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
-        const value = parseFloat(e.target.value);
+        if (e.target.value !== null && e.target.value !== undefined) {
+            const value = parseFloat(e.target.value);
 
-        let newValue = { x: 0, y: 0, z: 0 };
+            let newValue = { x: 0, y: 0, z: 0 };
 
-        if (type === 'translation') {
-            setTranslation(prevState => {
-                newValue = { ...prevState, [axis]: value };
-                return newValue; 
-            });
-        } 
-        
-        else if (type === 'rotation') {
-            setRotation(prevState => {
-                newValue = { ...prevState, [axis]: value };
-                return newValue;
-            });
-        } 
-        
-        else if (type === 'scale') {
-            setScale(prevState => {
-                newValue = { ...prevState, [axis]: value };
-                return newValue;
-            });
-        }
+            if (e.target.value !== '') {
+                if (type === 'translation') {
+                    setTranslation(prevState => {
+                        newValue = { ...prevState, [axis]: value };
+                        return newValue; 
+                    });
+                } 
+                
+                else if (type === 'rotation') {
+                    setRotation(prevState => {
+                        newValue = { ...prevState, [axis]: value };
+                        return newValue;
+                    });
+                } 
+                
+                else if (type === 'scale') {
+                    setScale(prevState => {
+                        newValue = { ...prevState, [axis]: value };
+                        return newValue;
+                    });
+                }
+    
+                else {
+                    throw new Error("Invalid TRS type");
+                }
+            }
 
-        else {
-            throw new Error("Invalid TRS type");
-        }
+            // Process the value
+            if (!currentNodeRef.current) {
+                return;
+            }
 
+            if (type === 'translation') {
+                currentNodeRef.current.position = new Vector3(newValue.x, newValue.y, newValue.z);
+            }
 
-        // Process the value
+            if (type === 'rotation') {
+                currentNodeRef.current.rotation = Quaternion.fromDegrees(newValue.x, newValue.y, newValue.z);
+            }
 
-        if (!currentNodeRef.current) {
-            return;
-        }
-
-        if (type === 'translation') {
-            currentNodeRef.current.position = new Vector3(newValue.x, newValue.y, newValue.z);
-        }
-
-        if (type === 'rotation') {
-            currentNodeRef.current.rotation = Quaternion.fromDegrees(newValue.x, newValue.y, newValue.z);
-        }
-
-        if (type === 'scale') {
-            currentNodeRef.current.scale = new Vector3(newValue.x, newValue.y, newValue.z);
+            if (type === 'scale') {
+                currentNodeRef.current.scale = new Vector3(newValue.x, newValue.y, newValue.z);
+            }
         }
     };
 
