@@ -20,6 +20,7 @@ import { JojoModel } from '@/lib/data/models/JojoModel';
 import { Scene } from '@/lib/data/Scene';
 import { GLTFParser } from '@/lib/data/GLTFParser';
 import { RenderManager } from '@/lib/rendering/RenderManager';
+import {AnimationRunner} from "@/lib/data/components/animations";
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -58,6 +59,7 @@ export default function Home() {
     const renderManagerRef = useRef<RenderManager>();
     const gltfStateRef = useRef<GLTFState>();
     const cameraNodesRef = useRef<SceneNode[]>([]);
+    const animationRunnerRef = useRef<AnimationRunner>();
 
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
@@ -198,14 +200,38 @@ export default function Home() {
             ]
             
             const glRenderer = new GLRenderer(glContainer);
+            const animationRunner = new AnimationRunner();
 
             glContainerRef.current = glContainer;
             glRendererRef.current = glRenderer;
             cameraNodesRef.current = cameraNodes;
+            animationRunnerRef.current = animationRunner;
         };
     
         initializeGL();
     }, [canvasRef.current]);
+
+    useEffect(() => {
+        // change the animation and rootNode of animationRunner
+        const animationRunner = animationRunnerRef.current;
+        const gltfState = gltfStateRef.current;
+
+        if (!gltfState) {
+            return;
+        }
+
+        const scene = gltfState.CurrentScene;
+        const rootNode = scene?.getRoot(0);
+        const animations = gltfState.animations;
+
+        if (!rootNode || !animations) {
+            return;
+        }
+
+        if (rootNode && animations && animations.length > 0) {
+            animationRunner?.setAnimation(animations[0], rootNode);
+        }
+    }, [gltfStateRef])
 
     return (
         <main className="flex flex-col min-h-screen w-full bg-[#F2FBFA]">
