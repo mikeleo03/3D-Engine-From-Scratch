@@ -5,8 +5,9 @@ import { AnimationClipType, AnimationPathType, AnimationTRS } from '../types/glt
 
 
 export type AnimationPath = {
+  node?: SceneNode;
   keyframe?: AnimationTRS;
-  children?: SceneNode[];
+  children?: AnimationPath[];
 }
 
 export type AnimationClip = {
@@ -64,7 +65,7 @@ export class AnimationRunner {
   isLoop: boolean = false;
   fps: number = 30;
   easeFunction: EasingFunction = EasingFunction.LINEAR;
-  private root: SceneNode;
+  root: SceneNode;
   private currentFrame: number = 0;
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
@@ -170,31 +171,8 @@ export class AnimationRunner {
     this.traverseAndUpdate(this.root, frame);
   }
 
-  // TODO: remove the update of the child as well since the child follows the parent (wait for live environment for testing)
+  // TODO: awikwok
   private traverseAndUpdate(node: SceneNode, frame: AnimationPath) {
-    // update the node based on the frame
-    if (frame.keyframe) {
-      if (frame.keyframe.translation) {
-        node.position = new Vector3(frame.keyframe.translation[0], frame.keyframe.translation[1], frame.keyframe.translation[2]);
-      }
-      if (frame.keyframe.rotation) {
-        const eulerVec = new Vector3(frame.keyframe.rotation[0], frame.keyframe.rotation[1], frame.keyframe.rotation[2]);
-        node.rotation = Quaternion.fromEuler(eulerVec);
-      }
-      if (frame.keyframe.scale) {
-        node.scale = new Vector3(frame.keyframe.scale[0], frame.keyframe.scale[1], frame.keyframe.scale[2]);
-      }
-    }
 
-    // // recursive approach to apply the frame to the children
-    // if (frame.children && node.children) {
-    //   for (let i = 0; i < node.children.length; i++) {
-    //     const child = node.children[i];
-    //     const childFrame = frame.children[i];
-    //     if (child && childFrame) {
-    //       this.traverseAndUpdate(child, childFrame);
-    //     }
-    //   }
-    // }
   }
 }
