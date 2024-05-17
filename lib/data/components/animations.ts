@@ -163,11 +163,26 @@ export class AnimationRunner {
     // update the scene graph based on the current frame
     const frame = this.frame;
     // use root as the parent and traverse according to the frame
-    this.traverseAndUpdate(this.root, frame);
+    this.traverseAndUpdate(frame);
   }
 
-  // TODO: awikwok
-  private traverseAndUpdate(node: SceneNode, frame: AnimationPath) {
+  private traverseAndUpdate(frame: AnimationPath) {
+    if (frame.nodeKeyframePairs) {
+      for (let pair of frame.nodeKeyframePairs) {
+        const node = pair.node;
+        const keyframe = pair.keyframe;
 
+        if (keyframe.translation) {
+          node.position = new Vector3(keyframe.translation[0], keyframe.translation[1], keyframe.translation[2]);
+        }
+        if (keyframe.rotation) {
+          const eulerVec = new Vector3(keyframe.rotation[0], keyframe.rotation[1], keyframe.rotation[2]);
+          node.rotation = Quaternion.fromEuler(eulerVec);
+        }
+        if (keyframe.scale) {
+          node.scale = new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2]);
+        }
+      }
+    }
   }
 }
