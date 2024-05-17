@@ -62,6 +62,12 @@ export class Quaternion {
         );
     }
 
+    static fromDegrees(x: number, y: number, z: number): Quaternion {
+        const euler = new Vector3(x, y, z).mul(Math.PI / 180);
+
+        return Quaternion.fromEuler(euler);
+    }
+
     static fromMatrix4(m: Matrix4): Quaternion {
         const m00 = m.get(0, 0);
         const m01 = m.get(0, 1);
