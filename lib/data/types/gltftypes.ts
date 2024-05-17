@@ -157,8 +157,7 @@ export type AnimationTRS = {
   }
   
 export type AnimationPathType = {
-    keyframe?: AnimationTRS;
-    children?: number[]
+    nodeKeyframePairs?: Array<{node: number, keyframe: AnimationTRS}>
 }
 export type AnimationClipType = {
     name: string;

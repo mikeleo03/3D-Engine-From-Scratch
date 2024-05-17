@@ -5,9 +5,7 @@ import { AnimationClipType, AnimationPathType, AnimationTRS } from '../types/glt
 
 
 export type AnimationPath = {
-  node?: SceneNode;
-  keyframe?: AnimationTRS;
-  children?: AnimationPath[];
+  nodeKeyframePairs?: Array<{node: SceneNode, keyframe: AnimationTRS}>
 }
 
 export type AnimationClip = {
@@ -17,20 +15,17 @@ export type AnimationClip = {
 
 export class AnimationPathUtil {
   static fromRaw(raw: AnimationPathType, nodes: SceneNode[]): AnimationPath {
-      return {
-        keyframe: raw.keyframe,
-        children: raw.children ? raw.children.map(child => nodes[child]) : undefined,
-      }
-  }
-
-  static toRaw(path: AnimationPath, nodeMap: Map<SceneNode, number>): AnimationPathType {
-    const children = path.children ? path.children.map(child => nodeMap.get(child)!!) : undefined;
     return {
-      keyframe: path.keyframe,
-      children: children
+      nodeKeyframePairs: raw.nodeKeyframePairs ? raw.nodeKeyframePairs.map(pair => ({node: nodes[pair.node], keyframe: pair.keyframe})) : undefined,
     }
   }
 
+  static toRaw(path: AnimationPath, nodeMap: Map<SceneNode, number>): AnimationPathType {
+    const nodeKeyframePairs = path.nodeKeyframePairs ? path.nodeKeyframePairs.map(pair => ({node: nodeMap.get(pair.node)!!, keyframe: pair.keyframe})) : undefined;
+    return {
+      nodeKeyframePairs: nodeKeyframePairs
+    }
+  }
 }
 
 export class AnimationClipUtil {
