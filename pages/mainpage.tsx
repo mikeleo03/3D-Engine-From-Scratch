@@ -16,14 +16,11 @@ import { GLContainer } from '@/lib/cores';
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from '@/lib/data/components/cameras';
 import { SceneNode } from '@/lib/data/SceneNode';
 import { GLRenderer } from '@/lib/rendering/GLRenderer';
-import { JojoModel } from '@/lib/data/models/JojoModel';
-import { Scene } from '@/lib/data/Scene';
 import { GLTFParser } from '@/lib/data/GLTFParser';
 import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
-import { assert } from 'console';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -159,7 +156,7 @@ export default function Home() {
         });
 
         const degrees = currentNodeRef.current.rotation.toDegrees();
-
+       
         setRotation({
             x: degrees.X,
             y: degrees.Y,
