@@ -23,9 +23,9 @@ void main() {
     vec3 specular = kSpec * u_specularColor.rgb / 255.0;
 
     gl_FragColor = (v_color / 255.0) * vec4(
-        0.1 * u_ambientColor.a * u_ambientColor.rgb / 255.0 + 
-        u_diffuseColor.a * diffuse +
-        u_specularColor.a * specular
+        0.1 * u_ambientColor.a / 255.0 * u_ambientColor.rgb / 255.0 + 
+        u_diffuseColor.a / 255.0 * diffuse +
+        u_specularColor.a / 255.0 * specular
     , 1.0);
 }
 `;
