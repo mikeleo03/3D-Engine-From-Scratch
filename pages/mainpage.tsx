@@ -22,6 +22,7 @@ import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
 import { CameraTypeString } from '@/lib/data/types/gltftypes';
+import NodeView from '@/components/NodeView';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -173,6 +174,15 @@ export default function Home() {
     const handleEasingModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
         setEasingMode({ mode: (e.target as HTMLSelectElement).value });
     };
+
+    const handleNodeChange = (node: SceneNode) => {
+        if (node.camera) {
+            return;
+        }
+        
+        currentNodeRef.current = node;
+        setCurrentTRS();
+    }
 
     const setCurrentTRS = () => {
         if (!currentNodeRef.current) {
@@ -466,7 +476,11 @@ export default function Home() {
                     {/* Tree */}
                     <div className="w-full h-auto p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
-
+                        <div className="flex flex-col w-full h-auto px-3 overflow-x-hidden">
+                            {gltfStateRef.current && gltfStateRef.current.CurrentScene && gltfStateRef.current.CurrentScene.roots.map((root, index) => (
+                                <NodeView key={index} node={root} clickCallback={handleNodeChange} />
+                            ))}
+                        </div>
                     </div>
                 </div>
 

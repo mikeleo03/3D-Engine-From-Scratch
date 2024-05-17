@@ -62,6 +62,8 @@ export class SceneNode {
 
 
     // Public getter, prevent re-instance new object
+    get id() { return this._id; }
+    get name() { return this._name; }
     get position() { return this._position; }
     get rotation() { return this._rotation; }
     get scale() { return this._scale; }
@@ -92,6 +94,10 @@ export class SceneNode {
     set scale(scale) {
         this._scale = scale;
         this.computeWorldMatrix(false, true);
+    }
+
+    set name(name) {
+        this._name = name;
     }
 
     translate(translation: Vector3) {
