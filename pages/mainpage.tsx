@@ -21,7 +21,8 @@ import { Scene } from '@/lib/data/Scene';
 import { GLTFParser } from '@/lib/data/GLTFParser';
 import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
-import {AnimationRunner} from "@/lib/data/components/animations";
+import { AnimationRunner } from "@/lib/data/components/animations";
+import { Quaternion, Vector3 } from '@/lib/data/math';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -61,6 +62,7 @@ export default function Home() {
     const gltfStateRef = useRef<GLTFState>();
     const cameraNodesRef = useRef<SceneNode[]>([]);
     const animationRunnerRef = useRef<AnimationRunner>();
+    const currentNodeRef = useRef<SceneNode>();
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         const value = parseFloat(e.target.value);
@@ -76,11 +78,27 @@ export default function Home() {
         console.log(rotation);
         console.log(scale);
         // Process the value
+
+        if (!currentNodeRef.current) {
+            return;
+        }
+
+        if (type === 'translation') {
+            currentNodeRef.current.position = new Vector3(translation.x, translation.y, translation.z);
+        }
+
+        if (type === 'rotation') {
+            currentNodeRef.current.rotation = Quaternion.fromDegrees(rotation.x, rotation.y, rotation.z);
+        }
+
+        if (type === 'scale') {
+            currentNodeRef.current.scale = new Vector3(scale.x, scale.y, scale.z);
+        }
     };
 
     const handleCameraModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
         setCamera(prevState => ({ ...prevState, mode: (e.target as HTMLSelectElement).value }));
-    };        
+    };
 
     const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
         setCamera(prevState => ({ ...prevState, distance: parseInt(e.target.value) }));
@@ -93,7 +111,7 @@ export default function Home() {
     const toggleShader = () => {
         setShader(prevState => ({ enabled: !prevState.enabled }));
     };
-    
+
     const togglePlay = () => {
         setIsPlaying(prevState => !prevState);
     };
@@ -110,6 +128,64 @@ export default function Home() {
         setEasingMode({ mode: (e.target as HTMLSelectElement).value });
     };
 
+    const setCurrentTRS = () => {
+        if (!currentNodeRef.current) {
+            return;
+        }
+
+        setTranslation({
+            x: currentNodeRef.current.position.X,
+            y: currentNodeRef.current.position.Y,
+            z: currentNodeRef.current.position.Z
+        });
+
+        const degrees = currentNodeRef.current.rotation.toDegrees();
+
+        setRotation({
+            x: degrees.X,
+            y: degrees.Y,
+            z: degrees.Z
+        });
+
+        setScale({
+            x: currentNodeRef.current.scale.X,
+            y: currentNodeRef.current.scale.Y,
+            z: currentNodeRef.current.scale.Z
+        });
+    }
+
+    const setNewState = (newState: GLTFState) => {
+        gltfStateRef.current = newState;
+
+        const currentScene = newState.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        for (const node of cameraNodesRef.current) {
+            const currentScene = newState.CurrentScene;
+            if (!currentScene.hasCamera(node.camera!!.type)) {
+                newState.addNodeToScene(node, currentScene);
+            }
+        }
+
+        for (const root of currentScene.roots) {
+            if (!root.camera) {
+                currentNodeRef.current = root;
+                setCurrentTRS();
+                break;
+            }
+        }
+
+        if (renderManagerRef.current) {
+            renderManagerRef.current.stop();
+        }
+
+        renderManagerRef.current = new RenderManager(newState, glRendererRef.current!!);
+        renderManagerRef.current.loop();
+    }
+
     const importFile = async () => {
         const input = document.createElement("input");
         input.type = "file";
@@ -122,23 +198,7 @@ export default function Home() {
             else {
                 const file = input.files[0];
                 const gltfState = await gltfParser.parse(file)
-                gltfStateRef.current = gltfState;
-
-                const currentScene = gltfState.CurrentScene;
-
-                if (!currentScene) {
-                    return;
-                }
-
-                for (const node of cameraNodesRef.current) {
-                    const currentScene = gltfState.CurrentScene;
-                    if (!currentScene.hasCamera(node.camera!!.type)) {
-                        gltfState.addNodeToScene(node, currentScene);
-                    }
-                }
-
-                renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
-                renderManagerRef.current.loop();
+                setNewState(gltfState);
             }
         }
 
@@ -158,14 +218,14 @@ export default function Home() {
 
     useEffect(() => {
         const canvas = canvasRef.current;
-    
+
         if (!canvas) {
-          return;
+            return;
         }
-    
+
         const initializeGL = async () => {
             const glContainer = new GLContainer(canvas);
-        
+
             const orthographicCamera = new OrthographicCamera(
                 1,
                 -1,
@@ -197,7 +257,7 @@ export default function Home() {
                 new SceneNode(undefined, undefined, undefined, undefined, undefined, perspectiveCamera),
                 new SceneNode(undefined, undefined, undefined, undefined, undefined, obliqueCamera)
             ]
-            
+
             const glRenderer = new GLRenderer(glContainer);
             const animationRunner = new AnimationRunner();
 
@@ -206,7 +266,7 @@ export default function Home() {
             cameraNodesRef.current = cameraNodes;
             animationRunnerRef.current = animationRunner;
         };
-    
+
         initializeGL();
     }, [canvasRef.current]);
 
@@ -242,13 +302,13 @@ export default function Home() {
                 {/* Save and Load Section */}
                 <div className="flex items-center">
                     {/* Separator */}
-                    <Separator className="h-full w-[1px]"/>
-                    
+                    <Separator className="h-full w-[1px]" />
+
                     {/* Load Button */}
                     <Button onClick={importFile} className="h-full w-full border-none rounded-0">⬆️ Load</Button>
 
                     {/* Separator */}
-                    <Separator className="h-full w-[1px]"/>
+                    <Separator className="h-full w-[1px]" />
 
                     {/* Clear Button */}
                     <Button onClick={exportFile} className="h-full w-full border-none rounded-0">💾 Save</Button>
@@ -264,9 +324,9 @@ export default function Home() {
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
                         <div className="text-base font-semibold pb-1">Animation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
-                                <Button onClick={togglePlay}>{isPlaying ? '⏸️ Pause' : '▶️ Play'}</Button>
-                                <Button onClick={toggleReverse}>{isReversing ? '⏭ Forward' : '⏮ Reverse'}</Button>
-                                <Button onClick={toggleLoop}>{isLooping ? '🔂 Stop' : '🔁 Loop'}</Button>
+                            <Button onClick={togglePlay}>{isPlaying ? '⏸️ Pause' : '▶️ Play'}</Button>
+                            <Button onClick={toggleReverse}>{isReversing ? '⏭ Forward' : '⏮ Reverse'}</Button>
+                            <Button onClick={toggleLoop}>{isLooping ? '🔂 Stop' : '🔁 Loop'}</Button>
                         </div>
                         <div className="text-base font-semibold py-1">Easing Functions</div>
                         <Select>
@@ -301,18 +361,18 @@ export default function Home() {
                     </div>
 
                     {/* Separator */}
-                    <Separator className="w-full"/>
+                    <Separator className="w-full" />
 
                     {/* Tree */}
                     <div className="w-full h-auto p-6 py-4 pt-4">
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
-                        
+
                     </div>
                 </div>
 
                 {/* Canvas */}
                 <div className='w-auto h-full'>
-                    <canvas ref={canvasRef} className="h-full w-full"/>
+                    <canvas ref={canvasRef} className="h-full w-full" />
                 </div>
 
                 {/* Right controller */}
@@ -440,7 +500,7 @@ export default function Home() {
                     </div>
 
                     {/* Separator */}
-                    <Separator className="w-full"/>
+                    <Separator className="w-full" />
 
                     {/* Camera */}
                     <div className="w-full p-6 py-4">
@@ -481,7 +541,7 @@ export default function Home() {
                     </div>
 
                     {/* Separator */}
-                    <Separator className="w-full"/>
+                    <Separator className="w-full" />
 
                     {/* Scene */}
                     <div className="text-base font-semibold py-2 flex flex-row justify-between w-full p-6 py-4">
