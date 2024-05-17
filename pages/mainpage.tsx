@@ -64,37 +64,40 @@ export default function Home() {
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         if (e.target.value !== null && e.target.value !== undefined) {
-            const value = parseFloat(e.target.value);
+            let value = parseFloat(e.target.value);
 
             let newValue = { x: 0, y: 0, z: 0 };
 
-            if (e.target.value !== '') {
-                if (type === 'translation') {
-                    setTranslation(prevState => {
-                        newValue = { ...prevState, [axis]: value };
-                        return newValue; 
-                    });
-                } 
-                
-                else if (type === 'rotation') {
-                    setRotation(prevState => {
-                        newValue = { ...prevState, [axis]: value };
-                        return newValue;
-                    });
-                } 
-                
-                else if (type === 'scale') {
-                    setScale(prevState => {
-                        newValue = { ...prevState, [axis]: value };
-                        return newValue;
-                    });
-                }
-    
-                else {
-                    throw new Error("Invalid TRS type");
-                }
+            if (type === 'translation') {
+                setTranslation(prevState => {
+                    newValue = { ...prevState, [axis]: value };
+                    return newValue; 
+                });
+            } 
+            
+            else if (type === 'rotation') {
+                setRotation(prevState => {
+                    newValue = { ...prevState, [axis]: value };
+                    return newValue;
+                });
+            } 
+            
+            else if (type === 'scale') {
+                setScale(prevState => {
+                    newValue = { ...prevState, [axis]: value };
+                    return newValue;
+                });
             }
 
+            else {
+                throw new Error("Invalid TRS type");
+            }
+
+            if (isNaN(value))
+            {
+                return;
+            }
+            
             // Process the value
             if (!currentNodeRef.current) {
                 return;
@@ -449,7 +452,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={translation.x}
+                                        value={isNaN(translation.x) ? '' : translation.x}
                                         onChange={(e) => handleInputChange(e, 'translation', 'x')}
                                     />
                                 </div>
@@ -461,7 +464,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={translation.y}
+                                        value={isNaN(translation.y) ? '' : translation.y}
                                         onChange={(e) => handleInputChange(e, 'translation', 'y')}
                                     />
                                 </div>
@@ -473,7 +476,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={translation.z}
+                                        value={isNaN(translation.z) ? '' : translation.z}
                                         onChange={(e) => handleInputChange(e, 'translation', 'z')}
                                     />
                                 </div>
@@ -488,7 +491,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={rotation.x}
+                                        value={isNaN(rotation.x) ? '' : rotation.x}
                                         onChange={(e) => handleInputChange(e, 'rotation', 'x')}
                                     />
                                 </div>
@@ -500,7 +503,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={rotation.y}
+                                        value={isNaN(rotation.y) ? '' : rotation.y}
                                         onChange={(e) => handleInputChange(e, 'rotation', 'y')}
                                     />
                                 </div>
@@ -512,7 +515,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={rotation.z}
+                                        value={isNaN(rotation.z) ? '' : rotation.z}
                                         onChange={(e) => handleInputChange(e, 'rotation', 'z')}
                                     />
                                 </div>
@@ -527,7 +530,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={scale.x}
+                                        value={isNaN(scale.x) ? '' : scale.x}
                                         onChange={(e) => handleInputChange(e, 'scale', 'x')}
                                     />
                                 </div>
@@ -539,7 +542,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={scale.y}
+                                        value={isNaN(scale.y) ? '' : scale.y}
                                         onChange={(e) => handleInputChange(e, 'scale', 'y')}
                                     />
                                 </div>
@@ -551,7 +554,7 @@ export default function Home() {
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
-                                        value={scale.z}
+                                        value={isNaN(scale.z) ? '' : scale.z}
                                         onChange={(e) => handleInputChange(e, 'scale', 'z')}
                                     />
                                 </div>
