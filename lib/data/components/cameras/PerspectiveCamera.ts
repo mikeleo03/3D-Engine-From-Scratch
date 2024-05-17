@@ -1,17 +1,15 @@
 import { Matrix4 } from "../../math/Matrix4";
-import { CameraType } from "../../types/gltftypes";
+import { CameraType, CameraTypeString } from "../../types/gltftypes";
 import { Camera } from "./Camera";
 
 export class PerspectiveCamera extends Camera {
-    static readonly COMPONENT_NAME: string = "Perspective Camera";
-
     private _aspectRatio: number;
     private _near: number;
     private _far: number;
     private _yfov: number;
 
     constructor(aspectRatio: number, yfov: number, near: number, far: number) {
-        super(Camera.COMPONENT_NAME);
+        super(CameraTypeString.PERSPECTIVE);
 
         this._aspectRatio = aspectRatio;
         this._yfov = yfov;
@@ -60,7 +58,7 @@ export class PerspectiveCamera extends Camera {
 
     override toRaw(): CameraType {
         return {
-            type: "perspective",
+            type: CameraTypeString.PERSPECTIVE,
             perspective: {
                 aspectRatio: this._aspectRatio,
                 yfov: this._yfov,

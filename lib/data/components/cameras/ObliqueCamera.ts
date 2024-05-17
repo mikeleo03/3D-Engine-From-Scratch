@@ -1,10 +1,8 @@
 import { Matrix4 } from "../../math/Matrix4";
-import { CameraType } from "../../types/gltftypes";
+import { CameraType, CameraTypeString } from "../../types/gltftypes";
 import { Camera } from "./Camera";
 
 export class ObliqueCamera extends Camera {
-    static readonly COMPONENT_NAME: string = "Oblique Camera";
-
     private _top: number;
     private _bottom: number;
     private _left: number;
@@ -14,7 +12,7 @@ export class ObliqueCamera extends Camera {
     private _angle: number;
 
     constructor(top: number, bottom: number, left: number, right: number, near: number, far: number, angle: number = 45) {
-        super(Camera.COMPONENT_NAME);
+        super(CameraTypeString.OBLIQUE);
 
         this._top = top;
         this._bottom = bottom;
@@ -107,7 +105,7 @@ export class ObliqueCamera extends Camera {
     
     override toRaw(): CameraType {
         return {
-            type: "oblique",
+            type: CameraTypeString.OBLIQUE,
             oblique: {
                 top: this._top,
                 bottom: this._bottom,

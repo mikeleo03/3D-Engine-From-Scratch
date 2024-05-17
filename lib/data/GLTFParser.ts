@@ -3,7 +3,7 @@ import { GLTFState } from "./GLTFState";
 import { GLTFType } from "./types/gltftypes";
 
 export class GLTFParser {
-    public static readonly DEFAULT_FILENAME = 'data.gltf';
+    public static readonly DEFAULT_FILENAME = 'scene.gltf';
     constructor() {
     }
 

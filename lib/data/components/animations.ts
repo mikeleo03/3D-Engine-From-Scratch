@@ -49,13 +49,13 @@ export class AnimationClipUtil {
 }
 
 export enum EasingFunction {
-  LINEAR = 'linear',
-  SINE = 'sine',
-  QUAD = 'quad',
-  CUBIC = 'cubic',
-  QUART = 'quart',
-  EXPO = 'expo',
-  CIRC = 'circ',
+  LINEAR = 'Linear',
+  SINE = 'Sine',
+  QUAD = 'Quad',
+  CUBIC = 'Cubic',
+  QUART = 'Quart',
+  EXPO = 'Expo',
+  CIRC = 'Circ',
 }
 
 export class AnimationRunner {
@@ -69,10 +69,19 @@ export class AnimationRunner {
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
 
-  constructor(animation: AnimationClip, root: SceneNode, {fps = 30} = {}) {
-    this.currentAnimation = animation;
+  constructor({fps = 30} = {}) {
     this.fps = fps;
-    this.root = root;
+  }
+
+  set animation(clip: AnimationClip) {
+    this.currentAnimation = clip;
+    this.currentFrame = 0;
+    this.deltaFrame = 0;
+    this.updateSceneGraph();
+  }
+
+  set rootScene(scene: SceneNode) {
+    this.root = scene;
   }
 
   get CurrentFrame() {

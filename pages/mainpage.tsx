@@ -20,6 +20,7 @@ import { JojoModel } from '@/lib/data/models/JojoModel';
 import { Scene } from '@/lib/data/Scene';
 import { GLTFParser } from '@/lib/data/GLTFParser';
 import { RenderManager } from '@/lib/rendering/RenderManager';
+import { FileUtil } from '@/lib/utils/FileUtil';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -58,7 +59,6 @@ export default function Home() {
     const renderManagerRef = useRef<RenderManager>();
     const gltfStateRef = useRef<GLTFState>();
     const cameraNodesRef = useRef<SceneNode[]>([]);
-
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         const value = parseFloat(e.target.value);
@@ -128,8 +128,11 @@ export default function Home() {
                     return;
                 }
 
-                for (const node in cameraNodesRef.current) {
-                    gltfState.addNodeToScene(cameraNodesRef.current[node], currentScene);
+                for (const node of cameraNodesRef.current) {
+                    const currentScene = gltfState.CurrentScene;
+                    if (!currentScene.hasCamera(node.camera!!.type)) {
+                        gltfState.addNodeToScene(node, currentScene);
+                    }
                 }
 
                 renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
@@ -147,12 +150,8 @@ export default function Home() {
         }
 
         const gltf = gltfParser.write(gltfState);
-        const blob = new Blob([gltf], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "scene.gltf";
-        a.click();
+        
+        FileUtil.downloadFile(gltf);
     }
 
     useEffect(() => {
