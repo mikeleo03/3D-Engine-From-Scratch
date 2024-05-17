@@ -23,6 +23,7 @@ import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
+import { assert } from 'console';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -66,17 +67,35 @@ export default function Home() {
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         const value = parseFloat(e.target.value);
+
+        let newValue = { x: 0, y: 0, z: 0 };
+
         if (type === 'translation') {
-            setTranslation(prevState => ({ ...prevState, [axis]: value }));
-        } else if (type === 'rotation') {
-            setRotation(prevState => ({ ...prevState, [axis]: value }));
-        } else if (type === 'scale') {
-            setScale(prevState => ({ ...prevState, [axis]: value }));
+            setTranslation(prevState => {
+                newValue = { ...prevState, [axis]: value };
+                return newValue; 
+            });
+        } 
+        
+        else if (type === 'rotation') {
+            setRotation(prevState => {
+                newValue = { ...prevState, [axis]: value };
+                return newValue;
+            });
+        } 
+        
+        else if (type === 'scale') {
+            setScale(prevState => {
+                newValue = { ...prevState, [axis]: value };
+                return newValue;
+            });
         }
 
-        console.log(translation);
-        console.log(rotation);
-        console.log(scale);
+        else {
+            throw new Error("Invalid TRS type");
+        }
+
+
         // Process the value
 
         if (!currentNodeRef.current) {
@@ -84,15 +103,15 @@ export default function Home() {
         }
 
         if (type === 'translation') {
-            currentNodeRef.current.position = new Vector3(translation.x, translation.y, translation.z);
+            currentNodeRef.current.position = new Vector3(newValue.x, newValue.y, newValue.z);
         }
 
         if (type === 'rotation') {
-            currentNodeRef.current.rotation = Quaternion.fromDegrees(rotation.x, rotation.y, rotation.z);
+            currentNodeRef.current.rotation = Quaternion.fromDegrees(newValue.x, newValue.y, newValue.z);
         }
 
         if (type === 'scale') {
-            currentNodeRef.current.scale = new Vector3(scale.x, scale.y, scale.z);
+            currentNodeRef.current.scale = new Vector3(newValue.x, newValue.y, newValue.z);
         }
     };
 
@@ -376,7 +395,7 @@ export default function Home() {
                 </div>
 
                 {/* Right controller */}
-                <div className="w-[300px] bg-gray-700 overflow-y-auto h-full text-white ">
+                <div className="w-[390px] bg-gray-700 overflow-y-auto h-full text-white ">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
