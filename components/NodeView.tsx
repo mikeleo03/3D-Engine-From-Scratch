@@ -1,7 +1,15 @@
 import React from 'react';
 import { SceneNode } from '@/lib/data/SceneNode';
 
-export default function NodeView({ node, clickCallback } : { node: SceneNode, clickCallback: (node: SceneNode) => void }) {
+export default function NodeView({ 
+    node, 
+    clickCallback, 
+    selectedNode 
+} : { 
+    node: SceneNode, 
+    clickCallback: (node: SceneNode) => void 
+    selectedNode?: SceneNode
+}) {
     const [isOpen, setIsOpen] = React.useState(false);
 
     const handleToggle = () => {
@@ -14,13 +22,13 @@ export default function NodeView({ node, clickCallback } : { node: SceneNode, cl
                 <button onClick={handleToggle} style={{ cursor: 'pointer' }}>
                     {isOpen ? '▼' : '▶'}
                 </button>
-                <button onClick={() => {clickCallback(node)}}>{node.name}</button>
+                <button className={`${selectedNode == node ? 'text-blue-500' : ''}`} onClick={() => {clickCallback(node)}}>{node.name}</button>
             </div>
             
             {isOpen && (
                 <div>
                     {node.children.map(child => (
-                        <NodeView key={node.id} node={child} clickCallback={clickCallback} />
+                        <NodeView key={node.id} node={child} clickCallback={clickCallback} selectedNode={selectedNode} />
                     ))}
                 </div>
             )}

@@ -55,6 +55,7 @@ export default function Home() {
     const [isReversing, setIsReversing] = useState(false);
     const [isLooping, setIsLooping] = useState(false);
     const [easingMode, setEasingMode] = useState({ mode: "Linear" });
+    const [currentNode, setCurrentNode] = useState<SceneNode>();
 
     const glContainerRef = useRef<GLContainer>();
     const glRendererRef = useRef<GLRenderer>();
@@ -179,7 +180,7 @@ export default function Home() {
         if (node.camera) {
             return;
         }
-        
+
         currentNodeRef.current = node;
         setCurrentTRS();
     }
@@ -378,6 +379,10 @@ export default function Home() {
         initializeGL();
     }, [canvasRef.current]);
 
+    useEffect(() => {
+        setCurrentNode(currentNodeRef.current);
+    }, [currentNodeRef.current]);
+
     const handleNextFrame = () => {
         for (const animationRunner of animationRunnersRef.current) {
             animationRunner.nextFrame();
@@ -478,7 +483,7 @@ export default function Home() {
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
                         <div className="flex flex-col w-full h-auto px-3 overflow-x-hidden">
                             {gltfStateRef.current && gltfStateRef.current.CurrentScene && gltfStateRef.current.CurrentScene.roots.map((root, index) => (
-                                <NodeView key={index} node={root} clickCallback={handleNodeChange} />
+                                <NodeView key={index} node={root} selectedNode={currentNode} clickCallback={handleNodeChange} />
                             ))}
                         </div>
                     </div>
@@ -658,7 +663,7 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Scene */}
-                    <div className="text-base font-semibold py-2 flex flex-row justify-between w-full p-6 py-4">
+                    <div className="text-base font-semibold flex flex-row justify-between w-full p-6 py-4">
                         <div className="text-lg font-semibold pb-2">🖼️ Scene</div>
                         <div className="flex items-center space-x-3">
                             <Switch
