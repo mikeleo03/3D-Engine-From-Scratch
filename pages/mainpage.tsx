@@ -21,6 +21,7 @@ import { Scene } from '@/lib/data/Scene';
 import { GLTFParser } from '@/lib/data/GLTFParser';
 import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
+import {AnimationRunner} from "@/lib/data/components/animations";
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -59,6 +60,7 @@ export default function Home() {
     const renderManagerRef = useRef<RenderManager>();
     const gltfStateRef = useRef<GLTFState>();
     const cameraNodesRef = useRef<SceneNode[]>([]);
+    const animationRunnerRef = useRef<AnimationRunner>();
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, type: TRSType, axis: Axis) => {
         const value = parseFloat(e.target.value);
@@ -150,7 +152,7 @@ export default function Home() {
         }
 
         const gltf = gltfParser.write(gltfState);
-        
+
         FileUtil.downloadFile(gltf);
     }
 
@@ -197,14 +199,38 @@ export default function Home() {
             ]
             
             const glRenderer = new GLRenderer(glContainer);
+            const animationRunner = new AnimationRunner();
 
             glContainerRef.current = glContainer;
             glRendererRef.current = glRenderer;
             cameraNodesRef.current = cameraNodes;
+            animationRunnerRef.current = animationRunner;
         };
     
         initializeGL();
     }, [canvasRef.current]);
+
+    useEffect(() => {
+        // change the animation and rootNode of animationRunner
+        const animationRunner = animationRunnerRef.current;
+        const gltfState = gltfStateRef.current;
+
+        if (!gltfState) {
+            return;
+        }
+
+        const scene = gltfState.CurrentScene;
+        const rootNode = scene?.getRoot(0);
+        const animations = gltfState.animations;
+
+        if (!rootNode || !animations) {
+            return;
+        }
+
+        if (rootNode && animations && animations.length > 0) {
+            animationRunner?.setAnimation(animations[0], rootNode);
+        }
+    }, [gltfStateRef])
 
     return (
         <main className="flex flex-col h-screen w-full bg-[#F2FBFA]">
@@ -216,19 +242,19 @@ export default function Home() {
                 {/* Save and Load Section */}
                 <div className="flex items-center">
                     {/* Separator */}
-                    <Separator className="h-auto w-[0.5px]"/>
+                    <Separator className="h-full w-[0.5px]"/>
 
                     {/* Clear Button */}
-                    <Button className="h-auto w-full border-none rounded-0">🧹 Clear</Button>
+                    <Button className="h-full w-full border-none rounded-0">🧹 Clear</Button>
 
                     {/* Separator */}
-                    <Separator className="h-auto w-[0.5px]"/>
+                    <Separator className="h-full w-[0.5px]"/>
 
                     {/* Load Button */}
                     <Button onClick={importFile} className="h-full w-full border-none rounded-0">⬆️ Load</Button>
 
                     {/* Separator */}
-                    <Separator className="h-auto w-[0.5px]"/>
+                    <Separator className="h-full w-[0.5px]"/>
 
                     {/* Clear Button */}
                     <Button onClick={exportFile} className="h-full w-full border-none rounded-0">💾 Save</Button>

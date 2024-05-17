@@ -73,23 +73,20 @@ export class AnimationRunner {
     this.fps = fps;
   }
 
-  set animation(clip: AnimationClip) {
-    this.currentAnimation = clip;
-    this.currentFrame = 0;
-    this.deltaFrame = 0;
-    this.updateSceneGraph();
-  }
-
-  set rootScene(scene: SceneNode) {
-    this.root = scene;
-  }
-
   get CurrentFrame() {
     return this.currentFrame;
   }
 
   get length() {
     return this.currentAnimation!.frames.length;
+  }
+
+  public setAnimation(animation: AnimationClip, root: SceneNode) {
+    this.currentAnimation = animation;
+    this.root = root;
+    this.currentFrame = 0;
+    this.deltaFrame = 0;
+    this.updateSceneGraph();
   }
 
   private get frame() {
