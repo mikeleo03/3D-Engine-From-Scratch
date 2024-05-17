@@ -21,6 +21,7 @@ import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
+import { CameraTypeString } from '@/lib/data/types/gltftypes';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -31,7 +32,7 @@ interface TRS {
 }
 
 interface CameraState {
-    mode: string;
+    type: CameraTypeString;
     distance: number;
     angle: number;
 }
@@ -47,7 +48,7 @@ export default function Home() {
     const [translation, setTranslation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [rotation, setRotation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [scale, setScale] = useState<TRS>({ x: 1, y: 1, z: 1 });
-    const [camera, setCamera] = useState<CameraState>({ mode: "Perspective", distance: 0, angle: 0 });
+    const [camera, setCamera] = useState<CameraState>({ type: CameraTypeString.PERSPECTIVE, distance: 0, angle: 0 });
     const [shader, setShader] = useState<ShaderState>({ enabled: false });
     const [isPlaying, setIsPlaying] = useState(false);
     const [isReversing, setIsReversing] = useState(false);
@@ -118,7 +119,7 @@ export default function Home() {
     };
 
     const handleCameraModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
-        setCamera(prevState => ({ ...prevState, mode: (e.target as HTMLSelectElement).value }));
+        setCamera(prevState => ({ ...prevState, type: (e.target as HTMLSelectElement).value as CameraTypeString }));
     };
 
     const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -574,9 +575,9 @@ export default function Home() {
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
                             <SelectContent onChange={handleCameraModeChange}>
-                                <SelectItem value="Orthographic">Orthographic</SelectItem>
-                                <SelectItem value="Oblique">Oblique</SelectItem>
-                                <SelectItem value="Perspective">Perspective</SelectItem>
+                                <SelectItem value={CameraTypeString.ORTHOGRAPHIC}>Orthographic</SelectItem>
+                                <SelectItem value={CameraTypeString.OBLIQUE}>Oblique</SelectItem>
+                                <SelectItem value={CameraTypeString.PERSPECTIVE}>Perspective</SelectItem>
                             </SelectContent>
                         </Select>
                         <div className="text-base font-semibold py-2 flex flex-row w-full">
