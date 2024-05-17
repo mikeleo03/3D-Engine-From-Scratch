@@ -570,7 +570,7 @@ export default function Home() {
                     <div className="w-full p-6 py-4">
                         <div className="text-lg font-semibold pb-2">📷 Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
-                        <Select>
+                        <Select value={camera.type}>
                             <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
