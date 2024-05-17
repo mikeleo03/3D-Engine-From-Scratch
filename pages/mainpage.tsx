@@ -291,7 +291,7 @@ export default function Home() {
                 </div>
 
                 {/* Canvas */}
-                <canvas ref={canvasRef} className="w-1/2 h-auto"/>
+                <canvas ref={canvasRef} className="w-1/2 h-full min-h-[92vh] max-h-[120vh]"/>
 
                 {/* Right controller */}
                 <div className="w-1/4 bg-gray-700 overlow-y-auto text-white h-full min-h-[92vh] max-h-[120vh]">
