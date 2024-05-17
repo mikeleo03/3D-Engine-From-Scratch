@@ -79,8 +79,6 @@ export class GLRenderer {
                 cameraPosition: cameraPosition
             }
 
-            console.log(camera.getProjectionMatrix());
-
             this.renderRoot(node, defaultUniform);
         }
     }

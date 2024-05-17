@@ -18,42 +18,42 @@ export class LeonModel extends Model {
         const meshFactory = new MeshFactory();
         const earMaterial = new BasicMaterial({ name: "ear", color: new Color(72, 60, 50) });
         const earMesh = meshFactory.cuboid(30, 40, 30, [earMaterial]);
-        return new SceneNode(undefined, undefined, undefined, undefined, earMesh);
+        return new SceneNode({mesh: earMesh});
     }
 
     private getHead() {
         const meshFactory = new MeshFactory();
         const headMaterial = new BasicMaterial({ name: "head", color: new Color(205, 127, 50) });
         const headMesh = meshFactory.cuboid(70, 70, 70, [headMaterial], { offset: [0, 12.5, 0] });
-        return new SceneNode(undefined, undefined, undefined, undefined, headMesh);
+        return new SceneNode({mesh: headMesh});
     }
 
     private getBody() {
         const meshFactory = new MeshFactory();
         const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(102, 61, 20) });
         const bodyMesh = meshFactory.cuboid(100, 70, 200, [bodyMaterial]);
-        return new SceneNode(undefined, undefined, undefined, undefined, bodyMesh);
+        return new SceneNode({mesh: bodyMesh});
     }
 
     private getLeg() {
         const meshFactory = new MeshFactory();
         const legMaterial = new BasicMaterial({ name: "leg", color: new Color(184, 115, 51) });
         const legMesh = meshFactory.cuboid(23, 40, 25, [legMaterial], { offset: [0, -25, 0] });
-        return new SceneNode(undefined, undefined, undefined, undefined, legMesh);
+        return new SceneNode({mesh: legMesh});
     }
 
     private getEye() {
         const meshFactory = new MeshFactory();
         const eyeMaterial = new BasicMaterial({ name: "eye", color: new Color(0, 0, 0) });
         const eyeMesh = meshFactory.cuboid(10, 10, 10, [eyeMaterial]);
-        return new SceneNode(undefined, undefined, undefined, undefined, eyeMesh);
+        return new SceneNode({mesh: eyeMesh});
     }
 
     private getMouth() {
         const meshFactory = new MeshFactory();
         const mouthMaterial = new BasicMaterial({ name: "mouth", color: new Color(0, 0, 0) });
         const mouthMesh = meshFactory.cuboid(20, 10, 10, [mouthMaterial]);
-        return new SceneNode(undefined, undefined, undefined, undefined, mouthMesh);
+        return new SceneNode({mesh: mouthMesh});
     }
 
     protected override getScene() {

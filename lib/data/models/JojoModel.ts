@@ -26,7 +26,7 @@ export class JojoModel extends Model {
 
         const bodyMesh = meshFactory.cuboid(50, 70, 30, [bodyMaterial]);
 
-        return new SceneNode(undefined, undefined, undefined, undefined, bodyMesh);
+        return new SceneNode({mesh: bodyMesh});
     }
 
     private getHand(): SceneNode {
@@ -35,7 +35,7 @@ export class JojoModel extends Model {
 
         const handMesh = meshFactory.cuboid(15, 60, 25, [handMaterial], { offset: [0, -27, 0] });
 
-        return new SceneNode(undefined, undefined, undefined, undefined, handMesh);
+        return new SceneNode({mesh: handMesh});
     }
 
     private getHead(): SceneNode {
@@ -44,7 +44,7 @@ export class JojoModel extends Model {
 
         const headMesh = meshFactory.cuboid(25, 25, 25, [headMaterial], { offset: [0, 12.5, 0] });
 
-        return new SceneNode(undefined, undefined, undefined, undefined, headMesh);
+        return new SceneNode({mesh: headMesh});
     }
 
     private getLeg(): SceneNode {
@@ -53,16 +53,16 @@ export class JojoModel extends Model {
 
         const legMesh = meshFactory.cuboid(23, 50, 25, [legMaterial], { offset: [0, -25, 0] });
 
-        return new SceneNode(undefined, undefined, undefined, undefined, legMesh);
+        return new SceneNode({mesh: legMesh});
     }
 
     private getEyeCover(): SceneNode {
         const meshFactory = new MeshFactory();
         const eyeConverMaterial = new BasicMaterial({ name: "eyeCover", color: Color.red() });
 
-        const eyeConverMesh = meshFactory.cuboid(28, 10, 28, [eyeConverMaterial]);
+        const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, [eyeConverMaterial]);
 
-        return new SceneNode(undefined, undefined, undefined, undefined, eyeConverMesh);
+        return new SceneNode({mesh: eyeCoverMesh});
     }
 
     private getMouth(): SceneNode {
@@ -71,7 +71,7 @@ export class JojoModel extends Model {
 
         const mouthMesh = meshFactory.cuboid(7, 1, 1, [mouthMaterial]);
 
-        return new SceneNode(undefined, undefined, undefined, undefined, mouthMesh);
+        return new SceneNode({mesh: mouthMesh});
     }
 
     protected override getScene(): Scene {

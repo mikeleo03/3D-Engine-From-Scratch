@@ -352,9 +352,9 @@ export default function Home() {
             );
 
             const cameraNodes = [
-                new SceneNode(undefined, undefined, undefined, undefined, undefined, orthographicCamera),
-                new SceneNode(undefined, undefined, undefined, undefined, undefined, perspectiveCamera),
-                new SceneNode(undefined, undefined, undefined, undefined, undefined, obliqueCamera)
+                new SceneNode({camera: orthographicCamera}),
+                new SceneNode({camera: perspectiveCamera}),
+                new SceneNode({camera: obliqueCamera})
             ]
 
             const glRenderer = new GLRenderer(glContainer);

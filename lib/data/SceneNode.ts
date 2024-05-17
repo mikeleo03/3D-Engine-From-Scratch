@@ -5,8 +5,10 @@ import { Matrix4 } from "./math/Matrix4";
 import { Quaternion } from "@/lib/data/math";
 import { Vector3 } from "./math/Vector";
 import { SceneNodeType } from "./types/gltftypes";
+import { v4 as uuidv4 } from 'uuid';
 
 export class SceneNode {
+    public static readonly DEFAULT_NAME = "Game Object";
     private _position: Vector3 = new Vector3();
     private _rotation: Quaternion = new Quaternion();
     private _scale: Vector3 = new Vector3(1, 1, 1);
@@ -16,17 +18,30 @@ export class SceneNode {
     private _children: SceneNode[] = []
     private _mesh?: Mesh;
     private _camera?: Camera;
+    private _name: string = SceneNode.DEFAULT_NAME;
+    private _id: string;
     // visible = true
 
 
-    constructor(
-        position: Vector3 = new Vector3(),
-        rotation: Quaternion = new Quaternion(),
-        scale: Vector3 = new Vector3(1, 1, 1),
-        parent: SceneNode | null = null,
+    constructor({
+        position = new Vector3(),
+        rotation = new Quaternion(),
+        scale = new Vector3(1, 1, 1),
+        parent = null,
+        mesh,
+        camera,
+        name = SceneNode.DEFAULT_NAME,
+        id = uuidv4()
+    }: {
+        position?: Vector3,
+        rotation?: Quaternion,
+        scale?: Vector3,
+        parent?: SceneNode | null,
         mesh?: Mesh,
-        camera?: Camera
-    ) {
+        camera?: Camera,
+        name?: string,
+        id?: string
+    } = {}) {
         this._position = position;
         this._rotation = rotation.normalize();
         this._scale = scale;
@@ -34,7 +49,8 @@ export class SceneNode {
         this.computeWorldMatrix();
         this._mesh = mesh;
         this._camera = camera;
-
+        this._name = name;
+        this._id = id || uuidv4();
         if (mesh) {
             mesh.addNodes(this);
         }
@@ -171,14 +187,16 @@ export class SceneNode {
 
     static fromRaw(raw: SceneNodeType, meshes: Mesh[], cameras: Camera[]): SceneNode {
         // NOTE: children are not set here
-
         const node = new SceneNode(
-            new Vector3(raw.translation[0], raw.translation[1], raw.translation[2]),
-            new Quaternion(raw.rotation[0], raw.rotation[1], raw.rotation[2], raw.rotation[3]),
-            new Vector3(raw.scale[0], raw.scale[1], raw.scale[2]),
-            null,
-            raw.mesh !== undefined ? meshes[raw.mesh] : undefined,
-            raw.camera !== undefined ? cameras[raw.camera] : undefined
+            {
+                id: raw.id,
+                name: raw.name,
+                position: new Vector3(raw.translation[0], raw.translation[1], raw.translation[2]),
+                rotation: new Quaternion(raw.rotation[0], raw.rotation[1], raw.rotation[2], raw.rotation[3]),
+                scale: new Vector3(raw.scale[0], raw.scale[1], raw.scale[2]),
+                mesh: raw.mesh !== undefined ? meshes[raw.mesh] : undefined,
+                camera: raw.camera !== undefined ? cameras[raw.camera] : undefined
+            }
         );
 
         return node;
@@ -203,6 +221,8 @@ export class SceneNode {
         }
 
         return {
+            id: this._id,
+            name: this._name,
             translation: this._position.toArray(),
             rotation: this.rotation.toArray(),
             scale: this._scale.toArray(),
