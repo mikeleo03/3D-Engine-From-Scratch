@@ -242,19 +242,13 @@ export default function Home() {
                 {/* Save and Load Section */}
                 <div className="flex items-center">
                     {/* Separator */}
-                    <Separator className="h-full w-[0.5px]"/>
-
-                    {/* Clear Button */}
-                    <Button className="h-full w-full border-none rounded-0">🧹 Clear</Button>
-
-                    {/* Separator */}
-                    <Separator className="h-full w-[0.5px]"/>
-
+                    <Separator className="h-full w-[1px]"/>
+                    
                     {/* Load Button */}
                     <Button onClick={importFile} className="h-full w-full border-none rounded-0">⬆️ Load</Button>
 
                     {/* Separator */}
-                    <Separator className="h-full w-[0.5px]"/>
+                    <Separator className="h-full w-[1px]"/>
 
                     {/* Clear Button */}
                     <Button onClick={exportFile} className="h-full w-full border-none rounded-0">💾 Save</Button>
