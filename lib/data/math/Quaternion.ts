@@ -129,6 +129,21 @@ export class Quaternion {
         return new Quaternion(x, y, z, w);
     }
 
+    static lookAt(from: Vector3, target: Vector3, up: Vector3): Quaternion {
+        const z = target.sub(from).normalize();
+        const x = up.cross(z).normalize();
+        const y = z.cross(x);
+
+        const m = new Matrix4([
+            [x.X, x.Y, x.Z, 0],
+            [y.X, y.Y, y.Z, 0],
+            [z.X, z.Y, z.Z, 0],
+            [0, 0, 0, 1]
+        ])
+
+        return Quaternion.fromMatrix4(m).normalize();
+    }
+
     set(x: number, y: number, z: number, w: number): void {
         this._x = x;
         this._y = y;
@@ -310,23 +325,6 @@ export class Quaternion {
         return new Quaternion(x, y, z, w);
     }
 
-    rotate(v: Vector3, inplace: Boolean = false): Vector3 {
-        const q = this.normalize();
-        const p = new Quaternion(v.X, v.Y, v.Z, 0);
-        const qInv = q.conjugate();
-
-        const result = q.mul(p).mul(qInv);
-
-        if (inplace) {
-            v.X = result._x;
-            v.Y = result._y;
-            v.Z = result._z;
-            return v;
-        }
-
-        return new Vector3(result._x, result._y, result._z);
-    }
-
     rotateX(angle: number, inplace: Boolean = false): Quaternion {
         const halfAngle = angle / 2;
         const q = new Quaternion(Math.sin(halfAngle), 0, 0, Math.cos(halfAngle));
@@ -346,5 +344,26 @@ export class Quaternion {
         const q = new Quaternion(0, 0, Math.sin(halfAngle), Math.cos(halfAngle));
 
         return this.mul(q, inplace);
+    }
+
+    rotateVector(v: Vector3): Vector3 {
+        const q = new Quaternion(v.X, v.Y, v.Z, 0);
+        const qInv = this.conjugate();
+        const qRot = this.mul(q.mul(qInv));
+
+        return new Vector3(qRot.X, qRot.Y, qRot.Z);
+    }
+
+    lookAt(from: Vector3, target: Vector3, up: Vector3, inplace: boolean = false): Quaternion {
+        const newQuaternion = Quaternion.lookAt(from, target, up);
+        if (inplace) {
+            this._x = newQuaternion._x;
+            this._y = newQuaternion._y;
+            this._z = newQuaternion._z;
+            this._w = newQuaternion._w;
+            return this;
+        }
+
+        return newQuaternion;
     }
 }

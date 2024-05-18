@@ -18,7 +18,7 @@ export class GLRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
-    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Float32Array, cameraPosition: Float32Array}) {
+    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Float32Array}) {
         const mesh = root.mesh;
         const gl = this._glContainer.glContext;
 
@@ -58,8 +58,7 @@ export class GLRenderer {
         this.clearCanvas();
 
         const cameraNode = scene.getActiveCameraNode();
-        const canvas = this._glContainer.canvasElement;
-
+        
         if (!cameraNode) {
             return;
         }
@@ -78,13 +77,8 @@ export class GLRenderer {
     
         for (const node of nodes) {
             const defaultUniform = {
-                viewMatrix: camera.getProjectionMatrix().buffer,
-                cameraPosition: cameraPosition.buffer
+                viewMatrix: camera.getFinalProjectionMatrix(cameraNode).buffer,
             }
-
-            console.log(defaultUniform.viewMatrix);
-            console.log(defaultUniform.cameraPosition);
-            console.log(camera.zoom)
 
             this.renderRoot(node, defaultUniform);
         }

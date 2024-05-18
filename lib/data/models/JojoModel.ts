@@ -94,21 +94,21 @@ export class JojoModel extends Model {
         leftHand.translate(new Vector3(-32.5, 32, 0));
         rightHand.translate(new Vector3(32.5, 32, 0));
         eyeConver.translate(new Vector3(0, 15, 0));
-        mouth.translate(new Vector3(0, 5, 13));
+        mouth.translate(new Vector3(0, 5, -13));
         head.translate(new Vector3(0, 35, 0));
         leftLeg.translate(new Vector3(-11.5, -35, 0));
         rightLeg.translate(new Vector3(11.5, -35, 0));
 
-        leftHand.rotateByDegrees(new Vector3(0, 0, 0));
-        rightHand.rotateByDegrees(new Vector3(-10, 0, 0));
+        leftHand.rotateByDegrees(new Vector3(-10, 0, 0));
+        rightHand.rotateByDegrees(new Vector3(0, 0, 0));
 
-        leftLeg.rotateByDegrees(new Vector3(-10, 0, 0));
-        rightLeg.rotateByDegrees(new Vector3(0, 0, 0));
+        leftLeg.rotateByDegrees(new Vector3(0, 0, 0));
+        rightLeg.rotateByDegrees(new Vector3(-10, 0, 0));
         
         head.add(eyeConver);
         head.add(mouth);
 
-        const parent = new SceneNode();
+        const parent = new SceneNode({name: 'Jojo'});
         parent.add(body);
         parent.add(leftHand);
         parent.add(rightHand);
@@ -116,8 +116,8 @@ export class JojoModel extends Model {
         parent.add(leftLeg);
         parent.add(rightLeg);
 
-        parent.translate(new Vector3(0, 0, -100));
-        parent.rotateByDegrees(new Vector3(0, 0, 0));
+        parent.translate(new Vector3(0, 0, 100));
+        parent.rotateByDegrees(new Vector3(-30, 30, 0));
 
         nodes.push(parent);
 
