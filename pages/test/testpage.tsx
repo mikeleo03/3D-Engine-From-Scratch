@@ -66,7 +66,7 @@ export default function TestPage() {
 
       glRenderer.render(scene);
       
-      // model.download();
+      model.download();
     };
 
     initializeGL();

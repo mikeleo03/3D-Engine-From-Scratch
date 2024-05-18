@@ -126,7 +126,124 @@ export class LeonModel extends Model {
         return new Scene(nodes);
     }
 
-  override getAnimations(): AnimationClip[] {
-    return [];
-  }
+    private getLeftFrontLegMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getRightFrontLegMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getRightBackLegMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getLeftBackLegMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [15, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    override getAnimations(): AnimationClip[] {
+        const leftFrontLegMovements = this.getLeftFrontLegMovements();
+        const rightFrontLegMovements = this.getRightFrontLegMovements();
+        const rightBackLegMovements = this.getRightBackLegMovements();
+        const leftBackLegMovements = this.getLeftBackLegMovements();
+
+        // assert all keyframes have the same length
+        const length = leftFrontLegMovements.length;
+        if (rightFrontLegMovements.length !== length || rightBackLegMovements.length !== length || leftBackLegMovements.length !== length) {
+            throw AssertionError;
+        }
+
+        const frames: AnimationPath[] = [];
+
+        for (let i = 0; i < length; i++) {
+            const pairs: {node: SceneNode, keyframe: AnimationTRS}[] = [];
+
+            pairs.push({node: this._leftFrontLeg!!, keyframe: leftFrontLegMovements[i]});
+            pairs.push({node: this._rightFrontLeg!!, keyframe: rightFrontLegMovements[i]});
+            pairs.push({node: this._rightBackLeg!!, keyframe: rightBackLegMovements[i]});
+            pairs.push({node: this._leftBackLeg!!, keyframe: leftBackLegMovements[i]});
+
+            frames.push({nodeKeyframePairs: pairs});
+        }
+
+        const animation = {
+            name: "walking",
+            frames: frames
+        }
+
+        return [animation];
+    }
 }
