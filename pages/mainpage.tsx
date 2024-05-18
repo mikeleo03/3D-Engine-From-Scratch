@@ -157,6 +157,13 @@ export default function Home() {
         const currentScene = gltfStateRef.current?.CurrentScene;
 
         if (!currentScene) {
+            setCamera(prevState => ({ 
+                ...prevState, 
+                type: type,
+                zoom: 1,
+                obliqueAngleX: 0,
+                obliqueAngleY: 0
+            }));
             return;
         }
 
@@ -179,6 +186,8 @@ export default function Home() {
                         newState.obliqueAngleY = obliqueCamera.angleY
                     }
 
+                    console.log(newState)
+
                     return newState;
                 });
 
@@ -188,7 +197,6 @@ export default function Home() {
     }
 
     const handleCameraModeChange = (type: string) => {
-       
         const value = type as CameraTypeString;
         changeCurrentCamera(value);
     };
@@ -301,29 +309,6 @@ export default function Home() {
         });
     }
 
-    const setCurrentCamera = () => {
-        const currentScene = gltfStateRef.current?.CurrentScene;
-
-        if (!currentScene) {
-            return;
-        }
-
-        const cameraNode = currentScene.getActiveCameraNode();
-
-        if (!cameraNode) {
-            return;
-        }
-
-        const camera = cameraNode.camera;
-
-        if (!camera) {
-            return;
-        }
-
-        // todo: UPDATE distance dan angle
-        setCamera(prevState => ({ ...prevState, type: camera.type }));
-    }
-
     const setNewState = (newState: GLTFState) => {
         gltfStateRef.current = newState;
 
@@ -340,7 +325,8 @@ export default function Home() {
             }
         }
 
-        setCurrentCamera();
+        const currentCamera = getCurrentCamera();
+        handleCameraModeChange(currentCamera!!.type);
 
         for (const root of currentScene.roots) {
             if (!root.camera) {
@@ -396,7 +382,7 @@ export default function Home() {
                 renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
                 renderManagerRef.current.loop();
 
-                await setNewState(gltfState);
+                setNewState(gltfState);
             }
         }
 
