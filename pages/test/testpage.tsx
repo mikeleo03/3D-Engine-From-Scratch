@@ -3,6 +3,7 @@ import { GLContainer } from "@/lib/cores";
 import { SceneNode } from "@/lib/data/SceneNode";
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data/components/cameras";
 import { JojoModel } from "@/lib/data/models/JojoModel";
+import { LeonModel } from "@/lib/data/models/LeonModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
 
@@ -54,18 +55,18 @@ export default function TestPage() {
           new SceneNode({camera: obliqueCamera})
       ]
 
-      const model = new JojoModel();
+      const model = new LeonModel();
 
       const glRenderer = new GLRenderer(glContainer);
 
       const scene = model.scene;
 
       // change camera here
-      scene.addNode(cameraNodes[2]);
+      scene.addNode(cameraNodes[1]);
 
       glRenderer.render(scene);
       
-      model.download();
+      // model.download();
     };
 
     initializeGL();
