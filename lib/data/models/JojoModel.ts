@@ -147,6 +147,42 @@ export class JojoModel extends Model {
             {
                 rotation: [0, 20, 0]
             },
+            {
+                rotation: [0, 15, 0]
+            },
+            {
+                rotation: [0, 10, 0]
+            },
+            {
+                rotation: [0, 5, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [0, -5, 0]
+            },
+            {
+                rotation: [0, -10, 0]
+            },
+            {
+                rotation: [0, -15, 0]
+            },
+            {
+                rotation: [0, -20, 0]
+            },
+            {
+                rotation: [0, -15, 0]
+            },
+            {
+                rotation: [0, -10, 0]
+            },
+            {
+                rotation: [0, -5, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
         ]
 
         return keyFrames;
@@ -168,6 +204,42 @@ export class JojoModel extends Model {
             },
             {
                 rotation: [10, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
             },
         ]
 
@@ -191,6 +263,42 @@ export class JojoModel extends Model {
             {
                 rotation: [-10, 0, 0]
             },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
         ]
 
         return keyFrames;
@@ -212,6 +320,42 @@ export class JojoModel extends Model {
             },
             {
                 rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
             },
         ]        
 
@@ -235,6 +379,42 @@ export class JojoModel extends Model {
             {
                 rotation: [10, 0, 0]
             },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-10, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [10, 0, 0]
+            },
+            {
+                rotation: [5, 0, 0]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [-5, 0, 0]
+            },
         ]
         
         return keyFrames;
@@ -247,6 +427,8 @@ export class JojoModel extends Model {
         const rightHandMovements = this.getRightHandMovements();
         const leftLegMovements = this.getLeftLegMovements();
         const rightLegMovements = this.getRightLegMovements();
+
+        console.log(headMovements.length, leftHandMovements.length, rightHandMovements.length, leftLegMovements.length, rightLegMovements.length);
 
         // assert all keyframes have the same length
         const length = headMovements.length;
