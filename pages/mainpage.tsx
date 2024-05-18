@@ -424,7 +424,7 @@ export default function Home() {
                 canvas.width / canvas.height,
                 60,
                 0.01,
-                1000,
+                9999,
                 1
             );
 
