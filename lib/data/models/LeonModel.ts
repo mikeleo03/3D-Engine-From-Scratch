@@ -14,6 +14,10 @@ export class LeonModel extends Model {
     private _rightFrontLeg?: SceneNode;
     private _leftBackLeg?: SceneNode;
     private _rightBackLeg?: SceneNode;
+    private _leftEye?: SceneNode;
+    private _rightEye?: SceneNode;
+    private _leftEar?: SceneNode;
+    private _rightEar?: SceneNode;
     
     constructor() {
         super();
@@ -22,7 +26,7 @@ export class LeonModel extends Model {
     private getEar(): SceneNode {
         const meshFactory = new MeshFactory();
         const earMaterial = new BasicMaterial({ name: "ear", color: new Color(72, 60, 50) });
-        const earMesh = meshFactory.cuboid(30, 40, 30, [earMaterial]);
+        const earMesh = meshFactory.cuboid(30, 40, 30, [earMaterial], { offset: [0, 15, 0] });
         return new SceneNode({name: 'Ear', mesh: earMesh});
     }
 
@@ -86,18 +90,18 @@ export class LeonModel extends Model {
         rightBackLeg.name = 'Right Back Leg';
 
         // translation to make the position of the limbs and other parts of the body
-        body.translate(new Vector3(0, 10, -120));
-        head.translate(new Vector3(0, 30, 15));
-        leftFrontLeg.translate(new Vector3(-35, -20, -50));
-        rightFrontLeg.translate(new Vector3(35, -20, -50));
-        leftBackLeg.translate(new Vector3(-35, -20, -180));
-        rightBackLeg.translate(new Vector3(35, -20, -180));
+        body.translate(new Vector3(0, 10, 50));
+        head.translate(new Vector3(0, 30, -70));
+        leftFrontLeg.translate(new Vector3(-35, -20, -10));
+        rightFrontLeg.translate(new Vector3(35, -20, -10));
+        leftBackLeg.translate(new Vector3(-35, -20, 120));
+        rightBackLeg.translate(new Vector3(35, -20, 120));
 
-        leftEye.translate(new Vector3(-15, 30, 35));
-        rightEye.translate(new Vector3(15, 30, 35));
-        mouth.translate(new Vector3(0, 0, 35));
-        leftEar.translate(new Vector3(-20, 60, 20));
-        rightEar.translate(new Vector3(20, 60, 20));
+        leftEye.translate(new Vector3(-15, 30, -35));
+        rightEye.translate(new Vector3(15, 30, -35));
+        mouth.translate(new Vector3(0, 0, -35));
+        leftEar.translate(new Vector3(-20, 50, -20));
+        rightEar.translate(new Vector3(20, 50, -20));
         
         head.add(leftEye);
         head.add(rightEye);
@@ -105,7 +109,7 @@ export class LeonModel extends Model {
         head.add(leftEar);
         head.add(rightEar);
 
-        const parent = new SceneNode();
+        const parent = new SceneNode({name: 'Dog'});
         parent.add(head);
         parent.add(body);
         parent.add(leftFrontLeg);
@@ -113,8 +117,8 @@ export class LeonModel extends Model {
         parent.add(leftBackLeg);
         parent.add(rightBackLeg);
 
-        parent.translate(new Vector3(0, 0, -100));
-        parent.rotateByDegrees(new Vector3(0, 0, 0));
+        parent.translate(new Vector3(0, 0, 100));
+        parent.rotateByDegrees(new Vector3(-30, 30, 0));
 
         nodes.push(parent);
 
@@ -122,8 +126,156 @@ export class LeonModel extends Model {
         this._rightFrontLeg = rightFrontLeg;
         this._leftBackLeg = leftBackLeg;
         this._rightBackLeg = rightBackLeg;
+        this._leftEye = leftEye;
+        this._rightEye = rightEye;
+        this._leftEar = leftEar;
+        this._rightEar = rightEar;
 
         return new Scene(nodes);
+    }
+
+    private getLeftEyeMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {},
+            {},
+            {},
+            {},
+            {},
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 0, 1]
+            },
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 1, 1]
+            },
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 0, 1]
+            },
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 1, 1]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getRightEyeMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {},
+            {},
+            {},
+            {},
+            {},
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 0, 1]
+            },
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 1, 1]
+            },
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 0, 1]
+            },
+            {
+                scale: [1, 0.5, 1]
+            },
+            {
+                scale: [1, 1, 1]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getRightEarMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {},
+            {},
+            {},
+            {},
+            {},
+            {
+                rotation: [0, 0, -5]
+            },
+            {
+                rotation: [0, 0, -15]
+            },
+            {
+                rotation: [0, 0, -5]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [0, 0, -5]
+            },
+            {
+                rotation: [0, 0, -15]
+            },
+            {
+                rotation: [0, 0, -5]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+        ]
+
+        return keyFrames;
+    }
+
+    private getLeftEarMovements(): AnimationTRS[] {
+        const keyFrames: AnimationTRS[] = [
+            {},
+            {},
+            {},
+            {},
+            {},
+            {
+                rotation: [0, 0, 5]
+            },
+            {
+                rotation: [0, 0, 15]
+            },
+            {
+                rotation: [0, 0, 5]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+            {
+                rotation: [0, 0, 5]
+            },
+            {
+                rotation: [0, 0, 15]
+            },
+            {
+                rotation: [0, 0, 5]
+            },
+            {
+                rotation: [0, 0, 0]
+            },
+        ]
+
+        return keyFrames;
     }
 
     private getLeftFrontLegMovements(): AnimationTRS[] {
@@ -143,6 +295,7 @@ export class LeonModel extends Model {
             {
                 rotation: [0, 0, 0]
             },
+            {}, {}, {}, {}, {}, {}, {}, {}
         ]
 
         return keyFrames;
@@ -165,6 +318,7 @@ export class LeonModel extends Model {
             {
                 rotation: [0, 0, 0]
             },
+            {}, {}, {}, {}, {}, {}, {}, {}
         ]
 
         return keyFrames;
@@ -187,6 +341,7 @@ export class LeonModel extends Model {
             {
                 rotation: [0, 0, 0]
             },
+            {}, {}, {}, {}, {}, {}, {}, {}
         ]
 
         return keyFrames;
@@ -209,6 +364,7 @@ export class LeonModel extends Model {
             {
                 rotation: [0, 0, 0]
             },
+            {}, {}, {}, {}, {}, {}, {}, {}
         ]
 
         return keyFrames;
@@ -219,10 +375,14 @@ export class LeonModel extends Model {
         const rightFrontLegMovements = this.getRightFrontLegMovements();
         const rightBackLegMovements = this.getRightBackLegMovements();
         const leftBackLegMovements = this.getLeftBackLegMovements();
+        const leftEyeMovements = this.getLeftEyeMovements();
+        const rightEyeMovements = this.getRightEyeMovements();
+        const leftEarMovements = this.getLeftEarMovements();
+        const rightEarMovements = this.getRightEarMovements();
 
         // assert all keyframes have the same length
         const length = leftFrontLegMovements.length;
-        if (rightFrontLegMovements.length !== length || rightBackLegMovements.length !== length || leftBackLegMovements.length !== length) {
+        if (rightFrontLegMovements.length !== length || rightBackLegMovements.length !== length || leftBackLegMovements.length !== length || leftFrontLegMovements.length !== length || rightBackLegMovements.length !== length || rightFrontLegMovements.length !== length || leftBackLegMovements.length !== length || leftFrontLegMovements.length !== length) {
             throw AssertionError;
         }
 
@@ -235,12 +395,16 @@ export class LeonModel extends Model {
             pairs.push({node: this._rightFrontLeg!!, keyframe: rightFrontLegMovements[i]});
             pairs.push({node: this._rightBackLeg!!, keyframe: rightBackLegMovements[i]});
             pairs.push({node: this._leftBackLeg!!, keyframe: leftBackLegMovements[i]});
+            pairs.push({node: this._leftEye!!, keyframe: leftEyeMovements[i]});
+            pairs.push({node: this._rightEye!!, keyframe: rightEyeMovements[i]});
+            pairs.push({node: this._leftEar!!, keyframe: leftEarMovements[i]});
+            pairs.push({node: this._rightEar!!, keyframe: rightEarMovements[i]});
 
             frames.push({nodeKeyframePairs: pairs});
         }
 
         const animation = {
-            name: "walking",
+            name: "walk and greet",
             frames: frames
         }
 

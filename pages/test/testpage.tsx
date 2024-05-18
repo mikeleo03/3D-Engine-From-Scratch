@@ -33,9 +33,9 @@ export default function TestPage() {
 
       const perspectiveCamera = new PerspectiveCamera(
           canvas.width / canvas.height,
-          60,
+          1,
           0.01,
-          1000,
+          9999,
           1
       );
 
@@ -57,11 +57,9 @@ export default function TestPage() {
           new SceneNode({camera: obliqueCamera, position: new Vector3(0, 0, 100)})
       ]
 
-      const model = new JojoModel();
-      const jojo = model.scene.nodes[0];
+      cameraNodes[0].rotateByDegrees(new Vector3(0, 0, 0));
 
-      jojo.translate(new Vector3(-400, 0, 0));
-      cameraNodes[0].lookAt(jojo.position);
+      const model = new LeonModel();
 
       const glRenderer = new GLRenderer(glContainer);
       const scene = model.scene;
@@ -71,7 +69,7 @@ export default function TestPage() {
 
       glRenderer.render(scene);
       
-      // model.download();
+      model.download();
     };
 
     initializeGL();
