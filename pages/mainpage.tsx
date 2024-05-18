@@ -269,9 +269,28 @@ export default function Home() {
         setEasingMode({ mode: (e.target as HTMLSelectElement).value });
     };
 
+    const handleCurrentNodeChange = () => {
+        setCurrentNode(currentNodeRef.current);
+        setCurrentTRS();
+        setDisableTRS(!currentNodeRef.current || currentNodeRef.current.camera !== undefined);
+
+        const currentCameraNode = getCurrentCameraNode();
+
+        if (!currentCameraNode) {
+            return;
+        }
+
+        if (currentCameraNode == currentNodeRef.current) {
+            return;
+        }
+
+        currentCameraNode.lookAt(currentNodeRef.current!!.position);
+    }
+
     const handleNodeChange = (node: SceneNode) => {
         currentNodeRef.current = node;
-        setCurrentTRS();
+        handleCurrentNodeChange();
+        
     }
 
     const setCurrentTRS = (currentNode: SceneNode | undefined = currentNodeRef.current) => {
@@ -330,8 +349,7 @@ export default function Home() {
 
         for (const root of currentScene.roots) {
             if (!root.camera) {
-                currentNodeRef.current = root;
-                setCurrentTRS();
+                handleNodeChange(root);
                 break;
             }
         }
@@ -535,24 +553,6 @@ export default function Home() {
 
         initializeGL();
     }, [canvasRef.current]);
-
-    useEffect(() => {
-        setCurrentNode(currentNodeRef.current);
-        setDisableTRS(!currentNodeRef.current || currentNodeRef.current.camera !== undefined);
-
-        const currentCameraNode = getCurrentCameraNode();
-
-        if (!currentCameraNode) {
-            return;
-        }
-
-        if (currentCameraNode == currentNodeRef.current) {
-            return;
-        }
-
-        // TODO: Fix this
-        currentCameraNode.lookAt(currentNodeRef.current!!.position);
-    }, [currentNodeRef.current]);
 
     const handleNextFrame = () => {
         for (const animationRunner of animationRunnersRef.current) {
