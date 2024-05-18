@@ -64,8 +64,12 @@ export default function TestPage() {
       const glRenderer = new GLRenderer(glContainer);
       const scene = model.scene;
 
+      const jojo = model.scene.nodes[0];
+      jojo.translate(new Vector3(-700, 0, 0));
+      cameraNodes[0].lookAt(jojo.position);
+
       // change camera here
-      scene.addNode(cameraNodes[0]);
+      scene.addNode(cameraNodes[1]);
 
       glRenderer.render(scene);
       
