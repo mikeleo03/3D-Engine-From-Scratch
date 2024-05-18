@@ -2,7 +2,6 @@ import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
 import { Vector3 } from "../data/math";
-import { CameraTypeString } from "../data/types/gltftypes";
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -54,7 +53,7 @@ export class GLRenderer {
         }
     }
 
-    render(scene: Scene) {
+    render(scene: Scene, camPosition: Vector3) {
         this.clearCanvas();
 
         const cameraNode = scene.getActiveCameraNode();
@@ -73,7 +72,10 @@ export class GLRenderer {
         for (const node of nodes) {
             const defaultUniform = {
                 viewMatrix: camera.getFinalProjectionMatrix(cameraNode).buffer,
+                cameraPosition: camPosition.buffer
             }
+
+            console.log(defaultUniform.cameraPosition)
 
             this.renderRoot(node, defaultUniform);
         }
