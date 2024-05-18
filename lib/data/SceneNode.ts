@@ -143,6 +143,10 @@ export class SceneNode {
         if (lookAtPoint) {
             this.lookAt(point);
         }
+
+        else {
+            this.rotate(rotation);
+        }
     }
 
     lookAt(target: Vector3, up?: Vector3) {

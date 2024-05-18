@@ -442,7 +442,7 @@ export default function Home() {
         const deltaY = e.movementY * deltaYFactor;
 
 
-        currentCameraNode.rotateAroundPoint(currentNode.position, Quaternion.fromDegrees(deltaY, deltaX, 0), true);
+        currentCameraNode.rotateAroundPoint(currentNode.position, Quaternion.fromDegrees(deltaY, deltaX, 0));
         setCurrentTRS(currentNode);
     }
 
