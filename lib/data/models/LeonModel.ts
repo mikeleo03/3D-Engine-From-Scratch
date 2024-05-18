@@ -86,18 +86,18 @@ export class LeonModel extends Model {
         rightBackLeg.name = 'Right Back Leg';
 
         // translation to make the position of the limbs and other parts of the body
-        body.translate(new Vector3(0, 10, -120));
-        head.translate(new Vector3(0, 30, 15));
-        leftFrontLeg.translate(new Vector3(-35, -20, -50));
-        rightFrontLeg.translate(new Vector3(35, -20, -50));
-        leftBackLeg.translate(new Vector3(-35, -20, -180));
-        rightBackLeg.translate(new Vector3(35, -20, -180));
+        body.translate(new Vector3(0, 10, 50));
+        head.translate(new Vector3(0, 30, -70));
+        leftFrontLeg.translate(new Vector3(-35, -20, -10));
+        rightFrontLeg.translate(new Vector3(35, -20, -10));
+        leftBackLeg.translate(new Vector3(-35, -20, 120));
+        rightBackLeg.translate(new Vector3(35, -20, 120));
 
-        leftEye.translate(new Vector3(-15, 30, 35));
-        rightEye.translate(new Vector3(15, 30, 35));
-        mouth.translate(new Vector3(0, 0, 35));
-        leftEar.translate(new Vector3(-20, 60, 20));
-        rightEar.translate(new Vector3(20, 60, 20));
+        leftEye.translate(new Vector3(-15, 30, -35));
+        rightEye.translate(new Vector3(15, 30, -35));
+        mouth.translate(new Vector3(0, 0, -35));
+        leftEar.translate(new Vector3(-20, 60, -20));
+        rightEar.translate(new Vector3(20, 60, -20));
         
         head.add(leftEye);
         head.add(rightEye);
@@ -105,7 +105,7 @@ export class LeonModel extends Model {
         head.add(leftEar);
         head.add(rightEar);
 
-        const parent = new SceneNode();
+        const parent = new SceneNode({name: 'Dog'});
         parent.add(head);
         parent.add(body);
         parent.add(leftFrontLeg);
@@ -113,7 +113,7 @@ export class LeonModel extends Model {
         parent.add(leftBackLeg);
         parent.add(rightBackLeg);
 
-        parent.translate(new Vector3(0, 0, -100));
+        parent.translate(new Vector3(0, 0, 100));
         parent.rotateByDegrees(new Vector3(0, 0, 0));
 
         nodes.push(parent);

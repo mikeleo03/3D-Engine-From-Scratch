@@ -33,9 +33,9 @@ export default function TestPage() {
 
       const perspectiveCamera = new PerspectiveCamera(
           canvas.width / canvas.height,
-          60,
+          1,
           0.01,
-          1000,
+          9999,
           1
       );
 
@@ -59,14 +59,14 @@ export default function TestPage() {
 
       cameraNodes[0].rotateByDegrees(new Vector3(0, 0, 0));
 
-      const model = new JojoModel();
+      const model = new LeonModel();
 
       const glRenderer = new GLRenderer(glContainer);
 
       const scene = model.scene;
 
       // change camera here
-      // scene.addNode(cameraNodes[0]);
+      scene.addNode(cameraNodes[0]);
 
       glRenderer.render(scene);
       
