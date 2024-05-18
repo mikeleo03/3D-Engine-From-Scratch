@@ -774,26 +774,7 @@ export default function Home() {
                     {/* Scene */}
                     <div className="text-base font-semibold flex flex-row justify-between w-full p-6 py-4">
                         <div className="text-lg font-semibold pb-2">🖼️ Scene</div>
-                        <div className="flex items-center space-x-3">
-                            <Switch
-                                id="shader-switch"
-                                checked={shader.enabled}
-                                onChange={toggleShader}
-                            />
-                            {/* <Switch
-                                id="shader-switch"
-                                className="w-10"
-                                checked={shader.enabled}
-                                onChange={toggleShader}
-                            /> */}
-                            <input
-                                type="checkbox"
-                                id="shader-switch"
-                                checked={shader.enabled}
-                                onChange={toggleShader}
-                            />
-                            <Label htmlFor="shader-switch">Shader</Label>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
