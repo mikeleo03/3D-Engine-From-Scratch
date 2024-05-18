@@ -120,22 +120,10 @@ export class ObliqueCamera extends Camera {
     }
 
     protected override updateProjectionMatrix() {
-        const top = this._top;
-        const bottom = this._bottom;
-        const left = this._left;
-        const right = this._right;
-        const d = [
-            (right - left) / (2 * this.zoom),
-            (top - bottom) / (2 * this.zoom),
-            (right - left) / 2,
-            (top - bottom) / 2,
-        ];
-
-        // this.projectionMatrix = Matrix4.oblique(
-        //     -(d[2] + d[0]) / 2, (d[2] + d[0]) / 2, -(d[3] + d[1]) / 2, (d[3] + d[1]) / 2,
-        //     this._near, this._far,
-        //     this._angle, 0.5,
-        // );
+        const top = this._top / this.zoom;
+        const bottom = this._bottom / this.zoom;
+        const left = this._left / this.zoom;
+        const right = this._right / this.zoom;
 
         this.projectionMatrix = Matrix4.oblique(
             top, bottom, left, right,

@@ -81,23 +81,10 @@ export class OrthographicCamera extends Camera {
     }
 
     protected override updateProjectionMatrix() {
-        const top = this._top;
-        const bottom = this._bottom;
-        const left = this._left;
-        const right = this._right;
-
-        const d = [
-            (right - left) / (2 * this.zoom),
-            (top - bottom) / (2 * this.zoom),
-            (right - left) / 2,
-            (top - bottom) / 2,
-        ];
-
-        // TODO: leon, kenapa pakai d malah bikin mirror 
-        // this.projectionMatrix = Matrix4.orthographic(
-        //     -(d[2] + d[0]) / 2, (d[2] + d[0]) / 2, -(d[3] + d[1]) / 2, (d[3] + d[1]) / 2,
-        //     this._near, this._far
-        // );
+        const top = this._top / this.zoom;
+        const bottom = this._bottom / this.zoom;
+        const left = this._left / this.zoom;
+        const right = this._right / this.zoom;
 
         this.projectionMatrix = Matrix4.orthographic(
             top, bottom, left, right, this._near, this._far)

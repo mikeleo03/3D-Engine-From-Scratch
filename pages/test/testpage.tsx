@@ -42,7 +42,7 @@ export default function TestPage() {
           1,
           0.01,
           1000,
-          80,
+          0,
           0
       );
 
