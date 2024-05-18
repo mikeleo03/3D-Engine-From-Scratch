@@ -186,8 +186,6 @@ export default function Home() {
                         newState.obliqueAngleY = obliqueCamera.angleY
                     }
 
-                    console.log(newState)
-
                     return newState;
                 });
 
@@ -270,10 +268,6 @@ export default function Home() {
     };
 
     const handleNodeChange = (node: SceneNode) => {
-        if (node.camera) {
-            return;
-        }
-
         currentNodeRef.current = node;
         setCurrentTRS();
     }
@@ -441,9 +435,9 @@ export default function Home() {
             );
 
             const cameraNodes = [
-                new SceneNode({camera: orthographicCamera}),
-                new SceneNode({camera: perspectiveCamera}),
-                new SceneNode({camera: obliqueCamera})
+                new SceneNode({name: 'OrthographicCamera', camera: orthographicCamera}),
+                new SceneNode({name: 'PerspectiveCamera', camera: perspectiveCamera}),
+                new SceneNode({name: 'ObliqueCamera', camera: obliqueCamera})
             ]
 
             const glRenderer = new GLRenderer(glContainer);

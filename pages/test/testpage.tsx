@@ -2,6 +2,7 @@
 import { GLContainer } from "@/lib/cores";
 import { SceneNode } from "@/lib/data/SceneNode";
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data/components/cameras";
+import { Vector3 } from "@/lib/data/math";
 import { JojoModel } from "@/lib/data/models/JojoModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
@@ -25,7 +26,8 @@ export default function TestPage() {
         -1,
         1,
         0.01,
-        1000
+        1000,
+        1
       );
 
       const perspectiveCamera = new PerspectiveCamera(
@@ -49,10 +51,12 @@ export default function TestPage() {
       );
 
       const cameraNodes = [
-          new SceneNode({camera: orthographicCamera}),
+          new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, 0)}),
           new SceneNode({camera: perspectiveCamera}),
           new SceneNode({camera: obliqueCamera})
       ]
+
+      cameraNodes[0].rotateByDegrees(new Vector3(0, 0, 0));
 
       const model = new JojoModel();
 
@@ -61,11 +65,11 @@ export default function TestPage() {
       const scene = model.scene;
 
       // change camera here
-      scene.addNode(cameraNodes[2]);
+      scene.addNode(cameraNodes[0]);
 
       glRenderer.render(scene);
       
-      model.download();
+      // model.download();
     };
 
     initializeGL();

@@ -1,3 +1,5 @@
+import { SceneNode } from "../../SceneNode";
+import { Quaternion, Vector3 } from "../../math";
 import { Matrix4 } from "../../math/Matrix4";
 import { CameraType, CameraTypeString } from "../../types/gltftypes";
 import { NodeComponent } from "../NodeComponent";
@@ -29,6 +31,19 @@ export abstract class Camera extends NodeComponent {
     getProjectionMatrix() {
         this.updateProjectionMatrix();
         return this._projectionMatrix;
+    }
+
+    getFinalProjectionMatrix(node: SceneNode): Matrix4 {
+        const projectionMatrix = this.getProjectionMatrix();
+        const worldPosition = node.worldPosition;
+
+        const translation = Matrix4.translation3d(worldPosition.mul(-1))
+        const rotation = Quaternion.lookAt(Vector3.zero(), node.backward, node.up).conjugate();
+
+        const viewMatrix = translation.mul(rotation.toMatrix4()).transpose();
+
+        const viewProjectionMatrix = Matrix4.mul(viewMatrix, projectionMatrix);
+        return viewProjectionMatrix;
     }
     
     get zoom(): number {

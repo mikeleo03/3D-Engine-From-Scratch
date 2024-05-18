@@ -14,6 +14,9 @@ export class SceneNode {
     private _scale: Vector3 = new Vector3(1, 1, 1);
     private _localMatrix: Matrix4 = Matrix4.identity();
     private _worldMatrix: Matrix4 = Matrix4.identity();
+    private _worldRotation: Quaternion = new Quaternion();
+    private _worldPosition: Vector3 = new Vector3();
+    private _worldScale: Vector3 = new Vector3(1, 1, 1);
     private _parent: SceneNode | null = null;
     private _children: SceneNode[] = []
     private _mesh?: Mesh;
@@ -70,6 +73,9 @@ export class SceneNode {
     get parent() { return this._parent; }
     get localMatrix() { return this._localMatrix; }
     get worldMatrix() { return this._worldMatrix; }
+    get worldRotation() { return this._worldRotation; }
+    get worldPosition() { return this._worldPosition; }
+    get worldScale() { return this._worldScale; }
     get children() { return this._children; }
     get camera() { return this._camera; }
     get mesh() { return this._mesh; }
@@ -125,6 +131,38 @@ export class SceneNode {
         this.computeWorldMatrix(false, true);
     }
 
+    get localUp(): Vector3 {
+        return this.rotation.rotateVector(Vector3.up());
+    }
+
+    get up(): Vector3 {
+        return this.worldRotation.rotateVector(Vector3.up()).normalize();
+    }
+
+    get localDown(): Vector3 {
+        return this.localUp.mul(-1);
+    }
+
+    get down(): Vector3 {
+        return this.up.mul(-1);
+    }
+
+    get localForward(): Vector3 {
+        return this.rotation.rotateVector(Vector3.forward());
+    }
+
+    get forward(): Vector3 {
+        return this.worldRotation.rotateVector(Vector3.forward()).normalize();
+    }
+
+    get localBackward(): Vector3 {
+        return this.localForward.mul(-1);
+    }
+
+    get backward(): Vector3 {
+        return this.forward.mul(-1);
+    }
+
     private computeLocalMatrix() {
         this._localMatrix = Matrix4.mul(
             Matrix4.translation3d(this._position),
@@ -133,8 +171,72 @@ export class SceneNode {
         );
     }
 
+    private computeWorldRotation(updateParent = true, updateChildren = true) {
+        if (updateParent && this.parent) {
+            this.parent.computeWorldRotation(true, false);
+        }
+
+        if (this.parent) {
+            this._worldRotation = Quaternion.mul(this.parent.worldRotation, this.rotation);
+        } else {
+            this._worldRotation = this.rotation.clone();
+        }
+
+        if (updateChildren) {
+            for (let i = 0; i < this._children.length; i++) {
+                this._children[i].computeWorldRotation(false, true);
+            }
+        }
+    }
+
+    private computeWorldPosition(updateParent = true, updateChildren = true) {
+        if (updateParent && this.parent) {
+            this.parent.computeWorldPosition(true, false);
+        }
+
+        if (this.parent) {
+            this._worldPosition = Vector3.add(
+                this.parent.worldPosition,
+                this.position
+            );
+        } else {
+            this._worldPosition = this.position.clone();
+        }
+
+        if (updateChildren) {
+            for (let i = 0; i < this._children.length; i++) {
+                this._children[i].computeWorldPosition(false, true);
+            }
+        }
+    }
+
+    private computeWorldScale(updateParent = true, updateChildren = true) {
+        if (updateParent && this.parent) {
+            this.parent.computeWorldScale(true, false);
+        }
+
+        if (this.parent) {
+            this._worldScale = Vector3.mulElements(
+                this.parent.worldScale,
+                this.scale
+            );
+        } else {
+            this._worldScale = this.scale.clone();
+        }
+
+        if (updateChildren) {
+            for (let i = 0; i < this._children.length; i++) {
+                this._children[i].computeWorldScale(false, true);
+            }
+        }
+    }
+
 
     private computeWorldMatrix(updateParent = true, updateChildren = true) {
+        this.computeWorldRotation();
+        this.computeWorldPosition();
+        this.computeWorldScale();
+
         // If updateParent, update world matrix of our ancestors
         // (.parent, .parent.parent, .parent.parent.parent, ...)
         if (updateParent && this.parent)

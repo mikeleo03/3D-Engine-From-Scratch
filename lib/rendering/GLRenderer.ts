@@ -58,8 +58,7 @@ export class GLRenderer {
         this.clearCanvas();
 
         const cameraNode = scene.getActiveCameraNode();
-        const canvas = this._glContainer.canvasElement;
-
+        
         if (!cameraNode) {
             return;
         }
@@ -75,7 +74,7 @@ export class GLRenderer {
     
         for (const node of nodes) {
             const defaultUniform = {
-                viewMatrix: camera.getProjectionMatrix().buffer,
+                viewMatrix: camera.getFinalProjectionMatrix(cameraNode).buffer,
                 cameraPosition: cameraPosition
             }
 
