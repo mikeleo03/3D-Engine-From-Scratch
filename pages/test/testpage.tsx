@@ -41,8 +41,9 @@ export default function TestPage() {
           -1,
           1,
           0.01,
-          100,
-          20
+          1000,
+          80,
+          0
       );
 
       const cameraNodes = [
@@ -58,7 +59,7 @@ export default function TestPage() {
       const scene = model.scene;
 
       // change camera here
-      scene.addNode(cameraNodes[0]);
+      scene.addNode(cameraNodes[2]);
 
       glRenderer.render(scene);
       

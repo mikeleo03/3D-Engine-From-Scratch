@@ -9,10 +9,30 @@ export class ObliqueCamera extends Camera {
     private _right: number;
     private _near: number;
     private _far: number;
-    private _angle: number;
+    private _angleX: number;
+    private _angleY: number;
 
-    constructor(top: number, bottom: number, left: number, right: number, near: number, far: number, angle: number = 45) {
+    constructor(
+        top: number, 
+        bottom: number, 
+        left: number, 
+        right: number, 
+        near: number, 
+        far: number, 
+        angleX: number = 45,
+        angleY: number = 45
+    ) {
         super(CameraTypeString.OBLIQUE);
+
+        // check angle in range -90 to 90
+
+        if (angleX < -90 || angleX > 90) {
+            throw new Error('angleX must be in range -90 to 90');
+        }
+
+        if (angleY < -90 || angleY > 90) {
+            throw new Error('angleY must be in range -90 to 90');
+        }
 
         this._top = top;
         this._bottom = bottom;
@@ -20,7 +40,8 @@ export class ObliqueCamera extends Camera {
         this._right = right;
         this._near = near;
         this._far = far;
-        this._angle = angle;
+        this._angleX = angleX;
+        this._angleY = angleY;
     }
 
     get top(): number {
@@ -47,8 +68,23 @@ export class ObliqueCamera extends Camera {
         return this._far;
     }
 
-    get angle(): number {
-        return this._angle;
+    get angleX(): number {
+        // check angle in range -90 to 90
+
+        if (this._angleX < -90 || this._angleX > 90) {
+            throw new Error('angleX must be in range -90 to 90');
+        }
+
+        return this._angleX;
+    }
+
+    get angleY(): number {
+        // check angle in range -90 to 90
+        if (this._angleY < -90 || this._angleY > 90) {
+            throw new Error('angleY must be in range -90 to 90');
+        }
+
+        return this._angleY;
     }
 
     set top(top: number) {
@@ -75,8 +111,12 @@ export class ObliqueCamera extends Camera {
         this._far = far;
     }
 
-    set angle(angle: number) {
-        this._angle = angle;
+    set angleX(angle: number) {
+        this._angleX = angle;
+    }
+
+    set angleY(angle: number) {
+        this._angleY = angle;
     }
 
     protected override updateProjectionMatrix() {
@@ -99,7 +139,7 @@ export class ObliqueCamera extends Camera {
 
         this.projectionMatrix = Matrix4.oblique(
             top, bottom, left, right,
-            this._near, this._far, this._angle, 0.5
+            this._near, this._far, this._angleX, this._angleY
         );
     }
     
@@ -113,7 +153,7 @@ export class ObliqueCamera extends Camera {
                 right: this._right,
                 znear: this._near,
                 zfar: this._far,
-                angle: this._angle
+                angle: this._angleX
             }
         };
     }

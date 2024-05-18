@@ -304,17 +304,50 @@ export class Matrix4 {
         ]);
     }
 
-    static oblique(top: number, bottom: number, left: number, right: number, near: number, far: number, angle: number, scale = 0.5) {
-        // TODO: LEON, check matrix kedua harus transpose atau engga, (M * N)^T = N^T * M^T
+    private static recalculateAngle(angle: number): number {
+        if (angle < 0) {
+            return -90 - angle;
+        }
 
-        angle *= Math.PI / 180;
-        return Matrix4.mul(Matrix4.orthographic(top, bottom, left, right, near, far),
+        return 90 - angle;
+    }
+
+    static oblique(
+        top: number, 
+        bottom: number, 
+        left: number, 
+        right: number, 
+        near: number, 
+        far: number, 
+        angleX: number, 
+        angleY: number
+    ) {
+        
+        // shear in z axis and project baed on orthographic
+
+        // check and recalculate angle
+
+        if (angleX < -90 || angleX > 90) {
+            throw new Error('angleX must be in range -90 to 90');
+        }
+
+        if (angleY < -90 || angleY > 90) {
+            throw new Error('angleY must be in range -90 to 90');
+        }
+
+        angleX = Matrix4.recalculateAngle(angleX);
+        angleY = Matrix4.recalculateAngle(angleY);
+
+        angleX *= Math.PI / 180;
+        angleY *= Math.PI / 180;
+        return Matrix4.mul(
             new Matrix4([
-                [1, 0, scale * Math.cos(angle), 0],
-                [0, 1, scale * Math.sin(angle), 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-            ])
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [-1 / Math.tan(angleX), -1 / Math.tan(angleY), 1, 0],
+                [0, 0, 0, 1],
+            ]),
+            Matrix4.orthographic(top, bottom, left, right, near, far),
         );
     }
 }

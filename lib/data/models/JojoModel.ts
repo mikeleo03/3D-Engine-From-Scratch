@@ -117,7 +117,7 @@ export class JojoModel extends Model {
         parent.add(rightLeg);
 
         parent.translate(new Vector3(0, 0, -100));
-        parent.rotateByDegrees(new Vector3(30, 30, 0));
+        parent.rotateByDegrees(new Vector3(0, 0, 0));
 
         nodes.push(parent);
 
