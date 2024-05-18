@@ -59,7 +59,7 @@ export default function TestPage() {
 
       cameraNodes[0].rotateByDegrees(new Vector3(0, 0, 0));
 
-      const model = new LeonModel();
+      const model = new JojoModel();
 
       const glRenderer = new GLRenderer(glContainer);
       const scene = model.scene;
@@ -69,7 +69,7 @@ export default function TestPage() {
 
       glRenderer.render(scene);
       
-      model.download();
+      // model.download();
     };
 
     initializeGL();
