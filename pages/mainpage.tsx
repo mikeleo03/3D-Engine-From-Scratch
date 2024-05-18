@@ -551,7 +551,7 @@ export default function Home() {
         }
 
         // TODO: Fix this
-        // currentCameraNode.lookAt(currentNodeRef.current!!.position);
+        currentCameraNode.lookAt(currentNodeRef.current!!.position);
     }, [currentNodeRef.current]);
 
     const handleNextFrame = () => {
