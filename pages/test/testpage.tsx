@@ -4,6 +4,7 @@ import { SceneNode } from "@/lib/data/SceneNode";
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data/components/cameras";
 import { Vector3 } from "@/lib/data/math";
 import { JojoModel } from "@/lib/data/models/JojoModel";
+import { LeonModel } from "@/lib/data/models/LeonModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
 

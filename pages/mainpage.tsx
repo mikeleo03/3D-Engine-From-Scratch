@@ -416,9 +416,9 @@ export default function Home() {
 
             const perspectiveCamera = new PerspectiveCamera(
                 canvas.width / canvas.height,
-                60,
+                1,
                 0.01,
-                1000,
+                9999,
                 1
             );
 

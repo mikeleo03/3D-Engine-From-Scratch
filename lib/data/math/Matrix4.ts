@@ -269,26 +269,14 @@ export class Matrix4 {
     }
 
     static perspective(aspectRatio: number, yfov: number, near: number, far: number) {
-        // TODO: perspective utk z axisnya besar banget D:
-        
-        /* const f = Math.tan(0.5 * Math.PI * (1 - yfov/180));
+        const f = 1.0 / Math.tan(0.5 * yfov * Math.PI / 180);
         const nf = 1 / (near - far);
 
         return new Matrix4([
             [f / aspectRatio, 0, 0, 0],
             [0, f, 0,  0],
             [0, 0, (far + near) * nf, -1],
-            [0, 0, 2 * far * near * nf,  0],
-        ]); */
-        const top = near * Math.tan(0.5 * Math.PI / 180 * yfov);
-        const right = top * aspectRatio;
-        const nf = 1 / (near - far);
-
-        return new Matrix4([
-            [near / right, 0, 0, 0],
-            [0, near / top, 0, 0],
-            [0, 0, (far + near) * nf, -1],
-            [0, 0, 2 * far * near * nf, 0],
+            [0, 0, (2 * far * near) * nf,  0],
         ]);
     }
 

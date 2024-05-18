@@ -49,9 +49,11 @@ export class PerspectiveCamera extends Camera {
         this._far = far;
     }
 
-    protected override updateProjectionMatrix() {        
+    protected override updateProjectionMatrix() {
+        const yfov = this._yfov / this.zoom; 
+
         this.projectionMatrix = Matrix4.perspective(
-            this._aspectRatio, this._yfov, this._near, this._far,
+            this._aspectRatio, yfov, this._near, this._far,
         );
 
     }

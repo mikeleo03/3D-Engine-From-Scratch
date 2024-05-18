@@ -1,7 +1,8 @@
 import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
-import { Matrix4 } from "../data/math";
+import { Vector3 } from "../data/math";
+import { CameraTypeString } from "../data/types/gltftypes";
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -17,7 +18,7 @@ export class GLRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
-    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Float32Array, cameraPosition: Float32Array}) {
+    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Float32Array}) {
         const mesh = root.mesh;
         const gl = this._glContainer.glContext;
 
@@ -33,7 +34,6 @@ export class GLRenderer {
 
                 this._glContainer.setProgram(programInfo);
 
-                // TODO: leon, handle cameraposition
                 this._glContainer.setUniforms(programInfo, { 
                     ...material.bufferUniforms, 
                     ...uniforms,
@@ -67,15 +67,17 @@ export class GLRenderer {
         if (!camera) {
             return;
         }
-
-        const cameraPosition = cameraNode.position.buffer;
+        
+        if (camera.type === CameraTypeString.PERSPECTIVE) {
+            cameraNode.position = new Vector3(0, 0, 700 - (camera.zoom - 1) / 4 * 300)
+        }
+        let cameraPosition = cameraNode.position;
 
         const nodes = scene.roots;
     
         for (const node of nodes) {
             const defaultUniform = {
                 viewMatrix: camera.getFinalProjectionMatrix(cameraNode).buffer,
-                cameraPosition: cameraPosition
             }
 
             this.renderRoot(node, defaultUniform);
