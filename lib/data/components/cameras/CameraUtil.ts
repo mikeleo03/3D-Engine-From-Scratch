@@ -11,7 +11,8 @@ export class CameraUtil {
                 raw.perspective.aspectRatio,
                 raw.perspective.yfov,
                 raw.perspective.znear,
-                raw.perspective.zfar
+                raw.perspective.zfar,
+                raw.perspective.zoom
             );
         }
         else if (raw.type === CameraTypeString.ORTHOGRAPHIC) {
@@ -22,7 +23,7 @@ export class CameraUtil {
                 raw.orthographic.right,
                 raw.orthographic.znear,
                 raw.orthographic.zfar,
-                raw.orthographic.angle
+                raw.orthographic.zoom
             );
         }
         else if (raw.type === CameraTypeString.OBLIQUE) {
@@ -33,7 +34,9 @@ export class CameraUtil {
                 raw.oblique.right,
                 raw.oblique.znear,
                 raw.oblique.zfar,
-                raw.oblique.angle
+                raw.oblique.zoom,
+                raw.oblique.angleX,
+                raw.oblique.angleY
             );
         }
 

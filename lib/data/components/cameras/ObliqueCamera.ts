@@ -19,10 +19,11 @@ export class ObliqueCamera extends Camera {
         right: number, 
         near: number, 
         far: number, 
-        angleX: number = 45,
-        angleY: number = 45
+        zoom: number = 1,
+        angleX: number = 15,
+        angleY: number = 15
     ) {
-        super(CameraTypeString.OBLIQUE);
+        super(CameraTypeString.OBLIQUE, zoom);
 
         // check angle in range -90 to 90
 
@@ -141,7 +142,9 @@ export class ObliqueCamera extends Camera {
                 right: this._right,
                 znear: this._near,
                 zfar: this._far,
-                angle: this._angleX
+                angleX: this._angleX,
+                angleY: this._angleY,
+                zoom: this.zoom
             }
         };
     }

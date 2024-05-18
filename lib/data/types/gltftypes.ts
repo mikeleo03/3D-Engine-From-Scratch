@@ -110,7 +110,8 @@ export type CameraType = {
         "aspectRatio": number,
         "yfov": number,
         "znear": number,
-        "zfar": number
+        "zfar": number,
+        "zoom": number,
     }
 } | {
     "type": CameraTypeString.ORTHOGRAPHIC,
@@ -121,7 +122,7 @@ export type CameraType = {
         "right": number,
         "znear": number,
         "zfar": number,
-        "angle": number
+        "zoom": number
     }
 } | {
     "type": CameraTypeString.OBLIQUE,
@@ -132,7 +133,9 @@ export type CameraType = {
         "right": number,
         "znear": number,
         "zfar": number,
-        "angle": number
+        "angleX": number,
+        "angleY": number,
+        "zoom": number
     }
 };
 

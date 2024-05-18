@@ -9,12 +9,16 @@ export abstract class Camera extends NodeComponent {
     private _zoom: number;
     private _type: CameraTypeString;
 
-    constructor(type: CameraTypeString) {
+    constructor(type: CameraTypeString, zoom: number = 1) {
         super(Camera.COMPONENT_NAME);
+
+        if (zoom <= 0) {
+            throw new Error('zoom must be greater than 0');
+        }
 
         this._projectionMatrix = Matrix4.identity();
         this._type = type;
-        this._zoom = 1;
+        this._zoom = zoom;
     }
 
 

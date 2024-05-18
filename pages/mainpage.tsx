@@ -23,6 +23,7 @@ import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
 import { CameraTypeString } from '@/lib/data/types/gltftypes';
 import NodeView from '@/components/NodeView';
+import { Type } from 'lucide-react';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -34,8 +35,9 @@ interface TRS {
 
 interface CameraState {
     type: CameraTypeString;
-    distance: number;
-    angle: number;
+    zoom: number;
+    obliqueAngleX?: number;
+    obliqueAngleY?: number;
 }
 
 interface ShaderState {
@@ -49,13 +51,17 @@ export default function Home() {
     const [translation, setTranslation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [rotation, setRotation] = useState<TRS>({ x: 0, y: 0, z: 0 });
     const [scale, setScale] = useState<TRS>({ x: 1, y: 1, z: 1 });
-    const [camera, setCamera] = useState<CameraState>({ type: CameraTypeString.PERSPECTIVE, distance: 0, angle: 0 });
+    const [camera, setCamera] = useState<CameraState>({ 
+        type: CameraTypeString.PERSPECTIVE, 
+        zoom: 1,
+    });
     const [shader, setShader] = useState<ShaderState>({ enabled: false });
     const [isPlaying, setIsPlaying] = useState(false);
     const [isReversing, setIsReversing] = useState(false);
     const [isLooping, setIsLooping] = useState(false);
     const [easingMode, setEasingMode] = useState({ mode: "Linear" });
     const [currentNode, setCurrentNode] = useState<SceneNode>();
+    const [disableTRS, setDisableTRS] = useState(true);
 
     const glContainerRef = useRef<GLContainer>();
     const glRendererRef = useRef<GLRenderer>();
@@ -125,6 +131,28 @@ export default function Home() {
         }
     };
 
+    const getCurrentCamera = () => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        const cameraNode = currentScene.getActiveCameraNode();
+
+        if (!cameraNode) {
+            return;
+        }
+
+        const camera = cameraNode.camera;
+
+        if (!camera) {
+            return;
+        }
+
+        return camera;
+    }
+
     const changeCurrentCamera = (type: CameraTypeString) => {
         const currentScene = gltfStateRef.current?.CurrentScene;
 
@@ -137,29 +165,81 @@ export default function Home() {
         for (const cameraNode of cameras) {
             if (cameraNode.camera && cameraNode.camera.type === type) {
                 currentScene.setActiveCameraNode(cameraNode);
+
+                setCamera(prevState => { 
+                    const newState: CameraState = {
+                        ...prevState, 
+                        type: type, 
+                        zoom: cameraNode.camera!.zoom,
+                    }
+
+                    if (type === CameraTypeString.OBLIQUE) {
+                        const obliqueCamera = cameraNode.camera as ObliqueCamera;
+                        newState.obliqueAngleX = obliqueCamera.angleX
+                        newState.obliqueAngleY = obliqueCamera.angleY
+                    }
+
+                    return newState;
+                });
+
                 break;
             }
         }
-
-        console.log(currentScene.getActiveCameraNode()?.camera)
     }
 
     const handleCameraModeChange = (type: string) => {
        
         const value = type as CameraTypeString;
-
-        setCamera(prevState => ({ ...prevState, type: value }));
-
         changeCurrentCamera(value);
     };
 
-    const handleDistanceChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setCamera(prevState => ({ ...prevState, distance: parseInt(e.target.value) }));
+    const handleCameraZoomChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCamera(prevState => ({ ...prevState, zoom: parseFloat(e.target.value) }));
+
+        const currentCamera = getCurrentCamera();
+
+        if (!currentCamera) {
+            return;
+        }
+
+        currentCamera.zoom = parseFloat(e.target.value);
     };
 
-    const handleAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setCamera(prevState => ({ ...prevState, angle: parseInt(e.target.value) }));
+    const handleObliqueHorizontalAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCamera(prevState => ({ ...prevState, obliqueAngleX: parseFloat(e.target.value) }));
+
+        const currentCamera = getCurrentCamera();
+
+        if (!currentCamera) {
+            return;
+        }
+
+        if (currentCamera.type !== CameraTypeString.OBLIQUE) {
+            return;
+        }
+
+        const obliqueCamera = currentCamera as ObliqueCamera;
+
+        obliqueCamera.angleX = parseFloat(e.target.value);
     };
+
+    const handleObliqueVerticalAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCamera(prevState => ({ ...prevState, obliqueAngleY: parseFloat(e.target.value) }));
+
+        const currentCamera = getCurrentCamera();
+
+        if (!currentCamera) {
+            return;
+        }
+
+        if (currentCamera.type !== CameraTypeString.OBLIQUE) {
+            return;
+        }
+
+        const obliqueCamera = currentCamera as ObliqueCamera;
+
+        obliqueCamera.angleY = parseFloat(e.target.value);
+    }
 
     const toggleShader = () => {
         setShader(prevState => ({ enabled: !prevState.enabled }));
@@ -192,6 +272,11 @@ export default function Home() {
 
     const setCurrentTRS = () => {
         if (!currentNodeRef.current) {
+            // set to 0
+            setTranslation({ x: 0, y: 0, z: 0 });
+            setRotation({ x: 0, y: 0, z: 0 });
+            setScale({ x: 1, y: 1, z: 1 });
+
             return;
         }
 
@@ -242,8 +327,6 @@ export default function Home() {
     const setNewState = (newState: GLTFState) => {
         gltfStateRef.current = newState;
 
-        console.log(newState);
-
         const currentScene = newState.CurrentScene;
 
         if (!currentScene) {
@@ -281,8 +364,6 @@ export default function Home() {
             animationRunnersRef.current.push(animationRunner);
             animationRunner.setAnimation(animation);
         }
-
-        console.log(currentScene.nodes)
     }
 
     const importFile = async () => {
@@ -349,14 +430,16 @@ export default function Home() {
                 -1,
                 1,
                 0.01,
-                1000
+                1000,
+                1
             );
 
             const perspectiveCamera = new PerspectiveCamera(
                 canvas.width / canvas.height,
                 60,
                 0.01,
-                1000
+                1000,
+                1
             );
 
             const obliqueCamera = new ObliqueCamera(
@@ -365,8 +448,10 @@ export default function Home() {
                 -1,
                 1,
                 0.01,
-                100,
-                20
+                1000,
+                1,
+                0,
+                0
             );
 
             const cameraNodes = [
@@ -388,6 +473,7 @@ export default function Home() {
 
     useEffect(() => {
         setCurrentNode(currentNodeRef.current);
+        setDisableTRS(!currentNodeRef.current || currentNodeRef.current.camera !== undefined);
     }, [currentNodeRef.current]);
 
     const handleNextFrame = () => {
@@ -490,7 +576,7 @@ export default function Home() {
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
                         <div className="flex flex-col w-full h-auto px-3 overflow-x-hidden">
                             {gltfStateRef.current && gltfStateRef.current.CurrentScene && gltfStateRef.current.CurrentScene.roots.map((root, index) => (
-                                !root.camera && <NodeView key={index} node={root} selectedNode={currentNode} clickCallback={handleNodeChange} />
+                                <NodeView key={index} node={root} selectedNode={currentNode} clickCallback={handleNodeChange} />
                             ))}
                         </div>
                     </div>
@@ -512,6 +598,7 @@ export default function Home() {
                                 <div className="w-1/4">X</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -524,6 +611,7 @@ export default function Home() {
                                 <div className="w-1/4">Y</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -536,6 +624,7 @@ export default function Home() {
                                 <div className="w-1/4">Z</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -551,6 +640,7 @@ export default function Home() {
                                 <div className="w-1/4">X</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -563,6 +653,7 @@ export default function Home() {
                                 <div className="w-1/4">Y</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -575,6 +666,7 @@ export default function Home() {
                                 <div className="w-1/4">Z</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -590,6 +682,7 @@ export default function Home() {
                                 <div className="w-1/4">X</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -602,6 +695,7 @@ export default function Home() {
                                 <div className="w-1/4">Y</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -614,6 +708,7 @@ export default function Home() {
                                 <div className="w-1/4">Z</div>
                                 <div className="w-3/4">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-8 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -642,28 +737,49 @@ export default function Home() {
                                 <SelectItem value={CameraTypeString.PERSPECTIVE}>Perspective</SelectItem>
                             </SelectContent>
                         </Select>
+                        
                         <div className="text-base font-semibold py-2 flex flex-row w-full">
-                            <div className="w-1/3">Distance</div>
+                            <div className="w-1/3">Zoom</div>
                             <input
                                 className="w-2/3"
                                 type="range"
-                                min="0"
-                                max="100"
-                                value={camera.distance}
-                                onChange={handleDistanceChange}
+                                min={0.001}
+                                max={5.000}
+                                step={0.001}
+                                value={camera.zoom}
+
+                                onChange={handleCameraZoomChange}
                             />
                         </div>
-                        <div className="text-base font-semibold pt-1 pb-2 flex flex-row w-full">
-                            <div className="w-1/3">Angle</div>
-                            <input
-                                className="w-2/3"
-                                type="range"
-                                min="0"
-                                max="360"
-                                value={camera.angle}
-                                onChange={handleAngleChange}
-                            />
-                        </div>
+                        
+                        {camera.type === CameraTypeString.OBLIQUE && (
+                            <div className="text-base font-semibold py-2 flex flex-row w-full">
+                                <div className="w-1/3">Horizontal Angle</div>
+                                <input
+                                    className="w-2/3"
+                                    type="range"
+                                    min="-90"
+                                    max="90"
+                                    value={camera.obliqueAngleX}
+                                    onChange={handleObliqueHorizontalAngleChange}
+                                />
+                            </div>
+                        )}
+
+                        {camera.type === CameraTypeString.OBLIQUE && (
+                            <div className="text-base font-semibold pt-1 pb-2 flex flex-row w-full">
+                                <div className="w-1/3">Vertical Angle</div>
+                                <input
+                                    className="w-2/3"
+                                    type="range"
+                                    min="-90"
+                                    max="90"
+                                    value={camera.obliqueAngleY}
+                                    onChange={handleObliqueVerticalAngleChange}
+                                />
+                            </div>
+                        )}
+                        
                     </div>
 
                     {/* Separator */}

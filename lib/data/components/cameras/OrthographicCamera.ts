@@ -9,10 +9,17 @@ export class OrthographicCamera extends Camera {
     private _right: number;
     private _near: number;
     private _far: number;
-    private _angle: number;
 
-    constructor(top: number, bottom: number, left: number, right: number, near: number, far: number, angle: number = 45) {
-        super(CameraTypeString.ORTHOGRAPHIC);
+    constructor(
+        top: number, 
+        bottom: number, 
+        left: number, 
+        right: number, 
+        near: number, 
+        far: number, 
+        zoom: number = 1,
+    ) {
+        super(CameraTypeString.ORTHOGRAPHIC, zoom);
 
         this._top = top;
         this._bottom = bottom;
@@ -20,7 +27,6 @@ export class OrthographicCamera extends Camera {
         this._right = right;
         this._near = near;
         this._far = far;
-        this._angle = angle;
     }
     
 
@@ -48,10 +54,6 @@ export class OrthographicCamera extends Camera {
         return this._far;
     }
 
-    get angle(): number {
-        return this._angle;
-    }
-
     set top(top: number) {
         this._top = top;
     }
@@ -76,9 +78,6 @@ export class OrthographicCamera extends Camera {
         this._far = far;
     }
 
-    set angle(angle: number) {
-        this._angle = angle;
-    }
 
     protected override updateProjectionMatrix() {
         const top = this._top / this.zoom;
@@ -100,7 +99,7 @@ export class OrthographicCamera extends Camera {
                 right: this._right,
                 znear: this._near,
                 zfar: this._far,
-                angle: this._angle
+                zoom: this.zoom,
             }
         };
     }

@@ -32,7 +32,8 @@ export default function TestPage() {
           canvas.width / canvas.height,
           60,
           0.01,
-          1000
+          1000,
+          1
       );
 
       const obliqueCamera = new ObliqueCamera(
@@ -42,6 +43,7 @@ export default function TestPage() {
           1,
           0.01,
           1000,
+          1,
           0,
           0
       );
@@ -63,7 +65,7 @@ export default function TestPage() {
 
       glRenderer.render(scene);
       
-    //   model.download();
+      model.download();
     };
 
     initializeGL();

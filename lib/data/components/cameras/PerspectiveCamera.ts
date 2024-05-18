@@ -8,8 +8,8 @@ export class PerspectiveCamera extends Camera {
     private _far: number;
     private _yfov: number;
 
-    constructor(aspectRatio: number, yfov: number, near: number, far: number) {
-        super(CameraTypeString.PERSPECTIVE);
+    constructor(aspectRatio: number, yfov: number, near: number, far: number, zoom: number = 1) {
+        super(CameraTypeString.PERSPECTIVE, zoom);
 
         this._aspectRatio = aspectRatio;
         this._yfov = yfov;
@@ -64,6 +64,7 @@ export class PerspectiveCamera extends Camera {
                 yfov: this._yfov,
                 znear: this._near,
                 zfar: this._far,
+                zoom: this.zoom,
             },
         };
     }
