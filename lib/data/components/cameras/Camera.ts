@@ -14,7 +14,7 @@ export abstract class Camera extends NodeComponent {
 
         this._projectionMatrix = Matrix4.identity();
         this._type = type;
-        this._zoom = 0.5;
+        this._zoom = 1;
     }
 
 
