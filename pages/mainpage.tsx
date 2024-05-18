@@ -434,10 +434,24 @@ export default function Home() {
                 0
             );
 
+            const cameraPosition = new Vector3(0, 0, -100);
+
             const cameraNodes = [
-                new SceneNode({name: 'OrthographicCamera', camera: orthographicCamera}),
-                new SceneNode({name: 'PerspectiveCamera', camera: perspectiveCamera}),
-                new SceneNode({name: 'ObliqueCamera', camera: obliqueCamera})
+                new SceneNode({
+                    name: 'OrthographicCamera', 
+                    camera: orthographicCamera,
+                    position: cameraPosition
+                }),
+                new SceneNode({
+                    name: 'PerspectiveCamera',
+                    camera: perspectiveCamera,
+                    position: cameraPosition
+                }),
+                new SceneNode({
+                    name: 'ObliqueCamera',
+                    camera: obliqueCamera,
+                    position: cameraPosition
+                })
             ]
 
             const glRenderer = new GLRenderer(glContainer);

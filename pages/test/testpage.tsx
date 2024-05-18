@@ -52,8 +52,8 @@ export default function TestPage() {
       );
 
       const cameraNodes = [
-          new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, 0)}),
-          new SceneNode({camera: perspectiveCamera}),
+          new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, -100)}),
+          new SceneNode({camera: perspectiveCamera}, ),
           new SceneNode({camera: obliqueCamera})
       ]
 
@@ -66,11 +66,11 @@ export default function TestPage() {
       const scene = model.scene;
 
       // change camera here
-      scene.addNode(cameraNodes[0]);
+      // scene.addNode(cameraNodes[0]);
 
       glRenderer.render(scene);
       
-      // model.download();
+      model.download();
     };
 
     initializeGL();
