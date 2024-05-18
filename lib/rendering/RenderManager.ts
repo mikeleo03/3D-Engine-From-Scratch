@@ -19,12 +19,14 @@ export class RenderManager {
 
     render() {
         const scene = this._gltfState.CurrentScene;
+        const currentCam = this._gltfState.CurrentScene?.getActiveCameraNode()?.position
+        console.log(currentCam);
 
-        if (!scene) {
+        if (!scene || !currentCam) {
             return;
         }
 
-        this._glRenderer.render(scene);
+        this._glRenderer.render(scene, currentCam);
     }
 
     loop(fps: number = RenderManager.DEFAULT_FPS) {
