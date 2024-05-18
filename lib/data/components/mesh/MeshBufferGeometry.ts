@@ -112,7 +112,7 @@ export class MeshBufferGeometry {
             const v3 = new Vector3(p[i3], p[i3 + 1], p[i3 + 2]);
 
             const normalVector = Vector3.cross(Vector3.sub(v2, v1), Vector3.sub(v3, v1));
-            normalVector.normalize();
+            normalVector.normalize(true);
 
             normal.set(i, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));
             normal.set(i + 1, Float32Array.from([normalVector.X, normalVector.Y, normalVector.Z]));

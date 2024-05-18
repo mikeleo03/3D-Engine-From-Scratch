@@ -159,7 +159,7 @@ export class Quaternion {
         this._z = c1 * c2 * s3 + s1 * s2 * c3;
         this._w = c1 * c2 * c3 - s1 * s2 * s3;
 
-        this.normalize();
+        this.normalize(true);
     }
 
     setFromMatrix4(m: Matrix4): void {
@@ -205,7 +205,7 @@ export class Quaternion {
             this._w = (m10 - m01) / s;
         }
 
-        this.normalize();
+        this.normalize(true);
     }
 
     normalize(inplace: Boolean = false): Quaternion {

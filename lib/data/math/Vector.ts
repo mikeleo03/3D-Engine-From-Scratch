@@ -198,7 +198,7 @@ export class Vector3 {
         const newVector = this.clone();
 
         if (len > 0) {
-            newVector.div(len);
+            newVector.div(len, true);
         }
 
         return newVector;
