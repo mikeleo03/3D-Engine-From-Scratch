@@ -62,7 +62,7 @@ export default function TestPage() {
       const scene = model.scene;
 
       // change camera here
-      scene.addNode(cameraNodes[1]);
+      scene.addNode(cameraNodes[0]);
 
       glRenderer.render(scene);
       
