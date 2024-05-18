@@ -90,18 +90,18 @@ export class LeonModel extends Model {
         rightBackLeg.name = 'Right Back Leg';
 
         // translation to make the position of the limbs and other parts of the body
-        body.translate(new Vector3(0, 10, 50));
-        head.translate(new Vector3(0, 30, -70));
-        leftFrontLeg.translate(new Vector3(-35, -20, -10));
-        rightFrontLeg.translate(new Vector3(35, -20, -10));
-        leftBackLeg.translate(new Vector3(-35, -20, 120));
-        rightBackLeg.translate(new Vector3(35, -20, 120));
+        body.translate(new Vector3(0, 10, -100));
+        head.translate(new Vector3(0, 30, 20));
+        leftFrontLeg.translate(new Vector3(-35, -20, -30));
+        rightFrontLeg.translate(new Vector3(35, -20, -30));
+        leftBackLeg.translate(new Vector3(-35, -20, -160));
+        rightBackLeg.translate(new Vector3(35, -20, -160));
 
-        leftEye.translate(new Vector3(-15, 30, -35));
-        rightEye.translate(new Vector3(15, 30, -35));
-        mouth.translate(new Vector3(0, 0, -35));
-        leftEar.translate(new Vector3(-20, 50, -20));
-        rightEar.translate(new Vector3(20, 50, -20));
+        leftEye.translate(new Vector3(-15, 30, 35));
+        rightEye.translate(new Vector3(15, 30, 35));
+        mouth.translate(new Vector3(0, 0, 35));
+        leftEar.translate(new Vector3(-20, 50, 20));
+        rightEar.translate(new Vector3(20, 50, 20));
         
         head.add(leftEye);
         head.add(rightEye);
@@ -117,8 +117,8 @@ export class LeonModel extends Model {
         parent.add(leftBackLeg);
         parent.add(rightBackLeg);
 
-        parent.translate(new Vector3(0, 0, 100));
-        parent.rotateByDegrees(new Vector3(-30, 30, 0));
+        parent.translate(new Vector3(0, 0, 0));
+        parent.rotateByDegrees(new Vector3(0, 0, 0));
 
         nodes.push(parent);
 

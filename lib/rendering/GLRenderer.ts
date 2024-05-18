@@ -67,12 +67,6 @@ export class GLRenderer {
         if (!camera) {
             return;
         }
-        
-        if (camera.type === CameraTypeString.PERSPECTIVE) {
-            // TODO: jangan modify position asli
-            cameraNode.position = new Vector3(0, 0, 700 - (camera.zoom - 1) / 4 * 300)
-        }
-        let cameraPosition = cameraNode.position;
 
         const nodes = scene.roots;
     
