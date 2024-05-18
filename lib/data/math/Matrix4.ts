@@ -48,7 +48,7 @@ export class Matrix4 {
         const q = new Quaternion();
 
         q.setFromEuler(v);
-        q.normalize();
+        q.normalize(true);
 
         return q.toMatrix4();
     }
@@ -142,6 +142,38 @@ export class Matrix4 {
             (m02 * m11 * m30 - m01 * m12 * m30 - m02 * m10 * m31 + m00 * m12 * m31 + m01 * m10 * m32 - m00 * m11 * m32) * s,
             (m01 * m12 * m20 - m02 * m11 * m20 + m02 * m10 * m21 - m00 * m12 * m21 - m01 * m10 * m22 + m00 * m11 * m22) * s],
         ]);
+    }
+
+    static lookAt(eye: Vector3, target: Vector3, up: Vector3) {
+        // fix this, consider z- as front
+        const z = Vector3.sub(eye, target);
+        if (z.distance() === 0) {
+            z.Z = 1;
+        }
+        z.normalize(true);
+
+        let x = Vector3.cross(up, z);
+        if (x.distance() === 0) {
+            if (Math.abs(up.Z) === 1) {
+                z.X += 0.0001;
+            } else {
+                z.Z += 0.0001;
+            }
+            z.normalize(true);
+            x = Vector3.cross(up, z);
+        }
+        x.normalize(true);
+
+        const y = Vector3.cross(z, x);
+
+        const result = new Matrix4([
+            [x.X, y.X, z.X, 0],
+            [x.Y, y.Y, z.Y, 0],
+            [x.Z, y.Z, z.Z, 0],
+            [-Vector3.dot(x, eye), -Vector3.dot(y, eye), -Vector3.dot(z, eye), 1]
+        ]);
+    
+        return result;
     }
 
     get data(): number[][] {
@@ -266,6 +298,11 @@ export class Matrix4 {
         }
 
         return this._data[row][col];
+    }
+
+    lookAt(eye: Vector3, target: Vector3, up: Vector3) {
+        const result = Matrix4.lookAt(eye, target, up);
+        this._data = result._data;
     }
 
     static perspective(aspectRatio: number, yfov: number, near: number, far: number) {

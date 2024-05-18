@@ -131,7 +131,7 @@ export default function Home() {
         }
     };
 
-    const getCurrentCamera = () => {
+    const getCurrentCameraNode = () => {
         const currentScene = gltfStateRef.current?.CurrentScene;
 
         if (!currentScene) {
@@ -140,15 +140,17 @@ export default function Home() {
 
         const cameraNode = currentScene.getActiveCameraNode();
 
+        return cameraNode;
+    }
+
+    const getCurrentCamera = () => {
+        const cameraNode = getCurrentCameraNode();
+
         if (!cameraNode) {
             return;
         }
 
         const camera = cameraNode.camera;
-
-        if (!camera) {
-            return;
-        }
 
         return camera;
     }
@@ -272,8 +274,12 @@ export default function Home() {
         setCurrentTRS();
     }
 
-    const setCurrentTRS = () => {
-        if (!currentNodeRef.current) {
+    const setCurrentTRS = (currentNode: SceneNode | undefined = currentNodeRef.current) => {
+        if (currentNode && currentNodeRef.current !== currentNode) {
+            return;
+        }
+
+        if (!currentNode) {
             // set to 0
             setTranslation({ x: 0, y: 0, z: 0 });
             setRotation({ x: 0, y: 0, z: 0 });
@@ -283,12 +289,12 @@ export default function Home() {
         }
 
         setTranslation({
-            x: currentNodeRef.current.position.X,
-            y: currentNodeRef.current.position.Y,
-            z: currentNodeRef.current.position.Z
+            x: currentNode.position.X,
+            y: currentNode.position.Y,
+            z: currentNode.position.Z
         });
 
-        const degrees = currentNodeRef.current.rotation.toDegrees();
+        const degrees = currentNode.rotation.toDegrees();
        
         setRotation({
             x: degrees.X,
@@ -297,9 +303,9 @@ export default function Home() {
         });
 
         setScale({
-            x: currentNodeRef.current.scale.X,
-            y: currentNodeRef.current.scale.Y,
-            z: currentNodeRef.current.scale.Z
+            x: currentNode.scale.X,
+            y: currentNode.scale.Y,
+            z: currentNode.scale.Z
         });
     }
 
@@ -394,6 +400,67 @@ export default function Home() {
         FileUtil.downloadFile(gltf);
     }
 
+    const handleScrollEvent = (e: WheelEvent) => {
+        const deltaFactor = 0.05;
+        const currentCameraNode = getCurrentCameraNode();
+
+        if (!currentCameraNode) {
+            return;
+        }
+
+        if (currentCameraNode == currentNodeRef.current) {
+            return;
+        }
+
+        const delta = e.deltaY * deltaFactor;
+
+        currentCameraNode.translate(currentCameraNode.forward.mul(-delta));
+        setCurrentTRS(currentCameraNode);
+    }
+
+    const handleMouseDragEvent = (e: MouseEvent) => {
+        const deltaXFactor = 0.5;
+        const deltaYFactor = 0.5;
+
+        const currentCameraNode = getCurrentCameraNode();
+
+        if (!currentCameraNode) {
+            return;
+        }
+
+        const currentNode = currentNodeRef.current;
+
+        if (!currentNode) {
+            return;
+        }   
+
+        if (currentCameraNode == currentNode) {
+            return;
+        }
+
+        const deltaX = e.movementX * deltaXFactor;
+        const deltaY = e.movementY * deltaYFactor;
+
+
+        currentCameraNode.rotateAroundPoint(currentNode.position, Quaternion.fromDegrees(deltaY, deltaX, 0), true);
+        setCurrentTRS(currentNode);
+    }
+
+    const handleMouseDownEvent = (e: MouseEvent) => {
+        const canvas = canvasRef.current;
+        canvas?.addEventListener('mousemove', handleMouseDragEvent);
+    }
+
+    const handleMouseUpEvent = (e: MouseEvent) => {
+        const canvas = canvasRef.current;
+        canvas?.removeEventListener('mousemove', handleMouseDragEvent);
+    }
+
+    const handleMouseOutEvent = (e: MouseEvent) => {
+        const canvas = canvasRef.current;
+        canvas?.removeEventListener('mousemove', handleMouseDragEvent);
+    }
+
     useEffect(() => {
         const canvas = canvasRef.current;
 
@@ -434,7 +501,7 @@ export default function Home() {
                 0
             );
 
-            const cameraPosition = new Vector3(0, 0, -100);
+            const cameraPosition = new Vector3(0, 0, 100);
 
             const cameraNodes = [
                 new SceneNode({
@@ -455,11 +522,15 @@ export default function Home() {
             ]
 
             const glRenderer = new GLRenderer(glContainer);
-            const animationRunner = new AnimationRunner();
 
             glContainerRef.current = glContainer;
             glRendererRef.current = glRenderer;
             cameraNodesRef.current = cameraNodes;
+
+            canvas.addEventListener('wheel', handleScrollEvent);
+            canvas.addEventListener('mousedown', handleMouseDownEvent);
+            canvas.addEventListener('mouseup', handleMouseUpEvent);
+            canvas.addEventListener('mouseout', handleMouseOutEvent);
         };
 
         initializeGL();
@@ -468,6 +539,19 @@ export default function Home() {
     useEffect(() => {
         setCurrentNode(currentNodeRef.current);
         setDisableTRS(!currentNodeRef.current || currentNodeRef.current.camera !== undefined);
+
+        const currentCameraNode = getCurrentCameraNode();
+
+        if (!currentCameraNode) {
+            return;
+        }
+
+        if (currentCameraNode == currentNodeRef.current) {
+            return;
+        }
+
+        // TODO: Fix this
+        // currentCameraNode.lookAt(currentNodeRef.current!!.position);
     }, [currentNodeRef.current]);
 
     const handleNextFrame = () => {

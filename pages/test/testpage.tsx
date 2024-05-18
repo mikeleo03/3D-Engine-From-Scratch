@@ -2,7 +2,7 @@
 import { GLContainer } from "@/lib/cores";
 import { SceneNode } from "@/lib/data/SceneNode";
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data/components/cameras";
-import { Vector3 } from "@/lib/data/math";
+import { Quaternion, Vector3 } from "@/lib/data/math";
 import { JojoModel } from "@/lib/data/models/JojoModel";
 import { LeonModel } from "@/lib/data/models/LeonModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
@@ -52,17 +52,18 @@ export default function TestPage() {
       );
 
       const cameraNodes = [
-          new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, -100)}),
-          new SceneNode({camera: perspectiveCamera}, ),
-          new SceneNode({camera: obliqueCamera})
+          new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, 100)}),
+          new SceneNode({camera: perspectiveCamera, position: new Vector3(0, 0, 100)}),
+          new SceneNode({camera: obliqueCamera, position: new Vector3(0, 0, 100)})
       ]
 
-      cameraNodes[0].rotateByDegrees(new Vector3(0, 0, 0));
-
       const model = new JojoModel();
+      const jojo = model.scene.nodes[0];
+
+      jojo.translate(new Vector3(-400, 0, 0));
+      cameraNodes[0].lookAt(jojo.position);
 
       const glRenderer = new GLRenderer(glContainer);
-
       const scene = model.scene;
 
       // change camera here

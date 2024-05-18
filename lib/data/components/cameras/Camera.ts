@@ -37,11 +37,11 @@ export abstract class Camera extends NodeComponent {
         const projectionMatrix = this.getProjectionMatrix();
         const worldPosition = node.worldPosition;
 
-        const translation = Matrix4.translation3d(worldPosition.mulZ(-1).mul(-1));
+        const translation = Matrix4.translation3d(worldPosition.mul(-1));
 
-        const rotation = Quaternion.lookAt(Vector3.zero(), node.backward, node.up).conjugate();
+        const rotation = node.rotation.conjugate();
 
-        const viewMatrix = translation.mul(rotation.toMatrix4()).transpose();
+        const viewMatrix = rotation.toMatrix4().mul(translation).transpose();
 
         const viewProjectionMatrix = Matrix4.mul(viewMatrix, projectionMatrix);
         return viewProjectionMatrix;

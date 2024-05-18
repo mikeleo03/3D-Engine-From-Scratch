@@ -131,6 +131,28 @@ export class SceneNode {
         this.computeWorldMatrix(false, true);
     }
 
+    rotateAroundPoint(point: Vector3, rotation: Quaternion, lookAtPoint = false) {
+        const translation = Vector3.mul(point, -1);
+        this.translate(translation);
+        
+        // rotate position
+        this.position = rotation.rotateVector(this.position);
+
+        this.translate(point);
+
+        if (lookAtPoint) {
+            this.lookAt(point);
+        }
+    }
+
+    lookAt(target: Vector3, up?: Vector3) {
+        if (!up) {
+            up = Vector3.up();
+        }
+
+        const rotation = Quaternion.lookAt(this._position, target, up);
+        this.rotation = rotation;
+    }
     get localUp(): Vector3 {
         return this.rotation.rotateVector(Vector3.up());
     }

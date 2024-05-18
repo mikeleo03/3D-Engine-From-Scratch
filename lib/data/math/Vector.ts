@@ -151,6 +151,10 @@ export class Vector3 {
         return new Vector3(this.x, this.y, this.z * s);
     }
 
+    distance() {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+    
     mulElements(v: Vector3, inplace: Boolean = false): Vector3 {
         if (inplace) {
             this.x *= v.x;
@@ -186,7 +190,7 @@ export class Vector3 {
 
         if (inplace) {
             if (len > 0) {
-                this.div(len);
+                this.div(len, true);
             }
             return this;
         }
