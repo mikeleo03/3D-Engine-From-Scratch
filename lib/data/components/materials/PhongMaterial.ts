@@ -42,27 +42,27 @@ export class PhongMaterial extends ShaderMaterial {
     }
 
     get ambientColor(): Color {
-        return this.ambientColor;
+        return this.uniforms.ambientColor;
     }
 
     get diffuseColor(): Color {
-        return this.diffuseColor;
+        return this.uniforms.diffuseColor;
     }
 
     get specularColor(): Color {
-        return this.specularColor;
+        return this.uniforms.specularColor;
     }
 
     get lightPosition(): Vector3 {
-        return this.lightPosition;
+        return this.uniforms.lightPosition;
     }
 
     get shininess(): number {
-        return this.shininess;
+        return this.uniforms.shininess;
     }
 
     set shininess(val: number) {
-        this.shininess = val;
+        this.uniforms.shininess = val;
     }
 
     get type() {
