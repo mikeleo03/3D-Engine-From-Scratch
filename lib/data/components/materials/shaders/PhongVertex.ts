@@ -28,6 +28,6 @@ void main() {
     v_normal = mat3(u_worldMatrix) * a_normal;
 
     // Pass the position in eye coordinates to the fragment shader    
-    v_pos = vec3(viewPosition);
+    v_pos = vec3(gl_Position);
 }
 `;
