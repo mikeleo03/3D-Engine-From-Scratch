@@ -5,6 +5,7 @@ import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data
 import { Quaternion, Vector3 } from "@/lib/data/math";
 import { JojoModel } from "@/lib/data/models/JojoModel";
 import { LeonModel } from "@/lib/data/models/LeonModel";
+import { CubeModel } from "@/lib/data/models/CubeModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
 
@@ -59,7 +60,7 @@ export default function TestPage() {
 
       cameraNodes[0].rotateByDegrees(new Vector3(0, 0, 0));
 
-      const model = new LeonModel();
+      const model = new CubeModel();
 
       const glRenderer = new GLRenderer(glContainer);
       const scene = model.scene;
