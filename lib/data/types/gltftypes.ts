@@ -139,6 +139,22 @@ export type CameraType = {
     }
 };
 
+export enum LightTypeString {
+    DIRECTIONAL = "directional"
+}
+
+export type LightType = {
+    "type": LightTypeString.DIRECTIONAL,
+    "directional": {
+        "color": Color,
+        "intensity": number,
+        "target": Vector3,
+        "ambientColor": Color,
+        "diffuseColor": Color,
+        "specularColor": Color
+    }
+}
+
 export type SceneNodeType = {
     id: string,
     name: string,
@@ -147,12 +163,14 @@ export type SceneNodeType = {
     scale: [number, number, number]
     children: number[],
     mesh?: number,
-    camera?: number
+    camera?: number,
+    light?: number
 }
 
 export type SceneType = {
     nodes: number[];
     activeCamera: number;
+    activeLight: number
 }
 
 export type AnimationTRS = {
