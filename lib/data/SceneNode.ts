@@ -1,4 +1,5 @@
 import { Camera } from "./components/cameras/Camera";
+import { Light } from "./components/lights/Light";
 import { Mesh } from "./components/mesh/Mesh";
 import { NodeComponent } from "./components/NodeComponent";
 import { Matrix4 } from "./math/Matrix4";
@@ -21,6 +22,7 @@ export class SceneNode {
     private _children: SceneNode[] = []
     private _mesh?: Mesh;
     private _camera?: Camera;
+    private _light?: Light;
     private _name: string = SceneNode.DEFAULT_NAME;
     private _id: string;
     // visible = true
@@ -33,6 +35,7 @@ export class SceneNode {
         parent = null,
         mesh,
         camera,
+        light,
         name = SceneNode.DEFAULT_NAME,
         id = uuidv4()
     }: {
@@ -42,6 +45,7 @@ export class SceneNode {
         parent?: SceneNode | null,
         mesh?: Mesh,
         camera?: Camera,
+        light?: Light,
         name?: string,
         id?: string
     } = {}) {
@@ -52,6 +56,7 @@ export class SceneNode {
         this.computeWorldMatrix();
         this._mesh = mesh;
         this._camera = camera;
+        this._light = light;
         this._name = name;
         this._id = id || uuidv4();
         if (mesh) {
@@ -60,6 +65,10 @@ export class SceneNode {
 
         if (camera) {
             camera.addNodes(this);
+        }
+
+        if (light) {
+            light.addNodes(this);
         }
     }
 
@@ -78,6 +87,7 @@ export class SceneNode {
     get worldScale() { return this._worldScale; }
     get children() { return this._children; }
     get camera() { return this._camera; }
+    get light() { return this._light; }
     get mesh() { return this._mesh; }
 
     // Public setter
@@ -319,7 +329,7 @@ export class SceneNode {
         if (this.parent) this.parent.remove(this);
     }
 
-    static fromRaw(raw: SceneNodeType, meshes: Mesh[], cameras: Camera[]): SceneNode {
+    static fromRaw(raw: SceneNodeType, meshes: Mesh[], cameras: Camera[], lights: Light[]): SceneNode {
         // NOTE: children are not set here
         const node = new SceneNode(
             {
@@ -329,14 +339,15 @@ export class SceneNode {
                 rotation: new Quaternion(raw.rotation[0], raw.rotation[1], raw.rotation[2], raw.rotation[3]),
                 scale: new Vector3(raw.scale[0], raw.scale[1], raw.scale[2]),
                 mesh: raw.mesh !== undefined ? meshes[raw.mesh] : undefined,
-                camera: raw.camera !== undefined ? cameras[raw.camera] : undefined
+                camera: raw.camera !== undefined ? cameras[raw.camera] : undefined,
+                light: raw.light!== undefined ? lights[raw.light] : undefined,
             }
         );
 
         return node;
     }
 
-    toRaw(nodeMap: Map<SceneNode, number>, meshMap: Map<Mesh, number>, cameraMap: Map<Camera, number>): SceneNodeType {
+    toRaw(nodeMap: Map<SceneNode, number>, meshMap: Map<Mesh, number>, cameraMap: Map<Camera, number>, lightMap: Map<Light, number>): SceneNodeType {
         // check if all children are in the map
         for (let i = 0; i < this._children.length; i++) {
             if (!nodeMap.has(this._children[i])) {
@@ -354,6 +365,11 @@ export class SceneNode {
             throw new Error("Camera must be in the map");
         }
 
+        // check if light is in the map
+        if (this._light && !lightMap.has(this._light)) {
+            throw new Error("Light must be in the map");
+        }
+
         return {
             id: this._id,
             name: this._name,
@@ -363,6 +379,7 @@ export class SceneNode {
             children: this._children.map(child => nodeMap.get(child)!!),
             mesh: this._mesh ? meshMap.get(this._mesh)!! : undefined,
             camera: this._camera ? cameraMap.get(this._camera)!! : undefined,
+            light: this._light ? lightMap.get(this._light)!! : undefined,
         };
     }
 
@@ -371,6 +388,10 @@ export class SceneNode {
 
         if (component instanceof Camera) {
             this._camera = component;
+        }
+
+        else if (component instanceof Light) {
+            this._light = component;
         }
 
         else if (component instanceof Mesh) {

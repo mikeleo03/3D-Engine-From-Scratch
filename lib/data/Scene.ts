@@ -1,5 +1,4 @@
 import { SceneNode } from "./SceneNode";
-import { Camera } from "./components/cameras/Camera";
 import { SceneType } from "./types/gltftypes";
 
 export class Scene {
@@ -7,11 +6,14 @@ export class Scene {
     private _rootNodes: SceneNode[] = [];
     private _cameras: SceneNode[] = [];
     private _activeCameraNode: SceneNode | null = null;
+    private _lights: SceneNode[] = [];
+    private _activeLightNode: SceneNode | null = null;
 
-    constructor(nodes: SceneNode[], activeCameraNode?: SceneNode) {
+    constructor(nodes: SceneNode[], activeCameraNode?: SceneNode, activeLightNode?: SceneNode) {
         this._nodes = [];
         this._rootNodes = [];
         this._cameras = [];
+        this._lights = [];
 
         for (const node of nodes) {
             this.addNode(node);
@@ -19,7 +21,11 @@ export class Scene {
 
         if (activeCameraNode) {
             this._activeCameraNode = activeCameraNode;
-        } 
+        }
+        
+        if (activeLightNode) {
+            this._activeLightNode = activeLightNode;
+        }
     }
 
     get nodes(): SceneNode[] {
@@ -32,6 +38,10 @@ export class Scene {
 
     get cameras(): SceneNode[] {
         return this._cameras.slice();
+    }
+
+    get lights(): SceneNode[] {
+        return this._lights.slice();
     }
 
     getRoot(index: number): SceneNode {
@@ -52,6 +62,20 @@ export class Scene {
         }
     }
 
+    getLightNode(index: number): SceneNode {
+        return this._lights[index];
+    }
+
+    getActiveLightNode(): SceneNode | null {
+        return this._activeLightNode;
+    }
+
+    setActiveLightNode(node: SceneNode) {
+        if (this._lights.includes(node)) {
+            this._activeLightNode = node;
+        }
+    }
+
     addNode(node: SceneNode) {
         if (this._nodes.includes(node)) {
             return;
@@ -67,8 +91,16 @@ export class Scene {
             this._cameras.push(node);
         }
 
+        if (node.light !== undefined) {
+            this._lights.push(node);
+        }
+
         if (this._cameras.length === 1) {
             this._activeCameraNode = this._cameras[0];
+        }
+
+        if (this._lights.length === 1) {
+            this._activeLightNode = this._lights[0];
         }
 
         for (const child of node.children) {
@@ -81,6 +113,14 @@ export class Scene {
             this._activeCameraNode = this._cameras[0];
         } else {
             this._activeCameraNode = null;
+        }
+    }
+
+    private resetCurrentLight() {
+        if (this._lights.length > 0) {
+            this._activeLightNode = this._lights[0];
+        } else {
+            this._activeLightNode = null;
         }
     }
 
@@ -101,9 +141,17 @@ export class Scene {
         if (this._cameras.includes(node)) {
             this._cameras.splice(this._cameras.indexOf(node), 1);
         }
+
+        if (this._lights.includes(node)) {
+            this._lights.splice(this._lights.indexOf(node), 1);
+        }
         
         if (this._activeCameraNode === node) {
             this.resetCurrentCamera();
+        }
+
+        if (this._activeLightNode === node) {
+            this.resetCurrentLight();
         }
 
         // remove every child node
@@ -116,8 +164,14 @@ export class Scene {
         return this._cameras.some(camera => camera.camera?.type === type);
     }
 
+    hasLight(type: string) {
+        return this._lights.some(light => light.light?.type === type);
+    }
+
     static fromRaw(raw: SceneType, nodes: SceneNode[]): Scene {
-        return new Scene(raw.nodes.map(index => nodes[index]), raw.activeCamera !== -1 ? nodes[raw.activeCamera] : undefined);
+        return new Scene(raw.nodes.map(index => nodes[index]), 
+        raw.activeCamera !== -1 ? nodes[raw.activeCamera] : undefined,
+        raw.activeLight !== -1 ? nodes[raw.activeLight] : undefined);
     }
 
     toRaw(nodeMap: Map<SceneNode, number>): SceneType {
@@ -130,7 +184,8 @@ export class Scene {
 
         return {
             nodes: this._nodes.map(node => nodeMap.get(node)!!),
-            activeCamera: this._activeCameraNode ? nodeMap.get(this._activeCameraNode)!! : -1
+            activeCamera: this._activeCameraNode ? nodeMap.get(this._activeCameraNode)!! : -1,
+            activeLight: this._activeLightNode ? nodeMap.get(this._activeLightNode)!! : -1
         };
     }
 }
