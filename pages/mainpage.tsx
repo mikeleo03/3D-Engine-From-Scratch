@@ -12,8 +12,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { GLTFState } from '@/lib/data/GLTFState';
-import { GLContainer } from '@/lib/cores';
+import { Color, GLContainer } from '@/lib/cores';
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from '@/lib/data/components/cameras';
+import { DirectionalLight } from '@/lib/data/components/lights';
 import { SceneNode } from '@/lib/data/SceneNode';
 import { GLRenderer } from '@/lib/rendering/GLRenderer';
 import { GLTFParser } from '@/lib/data/GLTFParser';
@@ -68,6 +69,7 @@ export default function Home() {
     const renderManagerRef = useRef<RenderManager>();
     const gltfStateRef = useRef<GLTFState>();
     const cameraNodesRef = useRef<SceneNode[]>([]);
+    const lightNodesRef = useRef<SceneNode[]>([]);
     const animationRunnersRef = useRef<AnimationRunner[]>([]);
     const currentNodeRef = useRef<SceneNode>();
 
@@ -344,6 +346,13 @@ export default function Home() {
             }
         }
 
+        for (const node of lightNodesRef.current) {
+            const currentScene = newState.CurrentScene;
+            if (!currentScene.hasLight(node.light!!.type)) {
+                newState.addNodeToScene(node, currentScene);
+            }
+        }
+
         const currentCamera = getCurrentCamera();
         handleCameraModeChange(currentCamera!!.type);
 
@@ -393,6 +402,13 @@ export default function Home() {
                 for (const node of cameraNodesRef.current) {
                     const currentScene = gltfState.CurrentScene;
                     if (!currentScene.hasCamera(node.camera!!.type)) {
+                        gltfState.addNodeToScene(node, currentScene);
+                    }
+                }
+
+                for (const node of lightNodesRef.current) {
+                    const currentScene = gltfState.CurrentScene;
+                    if (!currentScene.hasLight(node.light!!.type)) {
                         gltfState.addNodeToScene(node, currentScene);
                     }
                 }
@@ -519,23 +535,41 @@ export default function Home() {
                 0
             );
 
+            const directionalLight = new DirectionalLight(
+                new Color(255, 255, 255),
+                40,
+                new Vector3(0, 0, 0),
+                new Color(0.2 * 255, 0.2 * 255, 0.2 * 255),
+                new Color(0.5 * 255, 0.5 * 255, 0.5 * 255),
+                new Color(255, 255, 255)
+            );
+
             const cameraPosition = new Vector3(0, 0, 100);
+            const lightPosition = new Vector3(0, -50, 50);
 
             const cameraNodes = [
                 new SceneNode({
-                    name: 'OrthographicCamera', 
+                    name: 'Orthographic Camera', 
                     camera: orthographicCamera,
                     position: cameraPosition
                 }),
                 new SceneNode({
-                    name: 'PerspectiveCamera',
+                    name: 'Perspective Camera',
                     camera: perspectiveCamera,
                     position: cameraPosition
                 }),
                 new SceneNode({
-                    name: 'ObliqueCamera',
+                    name: 'Oblique Camera',
                     camera: obliqueCamera,
                     position: cameraPosition
+                })
+            ]
+
+            const lightNodes = [
+                new SceneNode({
+                    name: 'Directional Light', 
+                    light: directionalLight,
+                    position: lightPosition
                 })
             ]
 
@@ -544,6 +578,7 @@ export default function Home() {
             glContainerRef.current = glContainer;
             glRendererRef.current = glRenderer;
             cameraNodesRef.current = cameraNodes;
+            lightNodesRef.current = lightNodes;
 
             canvas.addEventListener('wheel', handleScrollEvent);
             canvas.addEventListener('mousedown', handleMouseDownEvent);
