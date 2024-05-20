@@ -896,7 +896,7 @@ export default function Home() {
     }
 
     return (
-        <main className="flex flex-col h-screen w-full bg-[#F2FBFA]">
+        <main className="flex flex-col h-screen w-full bg-[#F2FBFA] overflow-hidden">
             {/* Header Section */}
             <div className="bg-gray-800 w-full h-[8vh] sticky top-0 z-50 text-white flex justify-between">
                 {/* Title Section */}
@@ -988,7 +988,7 @@ export default function Home() {
                 </div>
 
                 {/* Right controller */}
-                <div className="w-[390px] bg-gray-700 overflow-y-auto h-full text-white ">
+                <div className="w-[400px] bg-gray-700 overflow-y-auto h-full text-white ">
                     {/* TRS */}
                     <div className="w-full p-6 py-4 pt-5">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
