@@ -108,18 +108,15 @@ export class JojoModel extends Model {
         head.add(eyeConver);
         head.add(mouth);
 
-        const parent = new SceneNode({name: 'Jojo'});
-        parent.add(body);
-        parent.add(leftHand);
-        parent.add(rightHand);
-        parent.add(head);
-        parent.add(leftLeg);
-        parent.add(rightLeg);
+        body.name = 'Jojo';
+        body.add(leftHand);
+        body.add(rightHand);
+        body.add(head);
+        body.add(leftLeg);
+        body.add(rightLeg);
 
-        parent.translate(new Vector3(0, 0, 0));
-        parent.rotateByDegrees(new Vector3(30, 30, 0));
-
-        nodes.push(parent);
+        body.translate(new Vector3(0, 0, 0));
+        body.rotateByDegrees(new Vector3(30, 30, 0));
 
         this._head = head;
         this._leftHand = leftHand;
@@ -127,7 +124,7 @@ export class JojoModel extends Model {
         this._leftLeg = leftLeg;
         this._rightLeg = rightLeg;
 
-        return new Scene(nodes);
+        return new Scene([body]);
     }
 
     private getHeadMovements(): AnimationTRS[] {
