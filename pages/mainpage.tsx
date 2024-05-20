@@ -344,6 +344,42 @@ export default function Home() {
         obliqueCamera.angleY = parseFloat(e.target.value);
     }
 
+    const handleSecondObliqueHorizontalAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setSecondCamera(prevState => ({ ...prevState, obliqueAngleX: parseFloat(e.target.value) }));
+
+        const currentCamera = secondRenderManagerRef.current?.getCustomeCamera()?.camera;
+
+        if (!currentCamera) {
+            return;
+        }
+
+        if (currentCamera.type !== CameraTypeString.OBLIQUE) {
+            return;
+        }
+
+        const obliqueCamera = currentCamera as ObliqueCamera;
+
+        obliqueCamera.angleX = parseFloat(e.target.value);
+    };
+
+    const handleSecondObliqueVerticalAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setSecondCamera(prevState => ({ ...prevState, obliqueAngleY: parseFloat(e.target.value) }));
+
+        const currentCamera = secondRenderManagerRef.current?.getCustomeCamera()?.camera;
+
+        if (!currentCamera) {
+            return;
+        }
+
+        if (currentCamera.type !== CameraTypeString.OBLIQUE) {
+            return;
+        }
+
+        const obliqueCamera = currentCamera as ObliqueCamera;
+
+        obliqueCamera.angleY = parseFloat(e.target.value);
+    }
+
     const togglePlay = () => {
         setIsPlaying(prevState => !prevState);
     };
@@ -1178,7 +1214,7 @@ export default function Home() {
                             />
                         </div>
 
-                        {camera.type === CameraTypeString.OBLIQUE && (
+                        {secondCamera.type === CameraTypeString.OBLIQUE && (
                             <div className="text-base font-semibold py-2 flex flex-row w-full">
                                 <div className="w-1/3">Horizontal Angle</div>
                                 <input
@@ -1186,13 +1222,13 @@ export default function Home() {
                                     type="range"
                                     min="-90"
                                     max="90"
-                                    value={camera.obliqueAngleX}
-                                    onChange={handleObliqueHorizontalAngleChange}
+                                    value={secondCamera.obliqueAngleX}
+                                    onChange={handleSecondObliqueHorizontalAngleChange}
                                 />
                             </div>
                         )}
 
-                        {camera.type === CameraTypeString.OBLIQUE && (
+                        {secondCamera.type === CameraTypeString.OBLIQUE && (
                             <div className="text-base font-semibold pt-1 pb-2 flex flex-row w-full">
                                 <div className="w-1/3">Vertical Angle</div>
                                 <input
@@ -1200,8 +1236,8 @@ export default function Home() {
                                     type="range"
                                     min="-90"
                                     max="90"
-                                    value={camera.obliqueAngleY}
-                                    onChange={handleObliqueVerticalAngleChange}
+                                    value={secondCamera.obliqueAngleY}
+                                    onChange={handleSecondObliqueVerticalAngleChange}
                                 />
                             </div>
                         )}
