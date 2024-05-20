@@ -209,7 +209,7 @@ export class GLContainer {
 
         if (attributeName in setters) {
             setters[attributeName](...data);
-            console.log(attributeName, data);
+            // console.log(attributeName, data);
         }
     }
     setAttributes(
@@ -229,7 +229,6 @@ export class GLContainer {
 
         if (uniformName in setters) {
             setters[uniformName](data);
-            console.log(uniformName, data);
         }
     }
 

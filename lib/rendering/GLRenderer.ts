@@ -2,6 +2,7 @@ import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
 import { Vector3 } from "../data/math";
+import { DirectionalLight } from "../data/components/lights";
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -17,7 +18,15 @@ export class GLRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
-    private renderRoot(root: SceneNode, uniforms: { viewMatrix: Float32Array}) {
+    private renderRoot(root: SceneNode, uniforms: { 
+        viewMatrix: Float32Array; 
+        lightPosition: Float32Array; 
+        lightColor: number[]; 
+        lightAmbient: number[]; 
+        lightDiffuse: number[]; 
+        lightSpecular: number[]; 
+        cameraPosition: Float32Array;
+    }) {
         const mesh = root.mesh;
         const gl = this._glContainer.glContext;
 
@@ -57,13 +66,15 @@ export class GLRenderer {
         this.clearCanvas();
 
         const cameraNode = scene.getActiveCameraNode();
-        
-        if (!cameraNode) {
+        const lightNode = scene.getActiveLightNode();
+
+        if (!cameraNode || !lightNode) {
             return;
         }
 
         const camera = cameraNode.camera;
-        if (!camera) {
+        const light = lightNode.light as DirectionalLight;
+        if (!camera || !light) {
             return;
         }
 
@@ -72,10 +83,13 @@ export class GLRenderer {
         for (const node of nodes) {
             const defaultUniform = {
                 viewMatrix: camera.getFinalProjectionMatrix(cameraNode).buffer,
+                lightPosition: lightNode.position.buffer,
+                lightColor: light.color.buffer,
+                lightAmbient: light.ambientColor.buffer,
+                lightDiffuse: light.diffuseColor.buffer,
+                lightSpecular: light.specularColor.buffer,
                 cameraPosition: camPosition.buffer
             }
-
-            console.log(defaultUniform.cameraPosition)
 
             this.renderRoot(node, defaultUniform);
         }
