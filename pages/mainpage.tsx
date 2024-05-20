@@ -1092,6 +1092,10 @@ export default function Home() {
 
                     </div>
 
+                    {/* Separator */}
+                    <Separator className="w-full" />
+
+                    {/* Second Camera */}
                     <div className="w-full p-6 py-4">
                         <div className="text-lg font-semibold pb-2">📷 Second Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
