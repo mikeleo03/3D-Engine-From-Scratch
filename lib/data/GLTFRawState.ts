@@ -6,11 +6,13 @@ import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/mesh/Mesh";
-import { AccessorType, AnimationClipType, BufferType, BufferViewType, CameraType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
+import { AccessorType, AnimationClipType, BufferType, BufferViewType, CameraType, LightType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
 import { ShaderMaterial } from "./components/materials";
 import { CameraUtil } from "./components/cameras/CameraUtil";
 import { MaterialUtil } from "./components/materials/MaterialUtil";
 import { AnimationClipUtil, AnimationPath } from "./components/animations";
+import { Light } from "./components/lights/Light";
+import { LightUtil } from "./components/lights/LightUtil";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
@@ -19,6 +21,7 @@ export class GLTFRawState {
     private _materials: MaterialType[] = [];
     private _meshes: MeshType[] = [];
     private _cameras: CameraType[] = [];
+    private _lights: LightType[] = [];
     private _nodes: SceneNodeType[] = [];
     private _scenes: SceneType[] = [];
     private _animations: AnimationClipType[] = [];
@@ -31,6 +34,7 @@ export class GLTFRawState {
         _materials: MaterialType[],
         meshes: MeshType[],
         cameras: CameraType[],
+        lights: LightType[],
         nodes: SceneNodeType[],
         scenes: SceneType[],
         animations: AnimationClipType[],
@@ -46,6 +50,7 @@ export class GLTFRawState {
         this._materials = _materials;
         this._meshes = meshes;
         this._cameras = cameras;
+        this._lights = lights;
         this._nodes = nodes;
         this._scenes = scenes;
         this._animations = animations;
@@ -76,6 +81,10 @@ export class GLTFRawState {
         return this._cameras;
     }
 
+    get lights(): LightType[] {
+        return this._lights;
+    }
+
     get nodes(): SceneNodeType[] {
         return this._nodes;
     }
@@ -100,6 +109,7 @@ export class GLTFRawState {
         const materialMap = new Map<ShaderMaterial, number>();
         const meshMap = new Map<Mesh, number>();
         const cameraMap = new Map<Camera, number>();
+        const lightMap = new Map<Light, number>();
         const nodeMap = new Map<SceneNode, number>();
 
         const bufferRaws = state.buffers.map((buffer, idx) => {
@@ -139,8 +149,17 @@ export class GLTFRawState {
 
         const cameraRaws = state.cameras.map((camera, idx) => {
             const raw = camera.toRaw();
+            console.log(raw);
             const index = idx;
             cameraMap.set(camera, index);
+            return raw;
+        });
+
+        const lightRaws = state.lights.map((light, idx) => {
+            const raw = light.toRaw();
+            console.log(raw);
+            const index = idx;
+            lightMap.set(light, index);
             return raw;
         });
 
@@ -149,7 +168,7 @@ export class GLTFRawState {
         });
 
         const nodeRaws = state.nodes.map(node => {
-            const raw = node.toRaw(nodeMap, meshMap, cameraMap);
+            const raw = node.toRaw(nodeMap, meshMap, cameraMap, lightMap);
             return raw;
         });
 
@@ -169,6 +188,7 @@ export class GLTFRawState {
             materialRaws,
             meshRaws,
             cameraRaws,
+            lightRaws,
             nodeRaws,
             sceneRaws,
             animationRaws,
@@ -182,8 +202,11 @@ export class GLTFRawState {
         const accessors = this._accessors.map(accessor => Accessor.fromRaw(accessor, bufferViews));
         const materials = this._materials.map(material => MaterialUtil.fromRaw(material));
         const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors, materials));
+        console.log(this._cameras);
+        console.log(this._lights);
         const cameras = this._cameras.map(camera => CameraUtil.fromRaw(camera));
-        const nodes = this._nodes.map(node => SceneNode.fromRaw(node, meshes, cameras));
+        const lights = this._lights.map(light => LightUtil.fromRaw(light));
+        const nodes = this._nodes.map(node => SceneNode.fromRaw(node, meshes, cameras, lights));
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
@@ -202,7 +225,8 @@ export class GLTFRawState {
             accessors, 
             materials, 
             meshes, 
-            cameras, 
+            cameras,
+            lights,
             nodes, 
             scenes, 
             animations,
