@@ -20,7 +20,6 @@ export class PhongMaterial extends ShaderMaterial {
             diffuseColor,
             specularColor,
             shininess,
-            lightPosition,
         } = options;
         super({
             name: name,
@@ -30,8 +29,7 @@ export class PhongMaterial extends ShaderMaterial {
                 ambientColor: ambientColor || Color.white(),
                 diffuseColor: diffuseColor || Color.white(),
                 specularColor: specularColor || Color.white(),
-                shininess: shininess || 30,
-                lightPosition: lightPosition || new Vector3(400, 400, 300),
+                shininess: shininess || 30
             },
             type: "Phong Material"
         });
@@ -51,10 +49,6 @@ export class PhongMaterial extends ShaderMaterial {
 
     get specularColor(): Color {
         return this.uniforms.specularColor;
-    }
-
-    get lightPosition(): Vector3 {
-        return this.uniforms.lightPosition;
     }
 
     get shininess(): number {
