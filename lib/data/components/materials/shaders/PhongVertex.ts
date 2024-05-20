@@ -7,8 +7,6 @@ attribute vec4 a_normal;
 uniform mat4 u_worldMatrix;
 uniform mat4 u_viewMatrix;
 uniform vec3 u_lightPosition;
-uniform float u_canvasWidth;
-uniform float u_canvasHeight;
 
 varying vec3 N, L, E;
 
