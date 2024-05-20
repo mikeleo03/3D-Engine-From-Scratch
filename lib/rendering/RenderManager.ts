@@ -1,4 +1,6 @@
 import { GLTFState } from "../data/GLTFState";
+import { SceneNode } from "../data/SceneNode";
+import { NodeComponent } from "../data/components/NodeComponent";
 import { GLRenderer } from "./GLRenderer";
 
 export class RenderManager {
@@ -11,22 +13,39 @@ export class RenderManager {
     private _interval: number = 0;
     private _lastTime: number = 0;
     private _loopId: number = 0;
+    private _customCamera: SceneNode | null = null;
 
     constructor(gltfState: GLTFState, glRenderer: GLRenderer) {
         this._gltfState = gltfState
         this._glRenderer = glRenderer
     }
 
+    set customCamera(cameraNode: SceneNode) {
+        this._customCamera = cameraNode;
+
+        if (this._isRunning) {
+            this.stop();
+            this.loop();
+        }
+    }
+
+    getCustomeCamera(): SceneNode | null{
+        return this._customCamera;
+    }
+
+    removeCustomCamera() {
+        this._customCamera = null;
+    }
+
     render() {
         const scene = this._gltfState.CurrentScene;
-        const currentCam = this._gltfState.CurrentScene?.getActiveCameraNode()?.position
-        console.log(currentCam);
+        const cameraNode = this._customCamera || scene?.getActiveCameraNode();
 
-        if (!scene || !currentCam) {
+        if (!scene || !cameraNode) {
             return;
         }
 
-        this._glRenderer.render(scene, currentCam);
+        this._glRenderer.render(scene, cameraNode);
     }
 
     loop(fps: number = RenderManager.DEFAULT_FPS) {

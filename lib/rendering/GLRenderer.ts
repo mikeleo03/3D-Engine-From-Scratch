@@ -4,19 +4,17 @@ import { Scene } from "../data/Scene";
 import { Vector3 } from "../data/math";
 import { Color } from "../cores";
 import { DirectionalLight } from "../data/components/lights";
+import { v4 as uuid } from "uuid";
 
 export class GLRenderer {
     private _glContainer: GLContainer
+    private _id: string = uuid();
     constructor(glContainer: GLContainer) {
         this._glContainer = glContainer;
     }
 
     private clearCanvas() {
-        const gl = this._glContainer.glContext;
-
-        gl.clearColor(1, 1, 1, 1);
-        gl.clearDepth(1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        this._glContainer.resetGL();
     }
 
     private renderRoot(root: SceneNode, uniforms: { 
@@ -35,11 +33,14 @@ export class GLRenderer {
             for (const geometry of mesh.geometries) {
                 const material = geometry.material;
 
-                if (!material.programInfo) {
-                    material.programInfo = this._glContainer.getProgramInfo(material.vertexShader, material.fragmentShader);
+                if (!material.getProgramInfo(this._id)) {
+                    material.setProgramInfo(
+                        this._id, 
+                        this._glContainer.getProgramInfo(material.vertexShader, material.fragmentShader)
+                    );
                 }
 
-                const programInfo = material.programInfo;
+                const programInfo = material.getProgramInfo(this._id)!!;
 
                 this._glContainer.setProgram(programInfo);
 
@@ -63,10 +64,9 @@ export class GLRenderer {
         }
     }
 
-    render(scene: Scene, camPosition: Vector3) {
+    render(scene: Scene, cameraNode: SceneNode) {
         this.clearCanvas();
 
-        const cameraNode = scene.getActiveCameraNode();
         const lightNode = scene.getActiveLightNode();
 
         if (!cameraNode || !lightNode) {
@@ -88,7 +88,7 @@ export class GLRenderer {
         };
 
         const viewMatrix = camera.getFinalProjectionMatrix(cameraNode).buffer;
-        const cameraPosition = camPosition.buffer;
+        const cameraPosition = cameraNode.position.buffer;
 
         const nodes = scene.roots;
 

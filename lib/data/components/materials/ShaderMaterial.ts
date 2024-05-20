@@ -12,7 +12,7 @@ export class ShaderMaterial {
     private _vertexShader: string;
     private _fragmentShader: string;
     private _uniforms: { [key: string]: any } = {};
-    private _programInfo: ProgramInfo | null = null;
+    private _programInfos: { [key: string]: ProgramInfo } = {};
 
     constructor(options: MaterialType) {
         const { name, vertexShader, fragmentShader, uniforms, type } = options;
@@ -61,16 +61,21 @@ export class ShaderMaterial {
         return bufferUniforms;
     }
 
-    get programInfo(): ProgramInfo | null {
-        return this._programInfo;
+    getProgramInfo(key: string): ProgramInfo | null {
+        return this._programInfos[key] || null;
     }
 
     get type() {
         return this._type;
     }
 
-    set programInfo(programInfo: ProgramInfo) {
-        this._programInfo = programInfo;
+    setProgramInfo(key: string, programInfo: ProgramInfo | null) {
+        if (!programInfo) {
+            delete this._programInfos[key];
+            return;
+        }
+
+        this._programInfos[key] = programInfo;
     }
 
     equals(material: ShaderMaterial): boolean {

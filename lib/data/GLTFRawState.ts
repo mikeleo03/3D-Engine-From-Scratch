@@ -149,7 +149,6 @@ export class GLTFRawState {
 
         const cameraRaws = state.cameras.map((camera, idx) => {
             const raw = camera.toRaw();
-            console.log(raw);
             const index = idx;
             cameraMap.set(camera, index);
             return raw;
@@ -157,7 +156,6 @@ export class GLTFRawState {
 
         const lightRaws = state.lights.map((light, idx) => {
             const raw = light.toRaw();
-            console.log(raw);
             const index = idx;
             lightMap.set(light, index);
             return raw;
@@ -202,8 +200,6 @@ export class GLTFRawState {
         const accessors = this._accessors.map(accessor => Accessor.fromRaw(accessor, bufferViews));
         const materials = this._materials.map(material => MaterialUtil.fromRaw(material));
         const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors, materials));
-        console.log(this._cameras);
-        console.log(this._lights);
         const cameras = this._cameras.map(camera => CameraUtil.fromRaw(camera));
         const lights = this._lights.map(light => LightUtil.fromRaw(light));
         const nodes = this._nodes.map(node => SceneNode.fromRaw(node, meshes, cameras, lights));

@@ -25,6 +25,13 @@ export class GLContainer {
         return this._canvas;
     }
 
+    resetGL(): void {
+        this._gl.clearColor(0, 0, 0, 0.9);
+        this._gl.clearDepth(1.0);
+        this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
+        
+    }
+
     private initGL(canvas: HTMLCanvasElement = this._canvas): WebGLRenderingContext {
         const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
 
@@ -34,8 +41,7 @@ export class GLContainer {
 
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
-        
-        
+
         return gl;
     }
 
@@ -46,6 +52,7 @@ export class GLContainer {
             this._canvas.width = dw;
             this._canvas.height = dh;
             this._gl.viewport(0, 0, dw, dh);
+            this.resetGL();
         }
     }
 

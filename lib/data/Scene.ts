@@ -164,6 +164,10 @@ export class Scene {
         return this._cameras.some(camera => camera.camera?.type === type);
     }
 
+    cameraCount(type: string) {
+        return this._cameras.filter(camera => camera.camera?.type === type).length;
+    }
+
     hasLight(type: string) {
         return this._lights.some(light => light.light?.type === type);
     }
