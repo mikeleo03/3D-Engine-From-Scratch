@@ -75,7 +75,7 @@ export default function TestPage() {
         new SceneNode({light: directionalLight, position: lightPosition})
       ]
 
-      const model = new LeonModel();
+      const model = new JojoModel();
 
       const glRenderer = new GLRenderer(glContainer);
       const scene = model.scene;
@@ -89,7 +89,7 @@ export default function TestPage() {
       // scene.addNode(cameraNodes[0]);
       // scene.addNode(lightNodes[0]);
 
-      glRenderer.render(scene, cameraNodes[0].position);
+      glRenderer.render(scene, cameraNodes[0]);
       
       model.download();
     };

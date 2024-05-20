@@ -364,6 +364,18 @@ export default function Home() {
         }
 
         currentCameraNode.lookAt(currentNodeRef.current!!.position);
+
+        const currentSecondCameraNode = secondRenderManagerRef.current?.getCustomeCamera();
+
+        if (!currentSecondCameraNode) {
+            return;
+        }
+
+        if (currentSecondCameraNode == currentNodeRef.current) {
+            return;
+        }
+
+        currentSecondCameraNode.lookAt(currentNodeRef.current!!.position);
     }
 
     const handleNodeChange = (node: SceneNode) => {
