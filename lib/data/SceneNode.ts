@@ -301,6 +301,10 @@ export class SceneNode {
      * dilepas dari parentnya terlebih dahulu.
      */
     add(node: SceneNode) {
+        if (node == this) {
+            throw new Error("Node cannot be added as a child of itself");
+        }
+        
         if (node.parent !== this) {
             node.removeFromParent();
             node.parent = this;
