@@ -7,6 +7,7 @@ import { BufferView } from "./buffers/BufferView";
 import { Accessor } from "./buffers/Accessor";
 import { ShaderMaterial } from "./components/materials";
 import { AnimationClip } from "./components/animations";
+import { Light } from "./components/lights/Light";
 
 
 
@@ -17,6 +18,7 @@ export class GLTFState {
     private _materials: ShaderMaterial[] = [];
     private _meshes: Mesh[];
     private _cameras: Camera[];
+    private _lights: Light[] = [];
     private _nodes: SceneNode[];
     private _scenes: Scene[];
     private _animations: AnimationClip[];
@@ -28,6 +30,7 @@ export class GLTFState {
         materials: ShaderMaterial[] = [],
         meshes: Mesh[] = [],
         cameras: Camera[] = [],
+        lights: Light[] = [],
         nodes: SceneNode[] = [],
         scenes: Scene[] = [],
         animations: AnimationClip[] = [],
@@ -43,6 +46,7 @@ export class GLTFState {
         this._materials = materials;
         this._meshes = meshes;
         this._cameras = cameras;
+        this._lights = lights;
         this._nodes = nodes;
         this._scenes = scenes;
         this._animations = animations;
@@ -71,6 +75,10 @@ export class GLTFState {
 
     get cameras(): Camera[] {
         return this._cameras.slice();
+    }
+
+    get lights(): Light[] {
+        return this._lights.slice();
     }
 
     get nodes(): SceneNode[] {
@@ -104,6 +112,14 @@ export class GLTFState {
         }
 
         this._cameras.push(camera);
+    }
+
+    addLight(light: Light) {
+        if (this._lights.indexOf(light) != -1) {
+            return;
+        }
+
+        this._lights.push(light);
     }
 
     addBuffer(buffer: GLTFBuffer) {
@@ -193,6 +209,10 @@ export class GLTFState {
             this.addCamera(node.camera);
         }
 
+        if (node.light) {
+            this.addLight(node.light);
+        }
+
         if (node.mesh) {
             this.addMesh(node.mesh);
         }
@@ -263,6 +283,30 @@ export class GLTFState {
         }
 
         this._cameras.splice(index, 1);
+        
+    }
+
+    removeLight(light: Light) {
+        const index = this._lights.indexOf(light);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._nodes.length; i++) {
+            if (this._nodes[i].light == light) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._lights.splice(index, 1);
         
     }
 
@@ -425,6 +469,10 @@ export class GLTFState {
 
         if (node.camera) {
             this.removeCamera(node.camera);
+        }
+
+        if (node.light) {
+            this.removeLight(node.light);
         }
     }
 

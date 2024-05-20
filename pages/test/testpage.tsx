@@ -63,7 +63,7 @@ export default function TestPage() {
         new Color(255, 255, 255)
       );
 
-      const lightPosition = new Vector3(50, 0, 50);
+      const lightPosition = new Vector3(-300, -1000, 300);
 
       const cameraNodes = [
           new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, 100)}),
@@ -75,7 +75,7 @@ export default function TestPage() {
         new SceneNode({light: directionalLight, position: lightPosition})
       ]
 
-      const model = new CubeModel();
+      const model = new LeonModel();
 
       const glRenderer = new GLRenderer(glContainer);
       const scene = model.scene;
@@ -85,12 +85,12 @@ export default function TestPage() {
       // cameraNodes[0].lookAt(jojo.position);
 
       // change camera here
-      scene.addNode(cameraNodes[1]);
+      scene.addNode(cameraNodes[0]);
       scene.addNode(lightNodes[0]);
 
       glRenderer.render(scene, cameraNodes[0].position);
       
-      // model.download();
+      model.download();
     };
 
     initializeGL();

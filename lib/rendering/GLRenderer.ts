@@ -2,6 +2,7 @@ import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
 import { Vector3 } from "../data/math";
+import { Color } from "../cores";
 import { DirectionalLight } from "../data/components/lights";
 
 export class GLRenderer {
@@ -21,10 +22,10 @@ export class GLRenderer {
     private renderRoot(root: SceneNode, uniforms: { 
         viewMatrix: Float32Array; 
         lightPosition: Float32Array; 
-        lightColor: number[]; 
-        lightAmbient: number[]; 
-        lightDiffuse: number[]; 
-        lightSpecular: number[]; 
+        lightColor: Color; 
+        lightAmbient: Color; 
+        lightDiffuse: Color; 
+        lightSpecular: Color; 
         cameraPosition: Float32Array;
     }) {
         const mesh = root.mesh;
@@ -84,10 +85,10 @@ export class GLRenderer {
             const defaultUniform = {
                 viewMatrix: camera.getFinalProjectionMatrix(cameraNode).buffer,
                 lightPosition: lightNode.position.buffer,
-                lightColor: light.color.buffer,
-                lightAmbient: light.ambientColor.buffer,
-                lightDiffuse: light.diffuseColor.buffer,
-                lightSpecular: light.specularColor.buffer,
+                lightColor: light.color,
+                lightAmbient: light.ambientColor,
+                lightDiffuse: light.diffuseColor,
+                lightSpecular: light.specularColor,
                 cameraPosition: camPosition.buffer
             }
 
