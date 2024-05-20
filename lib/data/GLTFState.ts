@@ -241,19 +241,14 @@ export class GLTFState {
             return;
         }
 
-        const nodes: SceneNode[] = [];
-
         for (let i = 0; i < animation.frames.length; i++) {
             const frame = animation.frames[i];
 
-            if (frame.children)
-            {
-                for (let j = 0; j < frame.children.length; j++) {
-                    const child = frame.children[j];
+            if (frame.nodeKeyframePairs) {
+                for (let pair of frame.nodeKeyframePairs) {
+                    const node = pair.node;
 
-                    if (nodes.indexOf(child) == -1) {
-                        nodes.push(child);
-                    }
+                    this.addNode(node);
                 }
             }
         }
