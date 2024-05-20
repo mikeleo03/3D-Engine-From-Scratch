@@ -539,10 +539,10 @@ export default function Home() {
             const glContainer = new GLContainer(canvas);
 
             const orthographicCamera = new OrthographicCamera(
-                1,
-                -1,
-                -1,
-                1,
+                canvas.height/2,
+                -canvas.height/2,
+                -canvas.width/2,
+                canvas.width/2,
                 0.01,
                 1000,
                 1
@@ -550,17 +550,17 @@ export default function Home() {
 
             const perspectiveCamera = new PerspectiveCamera(
                 canvas.width / canvas.height,
-                1,
+                120,
                 0.01,
-                9999,
+                1000,
                 1
             );
 
             const obliqueCamera = new ObliqueCamera(
-                1,
-                -1,
-                -1,
-                1,
+                canvas.height/2,
+                -canvas.height/2,
+                -canvas.width/2,
+                canvas.width/2,
                 0.01,
                 1000,
                 1,
