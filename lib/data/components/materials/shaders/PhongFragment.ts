@@ -1,45 +1,48 @@
 export default `
 precision mediump float;
 
+// Material uniform
 uniform float u_shininess;
-uniform vec3 u_cameraPosition;
 uniform vec4 u_ambientColor;
 uniform vec4 u_diffuseColor;
 uniform vec4 u_specularColor;
 
-varying vec4 v_color;
-varying vec3 v_normal, v_pos;
+// Light uniform
+uniform vec4 u_lightColor; 
+uniform vec4 u_lightAmbient; 
+uniform vec4 u_lightDiffuse; 
+uniform vec4 u_lightSpecular; 
+
+varying vec3 N, L, E;
 
 void main() {
-    vec3 normal = normalize(v_normal);
-    vec3 lightPosition = vec3(0, 0, 0);
-    vec3 lightDir = normalize(lightPosition - v_pos);
+    vec3 fColor;
+    vec3 H = normalize(L + E);
 
     // Convert colors from 0-255 to 0-1
     vec3 ambient = u_ambientColor.rgb / 255.0;
     vec3 diffuse = u_diffuseColor.rgb / 255.0;
     vec3 specular = u_specularColor.rgb / 255.0;
+    vec3 lightAmbient = u_lightAmbient.rgb / 255.0;
+    vec3 lightDiffuse = u_lightDiffuse.rgb / 255.0;
+    vec3 lightSpecular = u_lightSpecular.rgb / 255.0;
 
-    // Ambient light
-    vec3 ambientLight = vec3(0.7) * ambient;
+    // Ambient composition
+    vec3 ambientComp = lightAmbient * (ambient * u_ambientColor.a / 255.0);
 
-    // Diffuse light (Lambertian reflectance)
-    float lambertian = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseLight = vec3(0.5) * lambertian * diffuse;
+    // Diffuse composition
+    float Kd = max(dot(L, N), 0.0);
+    vec3 diffuseComp = lightDiffuse * (Kd * diffuse * u_diffuseColor.a / 255.0);
 
-    // Specular light
-    vec3 viewDir = normalize(u_cameraPosition - v_pos);
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float specAngle = max(dot(reflectDir, viewDir), 0.0);
-    float specularFactor = pow(specAngle, u_shininess);
-    vec3 specularLight = vec3(1.0) * specularFactor * specular;
+    // Specular composition
+    float Ks = pow(max(dot(N, H), 0.0), u_shininess);
+    vec3 specularComp = lightSpecular * (Ks * specular * u_specularColor.a / 255.0);
+    if(dot(L, N) < 0.0) {
+        specularComp = vec3(0.0, 0.0, 0.0);
+    }
 
     // Combine all
-    vec3 color = ambientLight * u_ambientColor.a / 255.0 +
-                 diffuseLight * u_diffuseColor.a / 255.0 +
-                 specularLight * u_specularColor.a / 255.0;
-
-    // Apply vertex color
-    gl_FragColor = vec4(color, 1.0);
+    fColor = ambientComp + diffuseComp + specularComp;
+    gl_FragColor = vec4(fColor, 1.0);
 }
 `;
