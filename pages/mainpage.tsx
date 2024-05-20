@@ -22,7 +22,7 @@ import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
-import { CameraTypeString } from '@/lib/data/types/gltftypes';
+import { CameraTypeString, LightTypeString } from '@/lib/data/types/gltftypes';
 import NodeView from '@/components/NodeView';
 import { Type } from 'lucide-react';
 
@@ -157,6 +157,30 @@ export default function Home() {
         return camera;
     }
 
+    const getCurrentLightNode = () => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        const lightNode = currentScene.getActiveLightNode();
+
+        return lightNode;
+    }
+
+    const getCurrentLight = () => {
+        const lightNode = getCurrentLightNode();
+
+        if (!lightNode) {
+            return;
+        }
+
+        const light = lightNode.light;
+
+        return light;
+    }
+
     const changeCurrentCamera = (type: CameraTypeString) => {
         const currentScene = gltfStateRef.current?.CurrentScene;
 
@@ -172,6 +196,13 @@ export default function Home() {
         }
 
         const cameras = currentScene.cameras;
+        const lights = currentScene.lights;
+
+        for (const lightNode of lights) {
+            if (lightNode.light && lightNode.light.type === LightTypeString.DIRECTIONAL) {
+                currentScene.setActiveLightNode(lightNode);
+            }
+        }
 
         for (const cameraNode of cameras) {
             if (cameraNode.camera && cameraNode.camera.type === type) {
@@ -355,6 +386,8 @@ export default function Home() {
 
         const currentCamera = getCurrentCamera();
         handleCameraModeChange(currentCamera!!.type);
+
+        const currentLight = getCurrentLight();
 
         for (const root of currentScene.roots) {
             if (!root.camera) {

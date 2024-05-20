@@ -2,7 +2,9 @@
 import { GLContainer } from "@/lib/cores";
 import { SceneNode } from "@/lib/data/SceneNode";
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data/components/cameras";
+import { DirectionalLight } from "@/lib/data/components/lights";
 import { Quaternion, Vector3 } from "@/lib/data/math";
+import { Color } from "@/lib/cores/Color";
 import { JojoModel } from "@/lib/data/models/JojoModel";
 import { LeonModel } from "@/lib/data/models/LeonModel";
 import { CubeModel } from "@/lib/data/models/CubeModel";
@@ -23,10 +25,10 @@ export default function TestPage() {
       const glContainer = new GLContainer(canvas);
 
       const orthographicCamera = new OrthographicCamera(
-        1,
-        -1,
-        -1,
-        1,
+        canvas.height/2,
+        -canvas.height/2,
+        -canvas.width/2,
+        canvas.width/2,
         0.01,
         1000,
         1
@@ -34,17 +36,17 @@ export default function TestPage() {
 
       const perspectiveCamera = new PerspectiveCamera(
           canvas.width / canvas.height,
-          1,
+          1000,
           0.01,
           9999,
           1
       );
 
       const obliqueCamera = new ObliqueCamera(
-          1,
-          -1,
-          -1,
-          1,
+          canvas.height/2,
+          -canvas.height/2,
+          -canvas.width/2,
+          canvas.width/2,
           0.01,
           1000,
           1,
@@ -52,13 +54,26 @@ export default function TestPage() {
           0
       );
 
+      const directionalLight = new DirectionalLight(
+        new Color(255, 255, 255),
+        40,
+        new Vector3(0, 0, 0),
+        new Color(0.2 * 255, 0.2 * 255, 0.2 * 255),
+        new Color(0.5 * 255, 0.5 * 255, 0.5 * 255),
+        new Color(255, 255, 255)
+      );
+
+      const lightPosition = new Vector3(50, 0, 50);
+
       const cameraNodes = [
           new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, 100)}),
           new SceneNode({camera: perspectiveCamera, position: new Vector3(0, 0, 100)}),
           new SceneNode({camera: obliqueCamera, position: new Vector3(0, 0, 100)})
       ]
 
-      cameraNodes[0].rotateByDegrees(new Vector3(0, 0, 0));
+      const lightNodes = [
+        new SceneNode({light: directionalLight, position: lightPosition})
+      ]
 
       const model = new CubeModel();
 
@@ -70,7 +85,8 @@ export default function TestPage() {
       // cameraNodes[0].lookAt(jojo.position);
 
       // change camera here
-      scene.addNode(cameraNodes[0]);
+      scene.addNode(cameraNodes[1]);
+      scene.addNode(lightNodes[0]);
 
       glRenderer.render(scene, cameraNodes[0].position);
       
