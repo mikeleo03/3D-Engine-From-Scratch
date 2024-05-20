@@ -14,15 +14,15 @@ export class DirectionalLight extends Light {
         intensity: number = 1, 
         target: Vector3, 
         ambientColor: Color, 
-        diffuseColor: Color, 
-        specularColor: Color
+        diffuseColor?: Color, 
+        specularColor?: Color
     ) {
         super(LightTypeString.DIRECTIONAL, color, intensity);
 
         this._target = target || new Vector3(0, -1, 0);
-        this._ambientColor = ambientColor;
-        this._diffuseColor = diffuseColor;
-        this._specularColor = specularColor;
+        this._ambientColor = ambientColor || Color.white();
+        this._diffuseColor = diffuseColor || Color.white();
+        this._specularColor = specularColor || Color.white();
     }
 
     get target(): Vector3 {
