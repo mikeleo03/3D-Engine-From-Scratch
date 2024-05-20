@@ -79,18 +79,25 @@ export class GLRenderer {
             return;
         }
 
+        const lightUniforms = {
+            lightPosition: lightNode.position.buffer,
+            lightColor: light.color,
+            lightAmbient: light.ambientColor,
+            lightDiffuse: light.diffuseColor,
+            lightSpecular: light.specularColor
+        };
+
+        const viewMatrix = camera.getFinalProjectionMatrix(cameraNode).buffer;
+        const cameraPosition = camPosition.buffer;
+
         const nodes = scene.roots;
-    
+
         for (const node of nodes) {
             const defaultUniform = {
-                viewMatrix: camera.getFinalProjectionMatrix(cameraNode).buffer,
-                lightPosition: lightNode.position.buffer,
-                lightColor: light.color,
-                lightAmbient: light.ambientColor,
-                lightDiffuse: light.diffuseColor,
-                lightSpecular: light.specularColor,
-                cameraPosition: camPosition.buffer
-            }
+                viewMatrix,
+                ...lightUniforms,
+                cameraPosition
+            };
 
             this.renderRoot(node, defaultUniform);
         }

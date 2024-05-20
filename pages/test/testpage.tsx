@@ -80,13 +80,14 @@ export default function TestPage() {
       const glRenderer = new GLRenderer(glContainer);
       const scene = model.scene;
 
-      // const jojo = model.scene.nodes[0];
-      // jojo.translate(new Vector3(-700, 0, 0));
-      // cameraNodes[0].lookAt(jojo.position);
+      const leon = model.scene.nodes[0];
+      // leon.translate(new Vector3(-700, 0, 0));
+      cameraNodes[0].lookAt(leon.position);
+      lightNodes[0].lookAt(leon.position);
 
       // change camera here
-      scene.addNode(cameraNodes[0]);
-      scene.addNode(lightNodes[0]);
+      // scene.addNode(cameraNodes[0]);
+      // scene.addNode(lightNodes[0]);
 
       glRenderer.render(scene, cameraNodes[0].position);
       
