@@ -48,8 +48,6 @@ export class GLRenderer {
                     ...material.bufferUniforms, 
                     ...uniforms,
                     worldMatrix: root.worldMatrix.transpose().buffer,
-                    canvasWidth: this._glContainer.canvasElement.width,
-                    canvasHeight: this._glContainer.canvasElement.height
                 });
 
                 this._glContainer.setAttributes(programInfo, geometry.attributes);

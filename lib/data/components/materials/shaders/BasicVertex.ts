@@ -7,8 +7,6 @@ uniform mat4 u_worldMatrix;
 uniform mat4 u_viewMatrix;
 uniform vec4 u_color;
 uniform bool u_useVertexColor;
-uniform float u_canvasWidth;
-uniform float u_canvasHeight;
 
 varying vec4 v_color;
 
