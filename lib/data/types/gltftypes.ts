@@ -146,12 +146,12 @@ export enum LightTypeString {
 export type LightType = {
     "type": LightTypeString.DIRECTIONAL,
     "directional": {
-        "color": Color,
+        "color": number[],
         "intensity": number,
         "target": Vector3,
-        "ambientColor": Color,
-        "diffuseColor": Color,
-        "specularColor": Color
+        "ambientColor": number[],
+        "diffuseColor": number[],
+        "specularColor": number[]
     }
 }
 
@@ -194,6 +194,7 @@ export type GLTFType = {
     materials: MaterialType[],
     meshes: MeshType[],
     cameras: CameraType[],
+    lights: LightType[],
     nodes: SceneNodeType[],
     scenes: SceneType[],
     animations: AnimationClipType[],
