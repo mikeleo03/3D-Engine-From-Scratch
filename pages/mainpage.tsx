@@ -296,6 +296,18 @@ export default function Home() {
         currentCamera.zoom = parseFloat(e.target.value);
     };
 
+    const handleSecondCameraZoomChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setSecondCamera(prevState => ({ ...prevState, zoom: parseFloat(e.target.value) }));
+
+        const currentCamera = secondRenderManagerRef.current?.getCustomeCamera();
+
+        if (!currentCamera) {
+            return;
+        }
+
+        currentCamera.camera!!.zoom = parseFloat(e.target.value);
+    }
+
     const handleObliqueHorizontalAngleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setCamera(prevState => ({ ...prevState, obliqueAngleX: parseFloat(e.target.value) }));
 
@@ -711,6 +723,36 @@ export default function Home() {
                 0
             );
 
+            const secondOrthographicCamera = new OrthographicCamera(
+                canvas.height / 2,
+                -canvas.height / 2,
+                -canvas.width / 2,
+                canvas.width / 2,
+                0.01,
+                1000,
+                1
+            );
+
+            const secondPerspectiveCamera = new PerspectiveCamera(
+                canvas.width / canvas.height,
+                120,
+                0.01,
+                1000,
+                1
+            );
+
+            const secondObliqueCamera = new ObliqueCamera(
+                canvas.height / 2,
+                -canvas.height / 2,
+                -canvas.width / 2,
+                canvas.width / 2,
+                0.01,
+                1000,
+                1,
+                0,
+                0
+            );
+
             const cameraPosition = new Vector3(0, 0, 100);
 
             const cameraNodes = [
@@ -734,17 +776,17 @@ export default function Home() {
             const secondCameraNodes = [
                 new SceneNode({
                     name: 'Second Perspective Camera',
-                    camera: perspectiveCamera,
+                    camera: secondPerspectiveCamera,
                     position: cameraPosition
                 }),
                 new SceneNode({
                     name: 'Second Orthographic Camera',
-                    camera: orthographicCamera,
+                    camera: secondOrthographicCamera,
                     position: cameraPosition
                 }),
                 new SceneNode({
                     name: 'Second Oblique Camera',
-                    camera: obliqueCamera,
+                    camera: secondObliqueCamera,
                     position: cameraPosition
                 })
             ]
@@ -1130,9 +1172,9 @@ export default function Home() {
                                 min={0.001}
                                 max={5.000}
                                 step={0.001}
-                                value={camera.zoom}
+                                value={secondCamera.zoom}
 
-                                onChange={handleCameraZoomChange}
+                                onChange={handleSecondCameraZoomChange}
                             />
                         </div>
 
