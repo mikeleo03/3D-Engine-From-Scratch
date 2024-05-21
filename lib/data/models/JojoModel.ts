@@ -2,7 +2,7 @@ import { Color } from "@/lib/cores";
 import { Scene } from "../Scene";
 import { SceneNode } from "../SceneNode";
 import { AnimationClip, AnimationPath } from "../components/animations";
-import { BasicMaterial } from "../components/materials";
+import { BasicMaterial, PhongMaterial } from "../components/materials";
 import { MeshFactory } from "../components/mesh/MeshFactory";
 import { Model } from "./Model";
 import { Vector3 } from "../math";
@@ -23,8 +23,17 @@ export class JojoModel extends Model {
     private getBody(): SceneNode {
         const meshFactory = new MeshFactory();
         const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(251, 231, 239) });
+        const phongBodyMaterial = new PhongMaterial({ 
+            name: "body-phong", 
+            ambientColor: Color.white(), 
+            diffuseColor: new Color(251, 231, 239), 
+            specularColor: Color.white(),
+            shininess: 0
+        });
 
-        const bodyMesh = meshFactory.cuboid(50, 70, 30, [{basicMaterial: bodyMaterial}]);
+        const bodyMesh = meshFactory.cuboid(50, 70, 30, 
+            [{basicMaterial: bodyMaterial, phongMaterial: phongBodyMaterial}]
+        );
 
         return new SceneNode({name: 'Body', mesh: bodyMesh});
     }
@@ -32,8 +41,18 @@ export class JojoModel extends Model {
     private getHand(): SceneNode {
         const meshFactory = new MeshFactory();
         const handMaterial = new BasicMaterial({ name: "hand", color: new Color(251, 231, 239) });
+        const phongHandMaterial = new PhongMaterial({
+            name: "hand-phong",
+            ambientColor: Color.white(),
+            diffuseColor: new Color(251, 231, 239),
+            specularColor: Color.white(),
+            shininess: 0
+        });
 
-        const handMesh = meshFactory.cuboid(15, 60, 25, [{basicMaterial: handMaterial}], { offset: [0, -27, 0] });
+        const handMesh = meshFactory.cuboid(15, 60, 25, 
+            [{basicMaterial: handMaterial, phongMaterial: phongHandMaterial}], 
+            { offset: [0, -27, 0] }
+        );
 
         return new SceneNode({name: 'Hand', mesh: handMesh});
     }
@@ -41,8 +60,19 @@ export class JojoModel extends Model {
     private getHead(): SceneNode {
         const meshFactory = new MeshFactory();
         const headMaterial = new BasicMaterial({ name: "head", color: new Color(255, 219, 172) });
+        const phongHeadMaterial = new PhongMaterial({
+            name: "head-phong",
+            ambientColor: Color.white(),
+            diffuseColor: new Color(255, 219, 172),
+            specularColor: Color.white(),
+            shininess: 0
+        });
 
-        const headMesh = meshFactory.cuboid(25, 25, 25, [{basicMaterial: headMaterial}], { offset: [0, 12.5, 0] });
+        const headMesh = meshFactory.cuboid(
+            25, 25, 25, 
+            [{basicMaterial: headMaterial, phongMaterial: phongHeadMaterial}], 
+            { offset: [0, 12.5, 0] }
+        );
 
         return new SceneNode({name: 'Head', mesh: headMesh});
     }
@@ -50,8 +80,18 @@ export class JojoModel extends Model {
     private getLeg(): SceneNode {
         const meshFactory = new MeshFactory();
         const legMaterial = new BasicMaterial({ name: "leg", color: new Color(108, 122, 137) });
+        const phongLegMaterial = new PhongMaterial({
+            name: "leg-phong",
+            ambientColor: Color.white(),
+            diffuseColor: new Color(108, 122, 137),
+            specularColor: Color.white(),
+            shininess: 0
+        });
 
-        const legMesh = meshFactory.cuboid(23, 50, 25, [{basicMaterial: legMaterial}], { offset: [0, -25, 0] });
+        const legMesh = meshFactory.cuboid(23, 50, 25, 
+            [{basicMaterial: legMaterial, phongMaterial: phongLegMaterial}], 
+            { offset: [0, -25, 0] }
+        );
 
         return new SceneNode({name: 'Leg', mesh: legMesh});
     }
@@ -59,8 +99,17 @@ export class JojoModel extends Model {
     private getEyeCover(): SceneNode {
         const meshFactory = new MeshFactory();
         const eyeConverMaterial = new BasicMaterial({ name: "eyeCover", color: Color.red() });
+        const eyeConverPhongMaterial = new PhongMaterial({
+            name: "eyeCover-phong",
+            ambientColor: Color.white(),
+            diffuseColor: Color.red(),
+            specularColor: Color.white(),
+            shininess: 0
+        });
 
-        const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, [{basicMaterial: eyeConverMaterial}]);
+        const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, 
+            [{basicMaterial: eyeConverMaterial, phongMaterial: eyeConverPhongMaterial}],
+        );
 
         return new SceneNode({name: 'EyeConver', mesh: eyeCoverMesh});
     }
@@ -68,15 +117,22 @@ export class JojoModel extends Model {
     private getMouth(): SceneNode {
         const meshFactory = new MeshFactory();
         const mouthMaterial = new BasicMaterial({ name: "mouth", color: new Color(0, 0, 0) });
+        const phongMouthMaterial = new PhongMaterial({
+            name: "mouth-phong",
+            ambientColor: Color.white(),
+            diffuseColor: new Color(0, 0, 0),
+            specularColor: Color.white(),
+            shininess: 0
+        });
 
-        const mouthMesh = meshFactory.cuboid(7, 1, 1, [{basicMaterial: mouthMaterial}]);
+        const mouthMesh = meshFactory.cuboid(7, 1, 1, 
+            [{basicMaterial: mouthMaterial, phongMaterial: phongMouthMaterial}]
+        );
 
         return new SceneNode({name: 'Mouth', mesh: mouthMesh});
     }
 
     protected override getScene(): Scene {
-        const nodes: SceneNode[] = [];
-
         const body = this.getBody();
         const leftHand = this.getHand();
         const rightHand = this.getHand();
