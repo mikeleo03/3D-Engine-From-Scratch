@@ -79,7 +79,7 @@ export default function TestPage() {
       const leon = new LeonModel();
       
       // change model here
-      const model = jojo;
+      const model = leon;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -100,7 +100,7 @@ export default function TestPage() {
       glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);
       
-      // jojo.download();
+      jojo.download();
       // leon.download();
     };
 
