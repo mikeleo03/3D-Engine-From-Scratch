@@ -25,6 +25,7 @@ import NodeView from '@/components/NodeView';
 import { Camera } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { render } from 'react-dom';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -384,8 +385,16 @@ export default function Home() {
         obliqueCamera.angleY = parseFloat(e.target.value);
     }
 
-    const toggleShader = () => {
-        setShader(prevState => ({ phongEnabled: !prevState.phongEnabled }));
+    const toggleShader = (isChecked: boolean) => {
+        if (renderManagerRef.current) {
+            renderManagerRef.current.enablePhongShading = isChecked;
+        }
+
+        if (secondRenderManagerRef.current) {
+            secondRenderManagerRef.current.enablePhongShading = isChecked;
+        }
+
+        setShader(prevState => ({...prevState, phongEnabled: isChecked }));
     };
 
     const togglePlay = () => {
@@ -1262,9 +1271,9 @@ export default function Home() {
                             <Label htmlFor="shader-switch">Phong Shader</Label>
                             <Switch
                                 id="shader-switch"
-                                value={String(shader.phongEnabled)}
+                                checked={shader.phongEnabled}
                                 className='data-[state=checked]:bg-gray-200 data-[state=unchecked]:bg-gray-800'
-                                onChange={toggleShader}
+                                onCheckedChange={toggleShader}
                             />
                         </div>
                     </div>

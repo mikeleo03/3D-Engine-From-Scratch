@@ -1,7 +1,6 @@
 import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
-import { Vector3 } from "../data/math";
 import { Color } from "../cores";
 import { DirectionalLight } from "../data/components/lights";
 import { v4 as uuid } from "uuid";
@@ -9,8 +8,13 @@ import { v4 as uuid } from "uuid";
 export class GLRenderer {
     private _glContainer: GLContainer
     private _id: string = uuid();
+    private _enablePhongShading: boolean = false;
     constructor(glContainer: GLContainer) {
         this._glContainer = glContainer;
+    }
+
+    set enablePhongShading(enable: boolean) {
+        this._enablePhongShading = enable;
     }
 
     private clearCanvas() {
@@ -31,7 +35,7 @@ export class GLRenderer {
 
         if (mesh) {
             for (const geometry of mesh.geometries) {
-                const material = geometry.basicMaterial;
+                const material = this._enablePhongShading ? geometry.phongMaterial : geometry.basicMaterial;
                 
                 if (!material) {
                     continue;

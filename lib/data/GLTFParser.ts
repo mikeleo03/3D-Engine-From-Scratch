@@ -64,6 +64,7 @@ export class GLTFParser {
             animations: raw.animations,
             scene: raw.scene
         }
+
         const jsonContent = JSON.stringify(jsonObject);
 
         // Create a new Blob with the JSON content

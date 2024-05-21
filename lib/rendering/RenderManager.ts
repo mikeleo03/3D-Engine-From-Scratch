@@ -22,11 +22,10 @@ export class RenderManager {
 
     set customCamera(cameraNode: SceneNode) {
         this._customCamera = cameraNode;
+    }
 
-        if (this._isRunning) {
-            this.stop();
-            this.loop();
-        }
+    set enablePhongShading(enable: boolean) {
+        this._glRenderer.enablePhongShading = enable;
     }
 
     getCustomeCamera(): SceneNode | null{

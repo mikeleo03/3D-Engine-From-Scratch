@@ -171,6 +171,10 @@ export class GLTFState {
             if (geometry.basicMaterial) {
                 this.addMaterial(geometry.basicMaterial);
             }
+
+            if (geometry.phongMaterial) {
+                this.addMaterial(geometry.phongMaterial);
+            }
         }
 
         const accessors: Accessor[] = [];
@@ -397,7 +401,7 @@ export class GLTFState {
             const geometries = this._meshes[i].geometries;
 
             for (let j = 0; j < geometries.length; j++) {
-                if (geometries[j].basicMaterial == material) {
+                if (geometries[j].basicMaterial == material || geometries[j].phongMaterial == material) {
                     remove = false;
                     break;
                 }
@@ -438,6 +442,10 @@ export class GLTFState {
 
             if (geometry.basicMaterial) {
                 this.removeMaterial(geometry.basicMaterial);
+            }
+
+            if (geometry.phongMaterial) {
+                this.removeMaterial(geometry.phongMaterial);
             }
         }
     }
