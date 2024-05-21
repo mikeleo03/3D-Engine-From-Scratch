@@ -27,6 +27,10 @@ export class ShaderMaterial {
         return this._id;
     }
 
+    get name() {
+        return this._name;
+    }
+
     get vertexShader() {
         return this._vertexShader;
     }
@@ -59,6 +63,10 @@ export class ShaderMaterial {
             }
         }
         return bufferUniforms;
+    }
+
+    setUniform(key: string, value: any) {
+        this._uniforms[key] = value;
     }
 
     getProgramInfo(key: string): ProgramInfo | null {

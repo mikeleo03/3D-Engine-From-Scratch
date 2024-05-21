@@ -25,7 +25,8 @@ import NodeView from '@/components/NodeView';
 import { Camera } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { render } from 'react-dom';
+import { BasicMaterial, PhongMaterial } from '@/lib/data/components/materials';
+import { RgbaColorPicker } from 'react-colorful';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -44,6 +45,31 @@ interface CameraState {
 
 interface ShaderState {
     phongEnabled: boolean;
+}
+
+type MaterialListState = {
+    basics: BasicMaterial[];
+    phongs: PhongMaterial[];
+}
+
+type RgbaColor = {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
+const colorToRgba = (color: Color) => {
+    return {
+        r: color.R,
+        g: color.G,
+        b: color.B,
+        a: color.A / 255
+    } as RgbaColor;
+}
+
+const rgbaToColor = (rgba: RgbaColor) => {
+    return new Color(rgba.r, rgba.g, rgba.b, rgba.a * 255);
 }
 
 const gltfParser = new GLTFParser();
@@ -71,6 +97,7 @@ export default function Home() {
     const [currentNode, setCurrentNode] = useState<SceneNode>();
     const [disableTRS, setDisableTRS] = useState(true);
     const [shader, setShader] = useState<ShaderState>({ phongEnabled: false });
+    const [materialList, setMaterialList] = useState<MaterialListState>({basics: [], phongs: []});
 
     const glContainerRef = useRef<GLContainer>();
     const secondGlContainerRef = useRef<GLContainer>();
@@ -421,27 +448,38 @@ export default function Home() {
 
         const currentCameraNode = getCurrentCameraNode();
 
-        if (!currentCameraNode) {
-            return;
+        if (currentCameraNode && currentCameraNode != currentNodeRef.current) {
+            currentCameraNode.lookAt(currentNodeRef.current!!.position);
         }
-
-        if (currentCameraNode == currentNodeRef.current) {
-            return;
-        }
-
-        currentCameraNode.lookAt(currentNodeRef.current!!.position);
 
         const currentSecondCameraNode = secondRenderManagerRef.current?.getCustomeCamera();
 
-        if (!currentSecondCameraNode) {
-            return;
+        if (currentSecondCameraNode && currentSecondCameraNode != currentNodeRef.current) {
+            currentSecondCameraNode.lookAt(currentNodeRef.current!!.position);
         }
 
-        if (currentSecondCameraNode == currentNodeRef.current) {
-            return;
-        }
+        const mesh = currentNodeRef.current?.mesh;
 
-        currentSecondCameraNode.lookAt(currentNodeRef.current!!.position);
+        if (mesh) {
+            const basics: BasicMaterial[] = [];
+            const phongs: PhongMaterial[] = [];
+
+            for (const geometry of mesh.geometries) {
+                const basicMaterial = geometry.basicMaterial;
+
+                if (basicMaterial && !basics.includes(basicMaterial)) {
+                    basics.push(basicMaterial);
+                }
+
+                const phongMaterial = geometry.phongMaterial;
+
+                if (phongMaterial && !phongs.includes(phongMaterial)) {
+                    phongs.push(phongMaterial);
+                }
+            }
+
+            setMaterialList({ basics: basics, phongs: phongs });
+        }
     }
 
     const handleNodeChange = (node: SceneNode) => {
@@ -941,6 +979,10 @@ export default function Home() {
         }
     }
 
+    const handleBasicColorChange = (material: BasicMaterial, color: RgbaColor) => {
+        material.color = rgbaToColor(color);
+    }
+
     return (
         <main className="flex flex-col h-screen w-full bg-[#F2FBFA] overflow-hidden">
             {/* Header Section */}
@@ -1299,9 +1341,9 @@ export default function Home() {
                     {/* Separator */}
                     <Separator className="w-full" />
 
-                    {/* Scene */}
+                    {/* Shader */}
                     <div className="w-full p-6 py-4">
-                        <div className="text-lg font-semibold pb-2">🖼️ Scene</div>
+                        <div className="text-lg font-semibold pb-2">🎨 Shader</div>
                         <div className="flex flex-row justify-between">   
                             <Label htmlFor="shader-switch">Phong Shader</Label>
                             <Switch
@@ -1310,6 +1352,25 @@ export default function Home() {
                                 className='data-[state=checked]:bg-gray-200 data-[state=unchecked]:bg-gray-800'
                                 onCheckedChange={toggleShader}
                             />
+                        </div>
+                    </div>
+
+                    {/* Separator */}
+                    <Separator className="w-full" />
+
+                    {/* Materials */}
+                    <div className="w-full p-6 py-4">
+                        <div className="text-lg font-semibold pb-2">👚 Materials</div>
+                        <div className='flex flex-col items-center'>
+                            {!shader.phongEnabled && materialList.basics.map((material, idx) =>
+                                <div key={idx}>
+                                    <div className="text-base font-semibold pb-1 text-center">{material.name}</div>
+                                    <RgbaColorPicker 
+                                        className='mt-3' 
+                                        color={colorToRgba(material.color)} 
+                                        onChange={(color) => handleBasicColorChange(material, color as RgbaColor)} />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

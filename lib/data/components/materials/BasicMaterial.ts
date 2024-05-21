@@ -29,6 +29,11 @@ export class BasicMaterial extends ShaderMaterial {
         return this._color;
     }
 
+    set color(color: Color) {
+        this._color = color.clone();
+        this.setUniform('color', this._color);
+    }
+
     override toRaw(): MaterialType {
         const { vertexShader, fragmentShader, ...other } = super.toRaw();
         return {

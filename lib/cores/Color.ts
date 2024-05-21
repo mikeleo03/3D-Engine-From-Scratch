@@ -46,20 +46,20 @@ export class Color {
         return `rgba(${this._r}, ${this._g}, ${this._b}, ${this._a})`;
     }
 
-    get rInt() {
-        return this._r * 255;
-    }
-    
-    get gInt() {
-        return this._g * 255;
+    get R() {
+        return this._r;
     }
 
-    get bInt() {
-        return this._b * 255;
+    get G() {
+        return this._g;
     }
 
-    get aInt() {
-        return this._a * 255;
+    get B() {
+        return this._b;
+    }
+
+    get A() {
+        return this._a;
     }
 
     get hex() {
