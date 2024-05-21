@@ -77,27 +77,30 @@ export default function TestPage() {
 
       const jojo = new JojoModel();
       const leon = new LeonModel();
+      
+      // change model here
+      const model = jojo;
 
       const glRenderer = new GLRenderer(glContainer);
-      const scene = jojo.scene;
+
+      const scene = model.scene;
 
       scene.addNode(lightNodes[0])
 
-      // const leonObj = jojo.scene.nodes[0];
-      // leon.translate(new Vector3(-700, 0, 0));
-      // cameraNodes[0].lookAt(leonObj.position);
-      // lightNodes[0].lookAt(leonObj.position);
+      const obj = model.scene.nodes[0];
 
-      cameraNodes[0].lookAt(leon.scene.nodes[0].position);
+      cameraNodes[0].lookAt(obj.position);
+      lightNodes[0].translate(new Vector3(0, 0, 700));
+      lightNodes[0].lookAt(obj.position);
 
       // change camera here
       scene.addNode(cameraNodes[0]);
-      // scene.addNode(lightNodes[0]);
+      scene.addNode(lightNodes[0]);
 
       glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);
       
-      jojo.download();
+      // jojo.download();
       // leon.download();
     };
 
