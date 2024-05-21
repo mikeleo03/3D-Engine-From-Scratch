@@ -480,6 +480,10 @@ export default function Home() {
 
             setMaterialList({ basics: basics, phongs: phongs });
         }
+
+        else {
+            setMaterialList({ basics: [], phongs: [] });
+        }
     }
 
     const handleNodeChange = (node: SceneNode) => {
@@ -1377,76 +1381,77 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Materials */}
-                    <div className="w-full p-6 py-4">
-                        <div className="text-lg font-semibold pb-2">👚 Materials</div>
-                        {!shader.phongEnabled && (
-                            <div className='flex flex-col items-center'>
-                            {!shader.phongEnabled && materialList.basics.map((material, idx) =>
-                                <div key={idx}>
-                                    <Label htmlFor='basic-color-picker' className="text-base font-semibold pb-1 text-center">{material.name}</Label>
-                                    <RgbaColorPicker
-                                        id='basic-color-picker'
-                                        className='mt-3' 
-                                        color={colorToRgba(material.color)} 
-                                        onChange={(color) => handleBasicColorChange(material, color as RgbaColor)} />
+                    {currentNodeRef.current && currentNodeRef.current.mesh &&
+                        <div className="w-full p-6 py-4">
+                            <div className="text-lg font-semibold pb-2">👚 Materials</div>
+                            {!shader.phongEnabled && (
+                                <div className='flex flex-col items-center'>
+                                {!shader.phongEnabled && materialList.basics.map((material, idx) =>
+                                    <div key={idx}>
+                                        <Label htmlFor='basic-color-picker' className="text-base font-semibold pb-1 text-center">{material.name}</Label>
+                                        <RgbaColorPicker
+                                            id='basic-color-picker'
+                                            className='mt-3' 
+                                            color={colorToRgba(material.color)} 
+                                            onChange={(color) => handleBasicColorChange(material, color as RgbaColor)} />
+                                    </div>
+                                )}
                                 </div>
                             )}
-                            </div>
-                        )}
-                        
-                        {shader.phongEnabled && (
-                            <div className="w-full">  
-                            {materialList.phongs.map((material, idx) =>
-                                <div key={idx} className='w-full flex flex-col items-center'>
-                                    <div className="text-base font-semibold pb-1 text-center mb-2">[{material.name}]</div>
+                            
+                            {shader.phongEnabled && (
+                                <div className="w-full">  
+                                {materialList.phongs.map((material, idx) =>
+                                    <div key={idx} className='w-full flex flex-col items-center'>
+                                        <div className="text-base font-semibold pb-1 text-center mb-2">[{material.name}]</div>
 
-                                    <Label htmlFor='diffuse-color-picker' className="text-base font-semibold pb-1 text-center">Diffuse Color</Label>
-                                    <RgbaColorPicker
-                                        id='diffuse-color-picker'
-                                        className='mt-3' 
-                                        color={colorToRgba(material.diffuseColor)} 
-                                        onChange={(color) => handleDiffuseColorChange(material, color as RgbaColor)} />
+                                        <Label htmlFor='diffuse-color-picker' className="text-base font-semibold pb-1 text-center">Diffuse Color</Label>
+                                        <RgbaColorPicker
+                                            id='diffuse-color-picker'
+                                            className='mt-3' 
+                                            color={colorToRgba(material.diffuseColor)} 
+                                            onChange={(color) => handleDiffuseColorChange(material, color as RgbaColor)} />
 
-                                    {/* Separator */}
-                                    <Separator className="w-full my-5" />
+                                        {/* Separator */}
+                                        <Separator className="w-full my-5" />
 
-                                    <Label htmlFor='ambient-color-picker' className="text-base font-semibold pb-1 text-center">Ambient Color</Label>
-                                    <RgbaColorPicker
-                                        id='ambient-color-picker'
-                                        className='mt-3' 
-                                        color={colorToRgba(material.ambientColor)} 
-                                        onChange={(color) => handleAmbientColorChange(material, color as RgbaColor)} />
+                                        <Label htmlFor='ambient-color-picker' className="text-base font-semibold pb-1 text-center">Ambient Color</Label>
+                                        <RgbaColorPicker
+                                            id='ambient-color-picker'
+                                            className='mt-3' 
+                                            color={colorToRgba(material.ambientColor)} 
+                                            onChange={(color) => handleAmbientColorChange(material, color as RgbaColor)} />
 
-                                    {/* Separator */}
-                                    <Separator className="w-full my-5" />
+                                        {/* Separator */}
+                                        <Separator className="w-full my-5" />
 
-                                    <Label htmlFor='specular-color-picker' className="text-base font-semibold pb-1 text-center">Specular Color</Label>
-                                    <RgbaColorPicker
-                                        id='specular-color-picker'
-                                        className='mt-3' 
-                                        color={colorToRgba(material.specularColor)} 
-                                        onChange={(color) => handleSpecularColorChange(material, color as RgbaColor)} />
+                                        <Label htmlFor='specular-color-picker' className="text-base font-semibold pb-1 text-center">Specular Color</Label>
+                                        <RgbaColorPicker
+                                            id='specular-color-picker'
+                                            className='mt-3' 
+                                            color={colorToRgba(material.specularColor)} 
+                                            onChange={(color) => handleSpecularColorChange(material, color as RgbaColor)} />
 
-                                    {/* Separator */}
-                                    <Separator className="w-full my-5" />
+                                        {/* Separator */}
+                                        <Separator className="w-full my-5" />
 
-                                    <div className='flex flex-row justify-between w-full'>
-                                        <Label htmlFor='shininess' className="text-base font-semibold pb-1 w-1/3">Shininess</Label>
-                                        <input
-                                            className="w-2/3"
-                                            type="range"
-                                            min="0"
-                                            max="200"
-                                            defaultValue={material.shininess}
-                                            onChange={(e) => handleShininessChange(material, parseFloat(e.target.value))}
-                                        />
+                                        <div className='flex flex-row justify-between w-full'>
+                                            <Label htmlFor='shininess' className="text-base font-semibold pb-1 w-1/3">Shininess</Label>
+                                            <input
+                                                className="w-2/3"
+                                                type="range"
+                                                min="0"
+                                                max="200"
+                                                defaultValue={material.shininess}
+                                                onChange={(e) => handleShininessChange(material, parseFloat(e.target.value))}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            )} 
+                                )} 
                             </div>
                         )}
                 
-                    </div>
+                    </div>}
                 </div>
             </div>
         </main>
