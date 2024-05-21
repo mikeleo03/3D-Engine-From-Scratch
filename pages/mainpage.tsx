@@ -47,6 +47,7 @@ interface ShaderState {
 }
 
 const gltfParser = new GLTFParser();
+const cameraPosition = new Vector3(0, 0, 100);
 
 export default function Home() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -806,8 +807,6 @@ export default function Home() {
                 0
             );
 
-            const cameraPosition = new Vector3(0, 0, 100);
-
             const cameraNodes = [
                 new SceneNode({
                     name: 'Perspective Camera',
@@ -909,6 +908,36 @@ export default function Home() {
     const handleLastFrame = () => {
         for (const animationRunner of animationRunnersRef.current) {
             animationRunner.lastFrame();
+        }
+    }
+
+    const resetCameraPosition = () => {
+        const cameraNode = getCurrentCameraNode();
+
+        if (!cameraNode) {
+            return;
+        }
+        
+        cameraNode.position = cameraPosition;
+
+        if (currentNodeRef.current)
+        {
+            cameraNode.lookAt(currentNodeRef.current.position);
+        }
+    }
+
+    const resetSecondCameraPosition = () => {
+        const cameraNode = secondRenderManagerRef.current?.getCustomeCamera();
+
+        if (!cameraNode) {
+            return;
+        }
+        
+        cameraNode.position = cameraPosition;
+
+        if (currentNodeRef.current)
+        {
+            cameraNode.lookAt(currentNodeRef.current.position);
         }
     }
 
@@ -1197,6 +1226,9 @@ export default function Home() {
                             </div>
                         )}
 
+                        <div className="text-base font-semibold pb-1">Camera Position</div>
+                        <Button onClick={resetCameraPosition} className="h-full w-full border-none rounded-0">↩️ Reset</Button>
+
                     </div>
 
                     {/* Separator */}
@@ -1258,6 +1290,9 @@ export default function Home() {
                                 />
                             </div>
                         )}
+
+                        <div className="text-base font-semibold pb-1">Camera Position</div>
+                        <Button onClick={resetSecondCameraPosition} className="h-full w-full border-none rounded-0">↩️ Reset</Button>
 
                     </div>
 

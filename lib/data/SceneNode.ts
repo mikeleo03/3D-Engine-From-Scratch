@@ -100,15 +100,15 @@ export class SceneNode {
     }
 
     set position(position) {
-        this._position = position;
+        this._position = position.clone();
         this.computeWorldMatrix(false, true);
     }
     set rotation(rotation) {
-        this._rotation = rotation.normalize();
+        this._rotation = rotation.clone().normalize();
         this.computeWorldMatrix(false, true);
     }
     set scale(scale) {
-        this._scale = scale;
+        this._scale = scale.clone();
         this.computeWorldMatrix(false, true);
     }
 
