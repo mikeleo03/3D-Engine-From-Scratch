@@ -88,8 +88,6 @@ export class ShaderMaterial {
             const uniform = raw.uniforms[key];
             if (key === 'color' || key === 'ambientColor' || key === 'diffuseColor' || key === 'specularColor') {
                 uniforms[key] = Color.fromRaw(uniform as number[]);
-            } else if (key === 'lightPosition') {
-                uniforms[key] = Vector3.fromRaw(uniform as number[]);
             } else {
                 uniforms[key] = uniform;
             }

@@ -12,7 +12,6 @@ export class PhongMaterial extends ShaderMaterial {
         diffuseColor?: Color;
         specularColor?: Color;
         shininess?: number;
-        lightPosition?: Vector3;
     }) {
         const {
             name,
