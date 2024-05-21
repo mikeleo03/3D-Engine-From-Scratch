@@ -28,7 +28,7 @@ export class PhongMaterial extends ShaderMaterial {
                 ambientColor: ambientColor || Color.white(),
                 diffuseColor: diffuseColor || Color.white(),
                 specularColor: specularColor || Color.white(),
-                shininess: shininess || 30
+                shininess: shininess === undefined ? 30 : shininess
             },
             type: "Phong Material"
         });
@@ -52,6 +52,18 @@ export class PhongMaterial extends ShaderMaterial {
 
     get shininess(): number {
         return this.uniforms.shininess;
+    }
+
+    set diffuseColor(val: Color) {
+        this.uniforms.diffuseColor = val;
+    }
+
+    set ambientColor(val: Color) {
+        this.uniforms.ambientColor = val;
+    }
+
+    set specularColor(val: Color) {
+        this.uniforms.specularColor = val;
     }
 
     set shininess(val: number) {
