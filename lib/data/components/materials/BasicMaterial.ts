@@ -5,8 +5,6 @@ import basicFragment from "./shaders/BasicFragment";
 import basicVertex from "./shaders/BasicVertex";
 
 export class BasicMaterial extends ShaderMaterial {
-    private _color: Color;
-
     constructor(options: { name: string; color?: Color }) {
         const { name, color } = options || {};
         super({
@@ -18,7 +16,6 @@ export class BasicMaterial extends ShaderMaterial {
             },
             type: "Basic Material"
         });
-        this._color = this.uniforms['color'];
     }
 
     get id() {
@@ -26,12 +23,11 @@ export class BasicMaterial extends ShaderMaterial {
     }
 
     get color() {
-        return this._color;
+        return this.uniforms.color;
     }
 
     set color(color: Color) {
-        this._color = color.clone();
-        this.setUniform('color', this._color);
+        this.setUniform('color', color.clone());
     }
 
     override toRaw(): MaterialType {

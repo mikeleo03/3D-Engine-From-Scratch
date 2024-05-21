@@ -580,6 +580,8 @@ export default function Home() {
 
         handleCameraModeChange(currentCamera!!.type);
         handleSecondCameraModeChange(CameraTypeString.PERSPECTIVE);
+        
+        toggleShader(false);
     }
 
     const importFile = async () => {

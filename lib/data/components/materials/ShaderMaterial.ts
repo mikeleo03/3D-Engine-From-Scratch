@@ -102,6 +102,7 @@ export class ShaderMaterial {
         }
 
         raw.uniforms = uniforms;
+
         if (!obj) {
             obj = new ShaderMaterial(raw);
         } else {
