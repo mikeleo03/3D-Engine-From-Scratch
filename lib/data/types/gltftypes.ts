@@ -88,7 +88,8 @@ export type MeshPrimitiveType = {
     attributes: {
         [key in keyof typeof MeshPrimitiveAttribute]?: number;
     };
-    material: number;
+    basicMaterial?: number;
+    phongMaterial?: number;
     indices?: number;
 }
 export type MeshType = { "primitives": MeshPrimitiveType[] };

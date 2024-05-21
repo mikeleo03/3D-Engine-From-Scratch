@@ -168,26 +168,23 @@ export class GLTFState {
         for (let i = 0; i < geometries.length; i++) {
             const geometry = geometries[i];
 
-            if (geometry.material) {
-                this.addMaterial(geometry.material);
+            if (geometry.basicMaterial) {
+                this.addMaterial(geometry.basicMaterial);
             }
         }
 
         const accessors: Accessor[] = [];
 
         for (let i = 0; i < geometries.length; i++) {
-            if (geometries[i].attributes.position)
-            {
+            if (geometries[i].attributes.position) {
                 accessors.push(geometries[i].attributes.position!.accessor);
             }
-            
-            if (geometries[i].attributes.normal)
-            {
+
+            if (geometries[i].attributes.normal) {
                 accessors.push(geometries[i].attributes.normal!.accessor);
             }
 
-            if (geometries[i].indices)
-            {
+            if (geometries[i].indices) {
                 accessors.push(geometries[i].indices!.accessor);
             }
         }
@@ -199,7 +196,7 @@ export class GLTFState {
         this._meshes.push(mesh);
     }
 
-    
+
     addNode(node: SceneNode) {
         if (this._nodes.indexOf(node) != -1) {
             return;
@@ -283,7 +280,7 @@ export class GLTFState {
         }
 
         this._cameras.splice(index, 1);
-        
+
     }
 
     removeLight(light: Light) {
@@ -307,7 +304,7 @@ export class GLTFState {
         }
 
         this._lights.splice(index, 1);
-        
+
     }
 
     removeBuffer(buffer: GLTFBuffer) {
@@ -400,7 +397,7 @@ export class GLTFState {
             const geometries = this._meshes[i].geometries;
 
             for (let j = 0; j < geometries.length; j++) {
-                if (geometries[j].material == material) {
+                if (geometries[j].basicMaterial == material) {
                     remove = false;
                     break;
                 }
@@ -439,8 +436,8 @@ export class GLTFState {
         for (let i = 0; i < geometries.length; i++) {
             const geometry = geometries[i];
 
-            if (geometry.material) {
-                this.removeMaterial(geometry.material);
+            if (geometry.basicMaterial) {
+                this.removeMaterial(geometry.basicMaterial);
             }
         }
     }

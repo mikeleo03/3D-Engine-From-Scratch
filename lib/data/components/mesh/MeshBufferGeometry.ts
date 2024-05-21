@@ -3,7 +3,12 @@ import { Vector3 } from "../../math/index";
 import { MeshPrimitiveAttribute } from "../../types/gltftypes";
 import { Accessor } from "../../buffers/Accessor";
 import { Float32ArrayConverter } from "../../buffers/typedarrayconverters";
-import { ShaderMaterial } from "../materials";
+import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
+
+export type MaterialOptions = {
+    basicMaterial?: BasicMaterial,
+    phongMaterial?: PhongMaterial,
+}
 
 export type MeshBufferGeometryAttributes = {
     [name in MeshPrimitiveAttribute]?: GLBufferAttribute;
@@ -14,16 +19,18 @@ export class MeshBufferGeometry {
     public static readonly INDEX_SIZE: number = 1;
 
     private _attributes: MeshBufferGeometryAttributes;
-    private _material: ShaderMaterial;
+    private _basicMaterial?: BasicMaterial;
+    private _phongMaterial?: PhongMaterial;
     private _indices?: GLBufferAttribute;
 
     constructor(
         attributes: MeshBufferGeometryAttributes = {},
-        material: ShaderMaterial,
+        materials: MaterialOptions = {},
         indices?: GLBufferAttribute
     ) {
         this._attributes = attributes;
-        this._material = material;
+        this._basicMaterial = materials.basicMaterial;
+        this._phongMaterial = materials.phongMaterial;
         this._indices = indices;
     }
 
@@ -31,8 +38,12 @@ export class MeshBufferGeometry {
         return this._attributes;
     }
 
-    get material() {
-        return this._material;
+    get basicMaterial() {
+        return this._basicMaterial;
+    }
+
+    get phongMaterial() {
+        return this._phongMaterial;
     }
 
     get indices() {

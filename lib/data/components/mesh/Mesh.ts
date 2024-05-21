@@ -2,7 +2,7 @@ import { Accessor } from "../../buffers/Accessor";
 import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
 import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "./MeshBufferGeometry";
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
-import { ShaderMaterial } from "../materials";
+import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
 import { MeshPrimitiveType, MeshType } from "../../types/gltftypes";
 import { NodeComponent } from "../NodeComponent";
 
@@ -41,7 +41,8 @@ export class Mesh extends NodeComponent {
             const position = primitive.attributes.POSITION !== undefined ? accessors[primitive.attributes.POSITION] : undefined;
             const normal = primitive.attributes.NORMAL !== undefined ? accessors[primitive.attributes.NORMAL] : undefined;
             const indices = primitive.indices !== undefined ? accessors[primitive.indices] : undefined;
-            const material = materials[primitive.material];
+            const basicMaterial = primitive.basicMaterial !== undefined ? materials[primitive.basicMaterial] as BasicMaterial : undefined;
+            const phongMaterial = primitive.phongMaterial !== undefined ? materials[primitive.phongMaterial] as PhongMaterial : undefined;
 
             const attribute: MeshBufferGeometryAttributes = {
                 position: position ? new GLBufferAttribute(
@@ -58,7 +59,10 @@ export class Mesh extends NodeComponent {
 
             return new MeshBufferGeometry(
                 attribute,
-                material,
+                {
+                    basicMaterial,
+                    phongMaterial,
+                },
                 indices ? new GLBufferAttribute(
                     indices,
                     MeshBufferGeometry.INDEX_SIZE,
@@ -95,7 +99,8 @@ export class Mesh extends NodeComponent {
                     POSITION: position ? accessorMap.get(position.accessor)!! : undefined,
                     NORMAL: normal ? accessorMap.get(normal.accessor)!! : undefined
                 },
-                material: materialMap.get(geometry.material)!!,
+                basicMaterial: geometry.basicMaterial ? materialMap.get(geometry.basicMaterial)!! : undefined,
+                phongMaterial: geometry.phongMaterial ? materialMap.get(geometry.phongMaterial)!! : undefined,
                 indices: indices ? accessorMap.get(indices.accessor)!! : undefined
             };
 

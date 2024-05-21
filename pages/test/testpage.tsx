@@ -75,15 +75,18 @@ export default function TestPage() {
         new SceneNode({light: directionalLight, position: lightPosition})
       ]
 
-      const model = new JojoModel();
+      const jojo = new JojoModel();
 
       const glRenderer = new GLRenderer(glContainer);
-      const scene = model.scene;
+      const scene = jojo.scene;
 
-      const leon = model.scene.nodes[0];
+      scene.addNode(lightNodes[0])
+
+      const leon = jojo.scene.nodes[0];
       // leon.translate(new Vector3(-700, 0, 0));
-      cameraNodes[0].lookAt(leon.position);
-      lightNodes[0].lookAt(leon.position);
+      // cameraNodes[0].lookAt(leon.position);
+      // lightNodes[0].lookAt(leon.position);
+      cameraNodes[0].lookAt(jojo.scene.nodes[0].position);
 
       // change camera here
       // scene.addNode(cameraNodes[0]);
@@ -91,7 +94,7 @@ export default function TestPage() {
 
       glRenderer.render(scene, cameraNodes[0]);
       
-      model.download();
+      jojo.download();
     };
 
     initializeGL();

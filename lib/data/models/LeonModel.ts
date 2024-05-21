@@ -26,42 +26,42 @@ export class LeonModel extends Model {
     private getEar(): SceneNode {
         const meshFactory = new MeshFactory();
         const earMaterial = new PhongMaterial({ name: "ear", ambientColor: new Color(72, 60, 50), diffuseColor: new Color(72, 60, 50), specularColor: new Color(255, 255, 255), shininess: 60});
-        const earMesh = meshFactory.cuboid(30, 40, 30, [earMaterial], { offset: [0, 15, 0] });
+        const earMesh = meshFactory.cuboid(30, 40, 30, [{phongMaterial: earMaterial}], { offset: [0, 15, 0] });
         return new SceneNode({name: 'Ear', mesh: earMesh});
     }
 
     private getHead(): SceneNode {
         const meshFactory = new MeshFactory();
         const headMaterial = new PhongMaterial({ name: "head", ambientColor: new Color(205, 127, 50), diffuseColor: new Color(205, 127, 50), specularColor: new Color(255, 255, 255), shininess: 60});
-        const headMesh = meshFactory.cuboid(70, 70, 70, [headMaterial], { offset: [0, 12.5, 0] });
+        const headMesh = meshFactory.cuboid(70, 70, 70, [{phongMaterial: headMaterial}], { offset: [0, 12.5, 0] });
         return new SceneNode({name: 'Head', mesh: headMesh});
     }
 
     private getBody(): SceneNode {
         const meshFactory = new MeshFactory();
         const bodyMaterial = new PhongMaterial({ name: "body", ambientColor: new Color(102, 61, 20), diffuseColor: new Color(102, 61, 20), specularColor: new Color(255, 255, 255), shininess: 60});
-        const bodyMesh = meshFactory.cuboid(100, 70, 200, [bodyMaterial]);
+        const bodyMesh = meshFactory.cuboid(100, 70, 200, [{phongMaterial: bodyMaterial}]);
         return new SceneNode({name: 'Body', mesh: bodyMesh});
     }
 
     private getLeg(): SceneNode {
         const meshFactory = new MeshFactory();
         const legMaterial = new PhongMaterial({ name: "leg", ambientColor: new Color(184, 115, 51), diffuseColor: new Color(184, 115, 51), specularColor: new Color(255, 255, 255), shininess: 60});
-        const legMesh = meshFactory.cuboid(23, 40, 25, [legMaterial], { offset: [0, -15, 0] });
+        const legMesh = meshFactory.cuboid(23, 40, 25, [{phongMaterial: legMaterial}], { offset: [0, -15, 0] });
         return new SceneNode({name: 'Leg', mesh: legMesh});
     }
 
     private getEye(): SceneNode {
         const meshFactory = new MeshFactory();
         const eyeMaterial = new PhongMaterial({ name: "eye", ambientColor: new Color(0, 0, 0), diffuseColor: new Color(0, 0, 0), specularColor: new Color(255, 255, 255), shininess: 60});
-        const eyeMesh = meshFactory.cuboid(10, 10, 10, [eyeMaterial]);
+        const eyeMesh = meshFactory.cuboid(10, 10, 10, [{phongMaterial: eyeMaterial}]);
         return new SceneNode({name: 'Eye', mesh: eyeMesh});
     }
 
     private getMouth(): SceneNode {
         const meshFactory = new MeshFactory();
         const mouthMaterial = new PhongMaterial({ name: "mouth", ambientColor: new Color(0, 0, 0), diffuseColor: new Color(0, 0, 0), specularColor: new Color(255, 255, 255), shininess: 60});
-        const mouthMesh = meshFactory.cuboid(20, 10, 10, [mouthMaterial]);
+        const mouthMesh = meshFactory.cuboid(20, 10, 10, [{phongMaterial: mouthMaterial}]);
         return new SceneNode({name: 'Mouth', mesh: mouthMesh});
     }
 

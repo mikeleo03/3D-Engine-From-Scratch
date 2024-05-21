@@ -23,6 +23,8 @@ import { Quaternion, Vector3 } from '@/lib/data/math';
 import { CameraTypeString, LightTypeString } from '@/lib/data/types/gltftypes';
 import NodeView from '@/components/NodeView';
 import { Camera } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 type Axis = 'x' | 'y' | 'z';
 type TRSType = 'translation' | 'rotation' | 'scale';
@@ -40,7 +42,7 @@ interface CameraState {
 }
 
 interface ShaderState {
-    enabled: boolean;
+    phongEnabled: boolean;
 }
 
 const gltfParser = new GLTFParser();
@@ -66,6 +68,7 @@ export default function Home() {
     const [easingMode, setEasingMode] = useState({ mode: "Linear" });
     const [currentNode, setCurrentNode] = useState<SceneNode>();
     const [disableTRS, setDisableTRS] = useState(true);
+    const [shader, setShader] = useState<ShaderState>({ phongEnabled: false });
 
     const glContainerRef = useRef<GLContainer>();
     const secondGlContainerRef = useRef<GLContainer>();
@@ -138,6 +141,7 @@ export default function Home() {
             }
         }
     };
+    
 
     const getCurrentCameraNode = () => {
         const currentScene = gltfStateRef.current?.CurrentScene;
@@ -380,6 +384,10 @@ export default function Home() {
         obliqueCamera.angleY = parseFloat(e.target.value);
     }
 
+    const toggleShader = () => {
+        setShader(prevState => ({ phongEnabled: !prevState.phongEnabled }));
+    };
+
     const togglePlay = () => {
         setIsPlaying(prevState => !prevState);
     };
@@ -545,7 +553,7 @@ export default function Home() {
                 if (!currentScene) {
                     return;
                 }
-
+                
                 for (const node of cameraNodesRef.current) {
                     const currentScene = gltfState.CurrentScene;
                     if (!currentScene.hasCamera(node.camera!!.type)) {
@@ -1248,9 +1256,17 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Scene */}
-                    <div className="text-base font-semibold flex flex-row justify-between w-full p-6 py-4">
+                    <div className="w-full p-6 py-4">
                         <div className="text-lg font-semibold pb-2">🖼️ Scene</div>
-
+                        <div className="flex flex-row justify-between">   
+                            <Label htmlFor="shader-switch">Phong Shader</Label>
+                            <Switch
+                                id="shader-switch"
+                                value={String(shader.phongEnabled)}
+                                className='data-[state=checked]:bg-gray-200 data-[state=unchecked]:bg-gray-800'
+                                onChange={toggleShader}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

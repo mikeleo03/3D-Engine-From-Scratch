@@ -5,14 +5,16 @@ import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
 import { GLTFBuffer } from "../../buffers/GLTFBuffer";
 import { Float32ArrayConverter } from "../../buffers/typedarrayconverters";
 import { AccessorComponentType, BufferViewTarget } from "../../types/gltftypes";
-import { ShaderMaterial } from "../materials";
-import { MeshBufferGeometry } from "./MeshBufferGeometry";
+import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
+import { MaterialOptions, MeshBufferGeometry } from "./MeshBufferGeometry";
 import { Mesh } from "./Mesh";
 
 export class MeshFactory {
     private _geometries: MeshBufferGeometry[] = [];
 
-    addGeometry(positions: [number, number, number][], material: ShaderMaterial): void {
+    addGeometry(
+        positions: [number, number, number][], 
+        materials: MaterialOptions = {}): void {
         const vertexBytesCount = positions.length * 4 * 3;
         const normalBytesCount = vertexBytesCount;
         const totalBytesCount = vertexBytesCount + normalBytesCount;
@@ -35,7 +37,7 @@ export class MeshFactory {
 
         positionAccessor.setData(floatConverter.tobytes(vertices));
 
-        const geometry = new MeshBufferGeometry(attributes, material);
+        const geometry = new MeshBufferGeometry(attributes, materials);
         geometry.calculateNormals(normalAccessor);
 
         this._geometries.push(geometry);
@@ -51,12 +53,12 @@ export class MeshFactory {
         width: number, 
         height: number, 
         depth: number, 
-        materials: ShaderMaterial[],
+        materialOptions: MaterialOptions[],
         options: {
             offset?: [number, number, number],
         } = {}
     ): Mesh {
-        if (materials.length === 0) {
+        if (materialOptions.length === 0) {
             throw new Error("At least one material is required");
         }
 
@@ -87,9 +89,9 @@ export class MeshFactory {
         }
 
         // front face
-        this.addGeometry(data1, materials[materialIndex]);
+        this.addGeometry(data1, materialOptions[materialIndex]);
 
-        if (materials.length > 1) {
+        if (materialOptions.length > 1) {
             materialIndex++;
         }
 
@@ -109,9 +111,9 @@ export class MeshFactory {
             data2[i][2] += offset[2];
         }
 
-        this.addGeometry(data2, materials[materialIndex]);
+        this.addGeometry(data2, materialOptions[materialIndex]);
 
-        if (materials.length > 2) {
+        if (materialOptions.length > 2) {
             materialIndex++;
         }
 
@@ -131,9 +133,9 @@ export class MeshFactory {
             data3[i][2] += offset[2];
         }
 
-        this.addGeometry(data3, materials[materialIndex]);
+        this.addGeometry(data3, materialOptions[materialIndex]);
 
-        if (materials.length > 3) {
+        if (materialOptions.length > 3) {
             materialIndex++;
         }
 
@@ -153,9 +155,9 @@ export class MeshFactory {
             data4[i][2] += offset[2];
         }
 
-        this.addGeometry(data4, materials[materialIndex]);
+        this.addGeometry(data4, materialOptions[materialIndex]);
 
-        if (materials.length > 4) {
+        if (materialOptions.length > 4) {
             materialIndex++;
         }
 
@@ -175,9 +177,9 @@ export class MeshFactory {
             data5[i][2] += offset[2];
         }
 
-        this.addGeometry(data5, materials[materialIndex]);
+        this.addGeometry(data5, materialOptions[materialIndex]);
 
-        if (materials.length > 5) {
+        if (materialOptions.length > 5) {
             materialIndex++;
         }
 
@@ -197,7 +199,7 @@ export class MeshFactory {
             data6[i][2] += offset[2];
         }
 
-        this.addGeometry(data6, materials[materialIndex]);
+        this.addGeometry(data6, materialOptions[materialIndex]);
 
         return this.createMesh();
     }

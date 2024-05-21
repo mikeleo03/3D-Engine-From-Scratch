@@ -17,13 +17,13 @@ export class GLRenderer {
         this._glContainer.resetGL();
     }
 
-    private renderRoot(root: SceneNode, uniforms: { 
-        viewMatrix: Float32Array; 
-        lightPosition: Float32Array; 
-        lightColor: Color; 
-        lightAmbient: Color; 
-        lightDiffuse: Color; 
-        lightSpecular: Color; 
+    private renderRoot(root: SceneNode, uniforms: {
+        viewMatrix: Float32Array;
+        lightPosition: Float32Array;
+        lightColor: Color;
+        lightAmbient: Color;
+        lightDiffuse: Color;
+        lightSpecular: Color;
         cameraPosition: Float32Array;
     }) {
         const mesh = root.mesh;
@@ -31,11 +31,15 @@ export class GLRenderer {
 
         if (mesh) {
             for (const geometry of mesh.geometries) {
-                const material = geometry.material;
+                const material = geometry.basicMaterial;
+                
+                if (!material) {
+                    continue;
+                }
 
                 if (!material.getProgramInfo(this._id)) {
                     material.setProgramInfo(
-                        this._id, 
+                        this._id,
                         this._glContainer.getProgramInfo(material.vertexShader, material.fragmentShader)
                     );
                 }
@@ -44,8 +48,8 @@ export class GLRenderer {
 
                 this._glContainer.setProgram(programInfo);
 
-                this._glContainer.setUniforms(programInfo, { 
-                    ...material.bufferUniforms, 
+                this._glContainer.setUniforms(programInfo, {
+                    ...material.bufferUniforms,
                     ...uniforms,
                     worldMatrix: root.worldMatrix.transpose().buffer,
                 });

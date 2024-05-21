@@ -24,7 +24,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(251, 231, 239) });
 
-        const bodyMesh = meshFactory.cuboid(50, 70, 30, [bodyMaterial]);
+        const bodyMesh = meshFactory.cuboid(50, 70, 30, [{basicMaterial: bodyMaterial}]);
 
         return new SceneNode({name: 'Body', mesh: bodyMesh});
     }
@@ -33,7 +33,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const handMaterial = new BasicMaterial({ name: "hand", color: new Color(251, 231, 239) });
 
-        const handMesh = meshFactory.cuboid(15, 60, 25, [handMaterial], { offset: [0, -27, 0] });
+        const handMesh = meshFactory.cuboid(15, 60, 25, [{basicMaterial: handMaterial}], { offset: [0, -27, 0] });
 
         return new SceneNode({name: 'Hand', mesh: handMesh});
     }
@@ -42,7 +42,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const headMaterial = new BasicMaterial({ name: "head", color: new Color(255, 219, 172) });
 
-        const headMesh = meshFactory.cuboid(25, 25, 25, [headMaterial], { offset: [0, 12.5, 0] });
+        const headMesh = meshFactory.cuboid(25, 25, 25, [{basicMaterial: headMaterial}], { offset: [0, 12.5, 0] });
 
         return new SceneNode({name: 'Head', mesh: headMesh});
     }
@@ -51,7 +51,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const legMaterial = new BasicMaterial({ name: "leg", color: new Color(108, 122, 137) });
 
-        const legMesh = meshFactory.cuboid(23, 50, 25, [legMaterial], { offset: [0, -25, 0] });
+        const legMesh = meshFactory.cuboid(23, 50, 25, [{basicMaterial: legMaterial}], { offset: [0, -25, 0] });
 
         return new SceneNode({name: 'Leg', mesh: legMesh});
     }
@@ -60,7 +60,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const eyeConverMaterial = new BasicMaterial({ name: "eyeCover", color: Color.red() });
 
-        const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, [eyeConverMaterial]);
+        const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, [{basicMaterial: eyeConverMaterial}]);
 
         return new SceneNode({name: 'EyeConver', mesh: eyeCoverMesh});
     }
@@ -69,7 +69,7 @@ export class JojoModel extends Model {
         const meshFactory = new MeshFactory();
         const mouthMaterial = new BasicMaterial({ name: "mouth", color: new Color(0, 0, 0) });
 
-        const mouthMesh = meshFactory.cuboid(7, 1, 1, [mouthMaterial]);
+        const mouthMesh = meshFactory.cuboid(7, 1, 1, [{basicMaterial: mouthMaterial}]);
 
         return new SceneNode({name: 'Mouth', mesh: mouthMesh});
     }
