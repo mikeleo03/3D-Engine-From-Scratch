@@ -3,7 +3,7 @@ import { TypedArrayConverter } from "./typedarrayconverters";
 
 export class GLBufferAttribute {
     private _accessor: Accessor;
-    private _size: number;
+    private _size: number;  // Size of each element in the buffer.
     private _converter: TypedArrayConverter;
     private _normalize = false;
     private _stride = 0;
@@ -71,7 +71,7 @@ export class GLBufferAttribute {
         const bytes = this._converter.tobytes(data);
         const arrays = this._converter.from(bytes);
 
-        if (arrays.length !== this._accessor.count - this._offset) {
+        if (arrays.length !== this.length - this._offset) {
             throw new Error(`Data size does not match accessor count and offset.`);
         }
 
@@ -120,7 +120,7 @@ export class GLBufferAttribute {
      * Panjang dari buffer (data.length = elemen * size).
      */
     get length(): number {
-        return this.data.length;
+        return this.count * this._size;
     }
 
 

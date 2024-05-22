@@ -13,7 +13,7 @@ export class MeshFactory {
     private _geometries: MeshBufferGeometry[] = [];
 
     addGeometry(
-        positions: [number, number, number][], 
+        positions: [number, number, number][],
         materials: MaterialOptions = {}): void {
         const vertexBytesCount = positions.length * 4 * 3;
         const normalBytesCount = vertexBytesCount;
@@ -38,7 +38,7 @@ export class MeshFactory {
         positionAccessor.setData(floatConverter.tobytes(vertices));
 
         const geometry = new MeshBufferGeometry(attributes, materials);
-        geometry.calculateNormals(normalAccessor);
+        geometry.calculateFaceNormals(normalAccessor);
 
         this._geometries.push(geometry);
     }
@@ -50,9 +50,9 @@ export class MeshFactory {
     }
 
     cuboid(
-        width: number, 
-        height: number, 
-        depth: number, 
+        width: number,
+        height: number,
+        depth: number,
         materialOptions: MaterialOptions[],
         options: {
             offset?: [number, number, number],

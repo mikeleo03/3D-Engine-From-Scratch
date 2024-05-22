@@ -6,9 +6,9 @@ import { TypedArrayConverter } from "./typedarrayconverters";
 export class Accessor {
     private _bufferView: BufferView;
     private _byteOffset: number;
-    private _componentType: number;
-    private _count: number;
-    private _type: AccessorComponentType;
+    private _componentType: number;  // type of component in the elements
+    private _count: number;  // Number of components for 1 element
+    private _type: AccessorComponentType;  // element type
     private _max: number[];
     private _min: number[];
     

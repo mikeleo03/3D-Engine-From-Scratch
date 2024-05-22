@@ -39,7 +39,8 @@ export class Mesh extends NodeComponent {
     static fromRaw(raw: MeshType, accessors: Accessor[], materials: ShaderMaterial[]): Mesh {
         const geometries = raw.primitives.map(primitive => {
             const position = primitive.attributes.POSITION !== undefined ? accessors[primitive.attributes.POSITION] : undefined;
-            const normal = primitive.attributes.NORMAL !== undefined ? accessors[primitive.attributes.NORMAL] : undefined;
+            const faceNormal = primitive.attributes.FACE_NORMAL !== undefined ? accessors[primitive.attributes.FACE_NORMAL] : undefined;
+            const vertexNormal = primitive.attributes.VERTEX_NORMAL !== undefined ? accessors[primitive.attributes.VERTEX_NORMAL] : undefined;
             const indices = primitive.indices !== undefined ? accessors[primitive.indices] : undefined;
             const basicMaterial = primitive.basicMaterial !== undefined ? materials[primitive.basicMaterial] as BasicMaterial : undefined;
             const phongMaterial = primitive.phongMaterial !== undefined ? materials[primitive.phongMaterial] as PhongMaterial : undefined;
@@ -50,8 +51,13 @@ export class Mesh extends NodeComponent {
                     MeshBufferGeometry.POSITION_SIZE,
                     new Float32ArrayConverter(),
                 ) : undefined,
-                normal: normal ? new GLBufferAttribute(
-                    normal,
+                faceNormal: faceNormal ? new GLBufferAttribute(
+                    faceNormal,
+                    MeshBufferGeometry.NORMAL_SIZE,
+                    new Float32ArrayConverter(),
+                ) : undefined,
+                vertexNormal: vertexNormal ? new GLBufferAttribute(
+                    vertexNormal,
                     MeshBufferGeometry.NORMAL_SIZE,
                     new Float32ArrayConverter(),
                 ) : undefined,
@@ -63,11 +69,15 @@ export class Mesh extends NodeComponent {
                     basicMaterial,
                     phongMaterial,
                 },
-                indices ? new GLBufferAttribute(
-                    indices,
-                    MeshBufferGeometry.INDEX_SIZE,
-                    new Uint16ArrayConverter(),
-                ) : undefined);
+                {
+                    indices: indices ? new GLBufferAttribute(
+                        indices,
+                        MeshBufferGeometry.INDEX_SIZE,
+                        new Uint16ArrayConverter(),
+                    ) : undefined
+                }
+            );
+                
         });
 
         return new Mesh(geometries);
@@ -79,14 +89,19 @@ export class Mesh extends NodeComponent {
     ): MeshPrimitiveType[] {
         return this._geometries.map(geometry => {
             const position = geometry.attributes.position;
-            const normal = geometry.attributes.normal;
+            const faceNormal = geometry.attributes.faceNormal;
+            const vertexNormal = geometry.attributes.vertexNormal;
             const indices = geometry.indices;
 
             if (position && !accessorMap.has(position.accessor)) {
                 throw new Error("Position accessor not found");
             }
 
-            if (normal && !accessorMap.has(normal.accessor)) {
+            if (faceNormal && !accessorMap.has(faceNormal.accessor)) {
+                throw new Error("Normal accessor not found");
+            }
+
+            if (vertexNormal && !accessorMap.has(vertexNormal.accessor)) {
                 throw new Error("Normal accessor not found");
             }
 
@@ -97,7 +112,7 @@ export class Mesh extends NodeComponent {
             const primitive: MeshPrimitiveType = {
                 attributes: {
                     POSITION: position ? accessorMap.get(position.accessor)!! : undefined,
-                    NORMAL: normal ? accessorMap.get(normal.accessor)!! : undefined
+                    FACE_NORMAL: faceNormal ? accessorMap.get(faceNormal.accessor)!! : undefined
                 },
                 basicMaterial: geometry.basicMaterial ? materialMap.get(geometry.basicMaterial)!! : undefined,
                 phongMaterial: geometry.phongMaterial ? materialMap.get(geometry.phongMaterial)!! : undefined,

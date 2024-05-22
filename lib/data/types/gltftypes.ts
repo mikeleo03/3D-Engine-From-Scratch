@@ -121,21 +121,22 @@ export type PhongMaterialUniformType = {
 export type MaterialType = {
     "type": MaterialTypeString.BASIC,
     "name": string,
-    "vertexShader": string, 
-    "fragmentShader": string, 
+    "vertexShader": string,
+    "fragmentShader": string,
     "uniforms": BasicMaterialUniformType
-}  | {
+} | {
     "type": MaterialTypeString.PHONG,
     "name": string,
-    "vertexShader": string, 
-    "fragmentShader": string, 
+    "vertexShader": string,
+    "fragmentShader": string,
     "uniforms": PhongMaterialUniformType
 
 }
 
 export enum MeshPrimitiveAttribute {
     POSITION = "position",
-    NORMAL = "normal"
+    FACE_NORMAL = "faceNormal",
+    VERTEX_NORMAL = "vertexNormal"
 }
 export type MeshPrimitiveType = {
     attributes: {
@@ -231,10 +232,10 @@ export type AnimationTRS = {
     translation?: [number, number, number];
     rotation?: [number, number, number];
     scale?: [number, number, number];
-  }
-  
+}
+
 export type AnimationPathType = {
-    nodeKeyframePairs?: Array<{node: number, keyframe: AnimationTRS}>
+    nodeKeyframePairs?: Array<{ node: number, keyframe: AnimationTRS }>
 }
 export type AnimationClipType = {
     name: string;
