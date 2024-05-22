@@ -39,7 +39,7 @@ export abstract class Model {
     protected abstract getScene(): Scene;
     abstract getAnimations(): AnimationClip[];
 
-    download() {
+    async download() {
         const scene = this._scene;
         const gLTFState = new GLTFState();
 
@@ -51,7 +51,7 @@ export abstract class Model {
         })
 
         const parser = new GLTFParser();
-        const file = parser.write(gLTFState);
+        const file = await parser.write(gLTFState);
 
         FileUtil.downloadFile(file);
     }
