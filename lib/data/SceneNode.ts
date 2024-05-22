@@ -76,16 +76,16 @@ export class SceneNode {
     // Public getter, prevent re-instance new object
     get id() { return this._id; }
     get name() { return this._name; }
-    get position() { return this._position; }
-    get rotation() { return this._rotation; }
-    get scale() { return this._scale; }
+    get position() { return this._position.clone(); }
+    get rotation() { return this._rotation.clone(); }
+    get scale() { return this._scale.clone(); }
     get parent() { return this._parent; }
-    get localMatrix() { return this._localMatrix; }
-    get worldMatrix() { return this._worldMatrix; }
-    get worldRotation() { return this._worldRotation; }
-    get worldPosition() { return this._worldPosition; }
-    get worldScale() { return this._worldScale; }
-    get children() { return this._children; }
+    get localMatrix() { return this._localMatrix.clone(); }
+    get worldMatrix() { return this._worldMatrix.clone(); }
+    get worldRotation() { return this._worldRotation.clone(); }
+    get worldPosition() { return this._worldPosition.clone(); }
+    get worldScale() { return this._worldScale.clone(); }
+    get children() { return this._children.slice(); }
     get camera() { return this._camera; }
     get light() { return this._light; }
     get mesh() { return this._mesh; }

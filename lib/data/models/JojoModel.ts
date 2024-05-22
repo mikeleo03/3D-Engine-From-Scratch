@@ -22,7 +22,7 @@ export class JojoModel extends Model {
 
     private getBody(): SceneNode {
         const meshFactory = new MeshFactory();
-        const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(251, 231, 239) });
+        const bodyMaterial = new BasicMaterial(new Color(251, 231, 239), { name: "body" });
         const phongBodyMaterial = new PhongMaterial({ 
             name: "body-phong", 
             ambientColor: new Color(251, 231, 239), 
@@ -40,7 +40,7 @@ export class JojoModel extends Model {
 
     private getHand(): SceneNode {
         const meshFactory = new MeshFactory();
-        const handMaterial = new BasicMaterial({ name: "hand", color: new Color(251, 231, 239) });
+        const handMaterial = new BasicMaterial(new Color(251, 231, 239), { name: "hand" });
         const phongHandMaterial = new PhongMaterial({
             name: "hand-phong",
             ambientColor: new Color(251, 231, 239),
@@ -59,7 +59,7 @@ export class JojoModel extends Model {
 
     private getHead(): SceneNode {
         const meshFactory = new MeshFactory();
-        const headMaterial = new BasicMaterial({ name: "head", color: new Color(255, 219, 172) });
+        const headMaterial = new BasicMaterial(new Color(255, 219, 172), { name: "head" });
         const phongHeadMaterial = new PhongMaterial({
             name: "head-phong",
             ambientColor: new Color(255, 219, 172),
@@ -79,7 +79,7 @@ export class JojoModel extends Model {
 
     private getLeg(): SceneNode {
         const meshFactory = new MeshFactory();
-        const legMaterial = new BasicMaterial({ name: "leg", color: new Color(108, 122, 137) });
+        const legMaterial = new BasicMaterial(new Color(108, 122, 137), { name: "leg" });
         const phongLegMaterial = new PhongMaterial({
             name: "leg-phong",
             ambientColor: new Color(108, 122, 137),
@@ -98,7 +98,7 @@ export class JojoModel extends Model {
 
     private getEyeCover(): SceneNode {
         const meshFactory = new MeshFactory();
-        const eyeConverMaterial = new BasicMaterial({ name: "eyeCover", color: Color.red() });
+        const eyeConverMaterial = new BasicMaterial(Color.red(), { name: "eyeCover" });
         const eyeConverPhongMaterial = new PhongMaterial({
             name: "eyeCover-phong",
             ambientColor: Color.red(),
@@ -116,7 +116,7 @@ export class JojoModel extends Model {
 
     private getMouth(): SceneNode {
         const meshFactory = new MeshFactory();
-        const mouthMaterial = new BasicMaterial({ name: "mouth", color: Color.black() });
+        const mouthMaterial = new BasicMaterial(Color.black(), { name: "mouth" });
         const phongMouthMaterial = new PhongMaterial({
             name: "mouth-phong",
             ambientColor: Color.black(),

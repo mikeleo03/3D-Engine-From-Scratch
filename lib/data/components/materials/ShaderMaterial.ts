@@ -1,30 +1,25 @@
 import { ProgramInfo, UniformSingleDataType } from "@/lib/cores";
 import { MaterialType } from "@/lib/data/types/gltftypes";
-import { Vector3 } from "@/lib/data/math/Vector";
-import { Color } from "@/lib/cores/Color";
+import { Texture } from "./textures/Texture";
+import { Accessor } from "../../buffers/Accessor";
 
-export class ShaderMaterial {
-    static idCounter: number = 0;
-
+export abstract class ShaderMaterial {
     private _name: string;
-    private _id: string = "M" + (ShaderMaterial.idCounter++).toString();
     private _type: string;
     private _vertexShader: string;
     private _fragmentShader: string;
-    private _uniforms: { [key: string]: any } = {};
     private _programInfos: { [key: string]: ProgramInfo } = {};
 
-    constructor(options: MaterialType) {
-        const { name, vertexShader, fragmentShader, uniforms, type } = options;
-        this._name = name || "Shader Material";
-        this._vertexShader = vertexShader || '';
-        this._fragmentShader = fragmentShader || '';
-        this._uniforms = uniforms || {};
+    constructor(
+        name: string,
+        type: string,
+        vertexShader: string,
+        fragmentShader: string,
+    ) {
+        this._name = name;
         this._type = type;
-    }
-
-    get id() {
-        return this._id;
+        this._vertexShader = vertexShader;
+        this._fragmentShader = fragmentShader;
     }
 
     get name() {
@@ -39,35 +34,8 @@ export class ShaderMaterial {
         return this._fragmentShader;
     }
 
-    get uniforms() {
-        return this._uniforms;
-    }
-
-    get bufferUniforms(): { [key: string]: UniformSingleDataType } {
-        const bufferUniforms: { [key: string]: UniformSingleDataType } = {};
-        for (const key in this._uniforms) {
-            const uniform = this._uniforms[key];
-            if (uniform instanceof Vector3) {
-                bufferUniforms[key] = uniform.buffer;
-            }
-            else if (uniform instanceof Color) {
-                bufferUniforms[key] = uniform.buffer;
-            }
-
-            else if (typeof uniform === 'number') {
-                bufferUniforms[key] = uniform;
-            }
-
-            else {
-                throw new Error(`Uniform type not supported: ${uniform}`);
-            }
-        }
-        return bufferUniforms;
-    }
-
-    setUniform(key: string, value: any) {
-        this._uniforms[key] = value;
-    }
+    abstract getUniforms(): { [key: string]: any };
+    abstract getBufferUniforms(): { [key: string]: UniformSingleDataType };
 
     getProgramInfo(key: string): ProgramInfo | null {
         return this._programInfos[key] || null;
@@ -86,49 +54,10 @@ export class ShaderMaterial {
         this._programInfos[key] = programInfo;
     }
 
-    equals(material: ShaderMaterial): boolean {
-        return this._id == material._id;
-    }
-    
-    static fromRaw(raw: MaterialType, obj: ShaderMaterial | null = null): ShaderMaterial {
-        const uniforms: { [key: string]: any } = {};
-        for (const key in raw.uniforms) {
-            const uniform = raw.uniforms[key];
-            if (key === 'color' || key === 'ambientColor' || key === 'diffuseColor' || key === 'specularColor') {
-                uniforms[key] = Color.fromRaw(uniform as number[]);
-            } else {
-                uniforms[key] = uniform;
-            }
+    abstract toRaw(
+        options: {
+            textureMap?: Map<Texture, number>,
+            accessorMap?: Map<Accessor, number>
         }
-
-        raw.uniforms = uniforms;
-
-        if (!obj) {
-            obj = new ShaderMaterial(raw);
-        } else {
-            obj._uniforms = raw.uniforms;
-        }
-        return obj;
-    }
-
-    toRaw(): MaterialType {
-        const uniformsData: { [key: string]: any } = {};
-        for (const key in this._uniforms) {
-            const uniform = this._uniforms[key];
-            if (uniform instanceof Color) {
-                uniformsData[key] = uniform.toRaw();
-            } else if (uniform instanceof Vector3) {
-                uniformsData[key] = uniform.toRaw();
-            } else {
-                uniformsData[key] = uniform;
-            }
-        }
-        return {
-            name: this._name,
-            vertexShader: this._vertexShader,
-            fragmentShader: this._fragmentShader,
-            uniforms: uniformsData,
-            type: this.type,
-        };
-    }
+    ): MaterialType;
 }

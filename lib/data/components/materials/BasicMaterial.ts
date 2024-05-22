@@ -1,39 +1,63 @@
 import { Color } from "@/lib/cores";
 import { ShaderMaterial } from "./ShaderMaterial";
-import { MaterialType } from "@/lib/data/types/gltftypes";
+import { MaterialType, MaterialTypeString } from "@/lib/data/types/gltftypes";
 import basicFragment from "./shaders/BasicFragment";
 import basicVertex from "./shaders/BasicVertex";
 
 export class BasicMaterial extends ShaderMaterial {
-    constructor(options: { name: string; color?: Color }) {
-        const { name, color } = options || {};
-        super({
-            name: name,
-            vertexShader: basicVertex,
-            fragmentShader: basicFragment,
-            uniforms: {
-                color: color || Color.white(),
-            },
-            type: "Basic Material"
-        });
-    }
+    public static readonly DEFAULT_NAME = "Basic Material";
 
-    get id() {
-        return "Basic Material";
+    private _color: Color;
+
+    constructor(
+        color: Color,
+        options: {
+            name?: string,
+        } = {}
+    ) {
+
+        const name = options.name || BasicMaterial.DEFAULT_NAME;
+
+        super(
+            name,
+            MaterialTypeString.BASIC,
+            basicVertex,
+            basicFragment,
+        );
+
+        this._color = color;
     }
 
     get color() {
-        return this.uniforms.color;
+        return this._color.clone();
     }
 
     set color(color: Color) {
-        this.setUniform('color', color.clone());
+        this._color = color.clone();
     }
 
-    override toRaw(): MaterialType {
-        const { vertexShader, fragmentShader, ...other } = super.toRaw();
+    override toRaw(_: {}): MaterialType {
         return {
-            vertexShader, fragmentShader, ...other, type: this.type
+            type: MaterialTypeString.BASIC,
+            name: this.name,
+            vertexShader: this.vertexShader,
+            fragmentShader: this.fragmentShader,
+            uniforms: {
+                color: this._color.toRaw()
+            }
+        };
+    }
+
+    override getUniforms() {
+        return {
+            color: this._color
+        };
+    }
+
+    override getBufferUniforms() {
+        const uniform = this.getUniforms();
+        return {
+            color: uniform.color.buffer
         };
     }
 }

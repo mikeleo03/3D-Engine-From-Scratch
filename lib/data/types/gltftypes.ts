@@ -87,15 +87,51 @@ export type TextureType = {
     "source": number
 }
 
+export type TextureDataType = {
+    "texture": number,
+    "textCoords": number
+}
+
+export type DisplacementDataType = {
+    "textureData": TextureDataType,
+    "scale": number,
+    "bias": number
+}
+
+export enum MaterialTypeString {
+    BASIC = "Basic Material",
+    PHONG = "Phong Material"
+}
+
+export type BasicMaterialUniformType = {
+    "color": number[]
+}
+
+export type PhongMaterialUniformType = {
+    "ambientColor": number[],
+    "diffuseColor": number[],
+    "specularColor": number[],
+    "shininess": number,
+    "diffuseMap"?: TextureDataType,
+    "normalMap"?: TextureDataType,
+    "displacementMap"?: DisplacementDataType,
+    "specularMap"?: TextureDataType
+}
+
 export type MaterialType = {
-    "type": string,
+    "type": MaterialTypeString.BASIC,
     "name": string,
     "vertexShader": string, 
     "fragmentShader": string, 
-    "uniforms": {
-        [key: string]: number[] | Color | Vector3 | number;
-    },
-} 
+    "uniforms": BasicMaterialUniformType
+}  | {
+    "type": MaterialTypeString.PHONG,
+    "name": string,
+    "vertexShader": string, 
+    "fragmentShader": string, 
+    "uniforms": PhongMaterialUniformType
+
+}
 
 export enum MeshPrimitiveAttribute {
     POSITION = "position",

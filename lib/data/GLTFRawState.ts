@@ -184,7 +184,7 @@ export class GLTFRawState {
         });
 
         const materialRaws = state.materials.map((material, idx) => {
-            const raw = material.toRaw();
+            const raw = material.toRaw({ textureMap, accessorMap});
             const index = idx;
             materialMap.set(material, index);
             return raw;
@@ -254,7 +254,7 @@ export class GLTFRawState {
         const samplers = this._samplers.map(sampler => Sampler.fromRaw(sampler));
         const images = this._images.map(image => TextureImage.fromRaw(image));
         const textures = this._textures.map(texture => Texture.fromRaw(texture, samplers, images));
-        const materials = this._materials.map(material => MaterialUtil.fromRaw(material));
+        const materials = this._materials.map(material => MaterialUtil.fromRaw(material, { textures, accessors }));
         const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors, materials));
         const cameras = this._cameras.map(camera => CameraUtil.fromRaw(camera));
         const lights = this._lights.map(light => LightUtil.fromRaw(light));
