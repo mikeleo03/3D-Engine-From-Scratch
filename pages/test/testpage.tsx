@@ -7,6 +7,7 @@ import { Quaternion, Vector3 } from "@/lib/data/math";
 import { Color } from "@/lib/cores/Color";
 import { JojoModel } from "@/lib/data/models/JojoModel";
 import { LeonModel } from "@/lib/data/models/LeonModel";
+import { MaggieModel } from "@/lib/data/models/MaggieModel";
 import { CubeModel } from "@/lib/data/models/CubeModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
@@ -25,33 +26,33 @@ export default function TestPage() {
       const glContainer = new GLContainer(canvas);
 
       const orthographicCamera = new OrthographicCamera(
-        canvas.height/2,
-        -canvas.height/2,
-        -canvas.width/2,
-        canvas.width/2,
+        canvas.height / 2,
+        -canvas.height / 2,
+        -canvas.width / 2,
+        canvas.width / 2,
         0.01,
         1000,
         1
       );
 
       const perspectiveCamera = new PerspectiveCamera(
-          canvas.width / canvas.height,
-          1000,
-          0.01,
-          9999,
-          1
+        canvas.width / canvas.height,
+        1000,
+        0.01,
+        9999,
+        1
       );
 
       const obliqueCamera = new ObliqueCamera(
-          canvas.height/2,
-          -canvas.height/2,
-          -canvas.width/2,
-          canvas.width/2,
-          0.01,
-          1000,
-          1,
-          0,
-          0
+        canvas.height / 2,
+        -canvas.height / 2,
+        -canvas.width / 2,
+        canvas.width / 2,
+        0.01,
+        1000,
+        1,
+        0,
+        0
       );
 
       const directionalLight = new DirectionalLight(
@@ -66,18 +67,19 @@ export default function TestPage() {
       const lightPosition = new Vector3(0, 0, 3000000);
 
       const cameraNodes = [
-          new SceneNode({camera: orthographicCamera, position: new Vector3(0, 0, 100)}),
-          new SceneNode({camera: perspectiveCamera, position: new Vector3(0, 0, 100)}),
-          new SceneNode({camera: obliqueCamera, position: new Vector3(0, 0, 100)})
+        new SceneNode({ camera: orthographicCamera, position: new Vector3(0, 0, 100) }),
+        new SceneNode({ camera: perspectiveCamera, position: new Vector3(0, 0, 100) }),
+        new SceneNode({ camera: obliqueCamera, position: new Vector3(0, 0, 100) })
       ]
 
       const lightNodes = [
-        new SceneNode({light: directionalLight, position: lightPosition})
+        new SceneNode({ light: directionalLight, position: lightPosition })
       ]
 
       const jojo = new JojoModel();
       const leon = new LeonModel();
-      
+      const maggie = new MaggieModel();
+
       // change model here
       const model = leon;
 
@@ -99,9 +101,10 @@ export default function TestPage() {
 
       glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);
-      
+
       jojo.download();
       // leon.download();
+      // maggie.download();
     };
 
     initializeGL();
