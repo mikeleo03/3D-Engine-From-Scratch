@@ -1,4 +1,4 @@
-import { Color } from "@/lib/cores";
+import { Color, UniformSingleDataType } from "@/lib/cores";
 import { ShaderMaterial } from "./ShaderMaterial";
 import { MaterialType, MaterialTypeString } from "@/lib/data/types/gltftypes";
 import basicFragment from "./shaders/BasicFragment";
@@ -54,7 +54,7 @@ export class BasicMaterial extends ShaderMaterial {
         };
     }
 
-    override getBufferUniforms() {
+    override getBufferUniforms(): { [key: string]: UniformSingleDataType } {
         const uniform = this.getUniforms();
         return {
             color: uniform.color.buffer

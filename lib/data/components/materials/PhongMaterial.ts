@@ -1,5 +1,5 @@
 import { AccessorComponentType, BufferViewTarget, DisplacementDataType, MaterialType, MaterialTypeString, PhongMaterialUniformType, TextureDataType } from "../../types/gltftypes";
-import { Color, WebGLType } from "../../../cores/index";
+import { Color, UniformSingleDataType, WebGLType } from "../../../cores/index";
 import { Vector3 } from "../../math/index";
 import { ShaderMaterial } from "./index";
 import phongFragment from "./shaders/PhongFragment";
@@ -290,7 +290,7 @@ export class PhongMaterial extends ShaderMaterial {
         };
     }
 
-    override getBufferUniforms(): { [key: string]: any } {
+    override getBufferUniforms(): { [key: string]: UniformSingleDataType } {
         return {
             ambientColor: this._ambientColor.buffer,
             diffuseColor: this._diffuseColor.buffer,

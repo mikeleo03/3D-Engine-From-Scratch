@@ -53,7 +53,7 @@ export class GLRenderer {
                 this._glContainer.setProgram(programInfo);
 
                 this._glContainer.setUniforms(programInfo, {
-                    ...material.bufferUniforms,
+                    ...material.getBufferUniforms(),
                     ...uniforms,
                     worldMatrix: root.worldMatrix.transpose().buffer,
                 });

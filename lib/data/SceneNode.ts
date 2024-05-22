@@ -168,11 +168,11 @@ export class SceneNode {
         this.rotation = rotation;
     }
     get localUp(): Vector3 {
-        return this.rotation.rotateVector(Vector3.up());
+        return this._rotation.rotateVector(Vector3.up());
     }
 
     get up(): Vector3 {
-        return this.worldRotation.rotateVector(Vector3.up()).normalize();
+        return this._worldRotation.rotateVector(Vector3.up()).normalize();
     }
 
     get localDown(): Vector3 {
@@ -184,11 +184,11 @@ export class SceneNode {
     }
 
     get localForward(): Vector3 {
-        return this.rotation.rotateVector(Vector3.forward());
+        return this._rotation.rotateVector(Vector3.forward());
     }
 
     get forward(): Vector3 {
-        return this.worldRotation.rotateVector(Vector3.forward()).normalize();
+        return this._worldRotation.rotateVector(Vector3.forward()).normalize();
     }
 
     get localBackward(): Vector3 {
@@ -202,7 +202,7 @@ export class SceneNode {
     private computeLocalMatrix() {
         this._localMatrix = Matrix4.mul(
             Matrix4.translation3d(this._position),
-            this.rotation.toMatrix4(),
+            this._rotation.toMatrix4(),
             Matrix4.scale3d(this._scale)
         );
     }
@@ -215,7 +215,7 @@ export class SceneNode {
         if (this.parent) {
             this._worldRotation = Quaternion.mul(this.parent.worldRotation, this.rotation);
         } else {
-            this._worldRotation = this.rotation.clone();
+            this._worldRotation = this._rotation.clone();
         }
 
         if (updateChildren) {
@@ -233,10 +233,10 @@ export class SceneNode {
         if (this.parent) {
             this._worldPosition = Vector3.add(
                 this.parent.worldPosition,
-                this.position
+                this._position
             );
         } else {
-            this._worldPosition = this.position.clone();
+            this._worldPosition = this._position.clone();
         }
 
         if (updateChildren) {
@@ -254,10 +254,10 @@ export class SceneNode {
         if (this.parent) {
             this._worldScale = Vector3.mulElements(
                 this.parent.worldScale,
-                this.scale
+                this._scale
             );
         } else {
-            this._worldScale = this.scale.clone();
+            this._worldScale = this._scale.clone();
         }
 
         if (updateChildren) {
@@ -309,20 +309,20 @@ export class SceneNode {
             node.removeFromParent();
             node.parent = this;
         }
-        this.children.push(node);
+        this._children.push(node);
     }
 
 
     remove(node: SceneNode, recursive: Boolean = false) {
-        const index = this.children.indexOf(node);
+        const index = this._children.indexOf(node);
 
         if (index >= 0) {
-            this.children.splice(index, 1);
+            this._children.splice(index, 1);
             node.parent = null;
         }
 
         if (recursive) {
-            for (let i = 0; i < this.children.length; i++) {
+            for (let i = 0; i < this._children.length; i++) {
                 this.children[i].remove(node);
             }
         }

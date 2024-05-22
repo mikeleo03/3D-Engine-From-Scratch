@@ -25,7 +25,7 @@ export class LeonModel extends Model {
 
     private getEar(): SceneNode {
         const meshFactory = new MeshFactory();
-        const earMaterial = new BasicMaterial({ name: "ear", color: new Color(72, 60, 50) });
+        const earMaterial = new BasicMaterial(new Color(72, 60, 50), { name: "ear" });
         const phongEarMaterial = new PhongMaterial({ 
             name: "ear-phong", 
             ambientColor: new Color(72, 60, 50), 
@@ -43,7 +43,7 @@ export class LeonModel extends Model {
 
     private getHead(): SceneNode {
         const meshFactory = new MeshFactory();
-        const headMaterial = new BasicMaterial({ name: "head", color: new Color(205, 127, 50) });
+        const headMaterial = new BasicMaterial(new Color(205, 127, 50), { name: "head" });
         const phongHeadMaterial = new PhongMaterial({ 
             name: "head-phong", 
             ambientColor: new Color(205, 127, 50), 
@@ -61,7 +61,7 @@ export class LeonModel extends Model {
 
     private getBody(): SceneNode {
         const meshFactory = new MeshFactory();
-        const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(102, 61, 20) });
+        const bodyMaterial = new BasicMaterial(new Color(102, 61, 20), { name: "body" });
         const phongBodyMaterial = new PhongMaterial({ 
             name: "body-phong", 
             ambientColor: new Color(102, 61, 20), 
@@ -79,7 +79,7 @@ export class LeonModel extends Model {
 
     private getLeg(): SceneNode {
         const meshFactory = new MeshFactory();
-        const legMaterial = new BasicMaterial({ name: "leg", color: new Color(184, 115, 51) });
+        const legMaterial = new BasicMaterial(new Color(184, 115, 51), { name: "leg" });
         const phongLegMaterial = new PhongMaterial({ 
             name: "leg-phong", 
             ambientColor: new Color(184, 115, 51), 
@@ -97,7 +97,7 @@ export class LeonModel extends Model {
 
     private getEye(): SceneNode {
         const meshFactory = new MeshFactory();
-        const eyeMaterial = new BasicMaterial({ name: "eye", color: new Color(0, 0, 0) });
+        const eyeMaterial = new BasicMaterial(new Color(0, 0, 0), { name: "eye" });
         const phongEyeMaterial = new PhongMaterial({ 
             name: "eye-phong", 
             ambientColor: new Color(0, 0, 0), 
@@ -115,7 +115,7 @@ export class LeonModel extends Model {
 
     private getMouth(): SceneNode {
         const meshFactory = new MeshFactory();
-        const mouthMaterial = new BasicMaterial({ name: "mouth", color: new Color(0, 0, 0) });
+        const mouthMaterial = new BasicMaterial(new Color(0, 0, 0), { name: "mouth" });
         const phongMouthMaterial = new PhongMaterial({ 
             name: "mouth-phong", 
             ambientColor: new Color(0, 0, 0), 

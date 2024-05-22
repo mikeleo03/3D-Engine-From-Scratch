@@ -481,8 +481,6 @@ export class JojoModel extends Model {
         const leftLegMovements = this.getLeftLegMovements();
         const rightLegMovements = this.getRightLegMovements();
 
-        console.log(headMovements.length, leftHandMovements.length, rightHandMovements.length, leftLegMovements.length, rightLegMovements.length);
-
         // assert all keyframes have the same length
         const length = headMovements.length;
         if (leftHandMovements.length !== length || rightHandMovements.length !== length || leftLegMovements.length !== length || rightLegMovements.length !== length) {
