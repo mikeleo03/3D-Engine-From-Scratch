@@ -2,7 +2,7 @@ export default `
 precision mediump float;
 
 attribute vec4 a_position;
-attribute vec4 a_normal;
+attribute vec4 a_faceNormal;
 
 uniform mat4 u_worldMatrix;
 uniform mat4 u_viewMatrix;
@@ -15,7 +15,7 @@ void main() {
     vec3 light = u_lightPosition;
     L = normalize(light - pos);
     E = -pos;
-    N = normalize((u_worldMatrix * a_normal).xyz);
+    N = normalize((u_worldMatrix * a_faceNormal).xyz);
     gl_Position = u_viewMatrix * u_worldMatrix * a_position;
 }
 `;
