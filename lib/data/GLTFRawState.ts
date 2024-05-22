@@ -6,18 +6,24 @@ import { BufferView } from "./buffers/BufferView";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/mesh/Mesh";
-import { AccessorType, AnimationClipType, BufferType, BufferViewType, CameraType, LightType, MaterialType, MeshType, SceneNodeType, SceneType } from "./types/gltftypes";
+import { AccessorType, AnimationClipType, BufferType, BufferViewType, CameraType, LightType, MaterialType, MeshType, SamplerType, SceneNodeType, SceneType, TextureImageType, TextureType } from "./types/gltftypes";
 import { ShaderMaterial } from "./components/materials";
 import { CameraUtil } from "./components/cameras/CameraUtil";
 import { MaterialUtil } from "./components/materials/MaterialUtil";
 import { AnimationClipUtil, AnimationPath } from "./components/animations";
 import { Light } from "./components/lights/Light";
 import { LightUtil } from "./components/lights/LightUtil";
+import { Sampler } from "./components/materials/textures/Sampler";
+import { TextureImage } from "./components/materials/textures/TextureImage";
+import { Texture } from "./components/materials/textures/Texture";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
     private _bufferViews: BufferViewType[] = [];
     private _accessors: AccessorType[] = [];
+    private _samplers: SamplerType[] = [];
+    private _images: TextureImageType[] = [];
+    private _textures: TextureType[] = [];
     private _materials: MaterialType[] = [];
     private _meshes: MeshType[] = [];
     private _cameras: CameraType[] = [];
@@ -31,6 +37,9 @@ export class GLTFRawState {
         buffers: BufferType[],
         bufferViews: BufferViewType[],
         accessors: AccessorType[],
+        sampler: SamplerType[],
+        images: TextureImageType[],
+        textures: TextureType[],
         _materials: MaterialType[],
         meshes: MeshType[],
         cameras: CameraType[],
@@ -47,6 +56,9 @@ export class GLTFRawState {
         this._buffers = buffers;
         this._bufferViews = bufferViews;
         this._accessors = accessors;
+        this._samplers = sampler;
+        this._images = images;
+        this._textures = textures;
         this._materials = _materials;
         this._meshes = meshes;
         this._cameras = cameras;
@@ -67,6 +79,18 @@ export class GLTFRawState {
 
     get accessors(): AccessorType[] {
         return this._accessors;
+    }
+
+    get samplers(): SamplerType[] {
+        return this._samplers;
+    }
+
+    get images(): TextureImageType[] {
+        return this._images;
+    }
+
+    get textures(): TextureType[] {
+        return this._textures;
     }
 
     get materials(): MaterialType[] {
@@ -101,11 +125,13 @@ export class GLTFRawState {
         return this._scene;
     }
 
-
-    static fromGLTFState(state: GLTFState): GLTFRawState {
+    static async fromGLTFState(state: GLTFState): Promise<GLTFRawState> {
         const bufferMap = new Map<GLTFBuffer, number>();
         const bufferViewMap = new Map<BufferView, number>();
         const accessorMap = new Map<Accessor, number>();
+        const samplerMap = new Map<Sampler, number>();
+        const imageMap = new Map<TextureImage, number>();
+        const textureMap = new Map<Texture, number>();
         const materialMap = new Map<ShaderMaterial, number>();
         const meshMap = new Map<Mesh, number>();
         const cameraMap = new Map<Camera, number>();
@@ -130,6 +156,30 @@ export class GLTFRawState {
             const raw = accessor.toRaw(bufferViewMap.get(accessor.bufferView)!!);
             const index = idx;
             accessorMap.set(accessor, index);
+            return raw;
+        });
+
+        const samplerRaws = state.samplers.map((sampler, idx) => {
+            const raw = sampler.toRaw();
+            const index = idx;
+            samplerMap.set(sampler, index);
+            return raw;
+        });
+
+        const imageRaws: TextureImageType[] = [];
+
+        for (let i = 0; i < state.images.length; i++) {
+            const image = state.images[i];
+            const raw = await image.toRaw();
+            const index = i;
+            imageMap.set(image, index);
+            imageRaws.push(raw);
+        }
+
+        const textureRaws = state.textures.map((texture, idx) => {
+            const raw = texture.toRaw(samplerMap, imageMap);
+            const index = idx;
+            textureMap.set(texture, index);
             return raw;
         });
 
@@ -183,6 +233,9 @@ export class GLTFRawState {
             bufferRaws,
             bufferViewRaws,
             accessorRaws,
+            samplerRaws,
+            imageRaws,
+            textureRaws,
             materialRaws,
             meshRaws,
             cameraRaws,
@@ -198,6 +251,9 @@ export class GLTFRawState {
         const buffers = this._buffers.map(buffer => GLTFBuffer.fromRaw(buffer));
         const bufferViews = this._bufferViews.map(bufferView => BufferView.fromRaw(bufferView, buffers));
         const accessors = this._accessors.map(accessor => Accessor.fromRaw(accessor, bufferViews));
+        const samplers = this._samplers.map(sampler => Sampler.fromRaw(sampler));
+        const images = this._images.map(image => TextureImage.fromRaw(image));
+        const textures = this._textures.map(texture => Texture.fromRaw(texture, samplers, images));
         const materials = this._materials.map(material => MaterialUtil.fromRaw(material));
         const meshes = this._meshes.map(mesh => Mesh.fromRaw(mesh, accessors, materials));
         const cameras = this._cameras.map(camera => CameraUtil.fromRaw(camera));
@@ -219,6 +275,9 @@ export class GLTFRawState {
             buffers, 
             bufferViews, 
             accessors, 
+            samplers,
+            images,
+            textures,
             materials, 
             meshes, 
             cameras,

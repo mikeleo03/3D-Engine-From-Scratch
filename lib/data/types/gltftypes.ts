@@ -70,6 +70,23 @@ export function getByteCountForComponentType(elementType: number, accessorType: 
     }
 }
 
+export type SamplerType = {
+    "magFilter": number,
+    "minFilter": number,
+    "wrapS": number,
+    "wrapT": number
+}
+
+export type TextureImageType = {
+    "uri": string,
+    "name": string,
+}
+
+export type TextureType = {
+    "sampler": number,
+    "source": number
+}
+
 export type MaterialType = {
     "type": string,
     "name": string,
@@ -192,6 +209,9 @@ export type GLTFType = {
     buffers: BufferType[],
     bufferViews: BufferViewType[],
     accessors: AccessorType[],
+    samplers: SamplerType[],
+    images: TextureImageType[],
+    textures: TextureType[],
     materials: MaterialType[],
     meshes: MeshType[],
     cameras: CameraType[],

@@ -8,6 +8,9 @@ import { Accessor } from "./buffers/Accessor";
 import { ShaderMaterial } from "./components/materials";
 import { AnimationClip } from "./components/animations";
 import { Light } from "./components/lights/Light";
+import { Sampler } from "./components/materials/textures/Sampler";
+import { TextureImage } from "./components/materials/textures/TextureImage";
+import { Texture } from "./components/materials/textures/Texture";
 
 
 
@@ -15,6 +18,9 @@ export class GLTFState {
     private _buffers: GLTFBuffer[] = [];
     private _bufferViews: BufferView[] = [];
     private _accessors: Accessor[] = [];
+    private _samplers: Sampler[] = [];
+    private _images: TextureImage[] = [];
+    private _textures: Texture[] = [];
     private _materials: ShaderMaterial[] = [];
     private _meshes: Mesh[];
     private _cameras: Camera[];
@@ -27,6 +33,9 @@ export class GLTFState {
         buffers: GLTFBuffer[] = [],
         bufferViews: BufferView[] = [],
         accessors: Accessor[] = [],
+        samplers: Sampler[] = [],
+        images: TextureImage[] = [],
+        textures: Texture[] = [],
         materials: ShaderMaterial[] = [],
         meshes: Mesh[] = [],
         cameras: Camera[] = [],
@@ -43,6 +52,9 @@ export class GLTFState {
         this._buffers = buffers;
         this._bufferViews = bufferViews;
         this._accessors = accessors;
+        this._samplers = samplers;
+        this._images = images;
+        this._textures = textures;
         this._materials = materials;
         this._meshes = meshes;
         this._cameras = cameras;
@@ -63,6 +75,18 @@ export class GLTFState {
 
     get accessors(): Accessor[] {
         return this._accessors.slice();
+    }
+
+    get samplers(): Sampler[] {
+        return this._samplers.slice();
+    }
+
+    get images(): TextureImage[] {
+        return this._images.slice();
+    }
+
+    get textures(): Texture[] {
+        return this._textures.slice();
     }
 
     get materials(): ShaderMaterial[] {
@@ -150,11 +174,39 @@ export class GLTFState {
         this._accessors.push(accessor);
     }
 
+    addSampler(sampler: Sampler) {
+        if (this._samplers.indexOf(sampler) != -1) {
+            return;
+        }
+
+        this._samplers.push(sampler);
+    }
+
+    addImage(image: TextureImage) {
+        if (this._images.indexOf(image) != -1) {
+            return;
+        }
+
+        this._images.push(image);
+    }
+
+    addTexture(texture: Texture) {
+        if (this._textures.indexOf(texture) != -1) {
+            return;
+        }
+
+        this.addSampler(texture.sampler);
+        this.addImage(texture.source);
+
+        this._textures.push(texture);
+    }
+
     addMaterial(material: ShaderMaterial) {
         if (this._materials.indexOf(material) != -1) {
             return;
         }
 
+        // TODO: Add textures
         this._materials.push(material);
     }
 
@@ -387,6 +439,79 @@ export class GLTFState {
         this._accessors.splice(index, 1);
         this.removeBufferView(accessor.bufferView);
     }
+
+    removeSampler(sampler: Sampler) {
+        const index = this._samplers.indexOf(sampler);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._textures.length; i++) {
+            if (this._textures[i].sampler == sampler) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._samplers.splice(index, 1);
+    }
+
+    removeImage(image: TextureImage) {
+        const index = this._images.indexOf(image);
+
+        if (index == -1) {
+            return;
+        }
+
+        let remove = true;
+
+        for (let i = 0; i < this._textures.length; i++) {
+            if (this._textures[i].source == image) {
+                remove = false;
+                break;
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
+        this._images.splice(index, 1);
+    }
+
+    // removeTexture(texture: Texture) {
+    //     const index = this._textures.indexOf(texture);
+
+    //     if (index == -1) {
+    //         return;
+    //     }
+
+    //     let remove = true;
+
+    //     for (let i = 0; i < this._materials.length; i++) {
+    //         if (this._materials[i].diffuseTexture == texture ||
+    //             this._materials[i].specularTexture == texture ||
+    //             this._materials[i].normalTexture == texture) {
+    //             remove = false;
+    //             break;
+    //         }
+    //     }
+
+    //     if (!remove) {
+    //         return;
+    //     }
+
+    //     this._textures.splice(index, 1);
+    //     this.removeSampler(texture.sampler);
+    //     this.removeImage(texture.source);
+    // }
 
     removeMaterial(material: ShaderMaterial) {
         const index = this._materials.indexOf(material);
