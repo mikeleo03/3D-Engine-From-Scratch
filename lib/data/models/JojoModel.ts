@@ -25,10 +25,10 @@ export class JojoModel extends Model {
         const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(251, 231, 239) });
         const phongBodyMaterial = new PhongMaterial({ 
             name: "body-phong", 
-            ambientColor: Color.white(), 
+            ambientColor: new Color(251, 231, 239), 
             diffuseColor: new Color(251, 231, 239), 
             specularColor: Color.white(),
-            shininess: 0
+            shininess: 4
         });
 
         const bodyMesh = meshFactory.cuboid(50, 70, 30, 
@@ -43,10 +43,10 @@ export class JojoModel extends Model {
         const handMaterial = new BasicMaterial({ name: "hand", color: new Color(251, 231, 239) });
         const phongHandMaterial = new PhongMaterial({
             name: "hand-phong",
-            ambientColor: Color.white(),
+            ambientColor: new Color(251, 231, 239),
             diffuseColor: new Color(251, 231, 239),
             specularColor: Color.white(),
-            shininess: 0
+            shininess: 4
         });
 
         const handMesh = meshFactory.cuboid(15, 60, 25, 
@@ -62,10 +62,10 @@ export class JojoModel extends Model {
         const headMaterial = new BasicMaterial({ name: "head", color: new Color(255, 219, 172) });
         const phongHeadMaterial = new PhongMaterial({
             name: "head-phong",
-            ambientColor: Color.white(),
+            ambientColor: new Color(255, 219, 172),
             diffuseColor: new Color(255, 219, 172),
             specularColor: Color.white(),
-            shininess: 0
+            shininess: 4
         });
 
         const headMesh = meshFactory.cuboid(
@@ -82,10 +82,10 @@ export class JojoModel extends Model {
         const legMaterial = new BasicMaterial({ name: "leg", color: new Color(108, 122, 137) });
         const phongLegMaterial = new PhongMaterial({
             name: "leg-phong",
-            ambientColor: Color.white(),
+            ambientColor: new Color(108, 122, 137),
             diffuseColor: new Color(108, 122, 137),
             specularColor: Color.white(),
-            shininess: 0
+            shininess: 4
         });
 
         const legMesh = meshFactory.cuboid(23, 50, 25, 
@@ -101,10 +101,10 @@ export class JojoModel extends Model {
         const eyeConverMaterial = new BasicMaterial({ name: "eyeCover", color: Color.red() });
         const eyeConverPhongMaterial = new PhongMaterial({
             name: "eyeCover-phong",
-            ambientColor: Color.white(),
+            ambientColor: Color.red(),
             diffuseColor: Color.red(),
             specularColor: Color.white(),
-            shininess: 0
+            shininess: 10
         });
 
         const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, 
@@ -116,13 +116,13 @@ export class JojoModel extends Model {
 
     private getMouth(): SceneNode {
         const meshFactory = new MeshFactory();
-        const mouthMaterial = new BasicMaterial({ name: "mouth", color: new Color(0, 0, 0) });
+        const mouthMaterial = new BasicMaterial({ name: "mouth", color: Color.black() });
         const phongMouthMaterial = new PhongMaterial({
             name: "mouth-phong",
-            ambientColor: Color.white(),
-            diffuseColor: new Color(0, 0, 0),
+            ambientColor: Color.black(),
+            diffuseColor: Color.black(),
             specularColor: Color.white(),
-            shininess: 0
+            shininess: 6
         });
 
         const mouthMesh = meshFactory.cuboid(7, 1, 1, 
