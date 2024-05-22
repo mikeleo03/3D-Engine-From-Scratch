@@ -3,10 +3,10 @@ import { Accessor } from "../../buffers/Accessor";
 import { BufferView } from "../../buffers/BufferView";
 import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
 import { GLTFBuffer } from "../../buffers/GLTFBuffer";
-import { Float32ArrayConverter } from "../../buffers/typedarrayconverters";
+import { Float32ArrayConverter, Uint32ArrayConverter } from "../../buffers/typedarrayconverters";
 import { AccessorComponentType, BufferViewTarget } from "../../types/gltftypes";
 import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
-import { MaterialOptions, MeshBufferGeometry } from "./MeshBufferGeometry";
+import { MaterialOptions, MeshBufferGeometry, MeshBufferGeometryAttributes } from "./MeshBufferGeometry";
 import { Mesh } from "./Mesh";
 
 export class MeshFactory {
@@ -14,31 +14,135 @@ export class MeshFactory {
 
     addGeometry(
         positions: [number, number, number][],
-        materials: MaterialOptions = {}): void {
+        materials: MaterialOptions = {},
+        options: {
+            indices?: number[]
+        } = {}
+    ): void {
+
+        const indices = options.indices;
+
+        if (indices && indices.length % 3 !== 0) {
+            throw new Error("Indices must be a multiple of 3");
+        }
+
+        if (!indices && positions.length % 3 !== 0) {
+            throw new Error("Positions must be a multiple of 3");
+        }
+
+        const vertexCount = positions.length;
+        const indicesCount = indices ? indices.length : vertexCount;
+        const faceNormalCount = indicesCount;
+        const vertexNormalCount = vertexCount;
+
         const vertexBytesCount = positions.length * 4 * 3;
-        const normalBytesCount = vertexBytesCount;
-        const totalBytesCount = vertexBytesCount + normalBytesCount;
+        const indicesBytesCount = (indices ? indices.length : positions.length) * 4;
+        const faceNormalBytesCount = indicesBytesCount * 3;
+        const vertexNormalBytesCount = vertexBytesCount;
+        const totalBytesCount = vertexBytesCount + faceNormalBytesCount + vertexNormalBytesCount + indicesBytesCount;
 
         const buffer = GLTFBuffer.empty(totalBytesCount);
-        const positionBufferView = new BufferView(buffer, 0, vertexBytesCount, BufferViewTarget.ARRAY_BUFFER);
-        const normalBufferView = new BufferView(buffer, vertexBytesCount, normalBytesCount, BufferViewTarget.ARRAY_BUFFER)
-        const positionAccessor = new Accessor(positionBufferView, 0, WebGLType.FLOAT, 36, AccessorComponentType.VEC3, [], []);
-        const normalAccessor = new Accessor(normalBufferView, 0, WebGLType.FLOAT, 36, AccessorComponentType.VEC3, [], []);
-        const floatConverter = new Float32ArrayConverter();
-        const positionAttribute = new GLBufferAttribute(positionAccessor, 3, floatConverter);
-        const normalAttribute = new GLBufferAttribute(normalAccessor, 3, floatConverter);
 
-        const attributes = {
+        const positionBufferView = new BufferView(
+            buffer, 
+            0, 
+            vertexBytesCount, 
+            BufferViewTarget.ARRAY_BUFFER
+        );
+        const indicesBufferView = new BufferView(
+            buffer, 
+            vertexBytesCount, 
+            indicesBytesCount, 
+            BufferViewTarget.ELEMENT_ARRAY_BUFFER
+        );
+        const faceNormalBufferView = new BufferView(
+            buffer, 
+            vertexBytesCount + indicesBytesCount, 
+            faceNormalBytesCount, 
+            BufferViewTarget.ARRAY_BUFFER
+        )
+        const vertexNormalBufferView = new BufferView(
+            buffer, 
+            vertexBytesCount + indicesBytesCount + faceNormalBytesCount, 
+            vertexNormalBytesCount, 
+            BufferViewTarget.ARRAY_BUFFER
+        );
+
+        const positionAccessor = new Accessor(
+            positionBufferView, 
+            0, 
+            WebGLType.FLOAT, 
+            vertexCount, 
+            AccessorComponentType.VEC3, 
+            [], 
+            []
+        );
+        const indicesAccessor = new Accessor(
+            indicesBufferView, 
+            0, 
+            WebGLType.UNSIGNED_INT, 
+            indicesCount, 
+            AccessorComponentType.SCALAR, 
+            [], 
+            []
+        );
+        const faceNormalAccessor = new Accessor(
+            faceNormalBufferView, 
+            0, 
+            WebGLType.FLOAT, 
+            faceNormalCount, 
+            AccessorComponentType.VEC3, 
+            [], 
+            []
+        );
+        const vertexNormalAccessor = new Accessor(
+            vertexNormalBufferView, 
+            0, 
+            WebGLType.FLOAT, 
+            vertexNormalCount, 
+            AccessorComponentType.VEC3, 
+            [], 
+            []
+        );
+        const floatConverter = new Float32ArrayConverter();
+        const uintConverter = new Uint32ArrayConverter();
+        const positionAttribute = new GLBufferAttribute(positionAccessor, 3, floatConverter);
+        const indicesAttribute = new GLBufferAttribute(indicesAccessor, 1, uintConverter);
+        const faceNormalAttribute = new GLBufferAttribute(faceNormalAccessor, 3, floatConverter);
+        const vertexNormalAttribute = new GLBufferAttribute(vertexNormalAccessor, 3, floatConverter);
+
+        const attributes: MeshBufferGeometryAttributes = {
             position: positionAttribute,
-            normal: normalAttribute,
+            faceNormal: faceNormalAttribute,
+            vertexNormal: vertexNormalAttribute,
         };
 
         const vertices = Float32Array.from(positions.flat());
-
         positionAccessor.setData(floatConverter.tobytes(vertices));
+        
+        if (indices) {
+            const indexData = Uint32Array.from(indices);
+            indicesAccessor.setData(uintConverter.tobytes(indexData));
+        }
 
-        const geometry = new MeshBufferGeometry(attributes, materials);
-        geometry.calculateFaceNormals(normalAccessor);
+        const meshBufferOptions: {indices?: GLBufferAttribute, indicesAccessor?: Accessor} = {}
+
+        if (indices) {
+            meshBufferOptions.indices = indicesAttribute;
+        }
+
+        else {
+            meshBufferOptions.indicesAccessor = indicesAccessor;
+        }
+
+        const geometry = new MeshBufferGeometry(
+            attributes, 
+            materials,
+            meshBufferOptions
+        );
+
+        geometry.calculateFaceNormals(faceNormalAccessor);
+        geometry.calculateVertexNormals(vertexNormalAccessor);
 
         this._geometries.push(geometry);
     }

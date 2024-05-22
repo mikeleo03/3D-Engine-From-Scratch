@@ -42,7 +42,7 @@ export class GLBufferAttribute {
         }
         
         this._accessor = accessor;
-        this._size = size;
+        this._size = size;  // Size of each element in the buffer (ex: 3 for each vertex)
         this._converter = conveter;
         this._normalize = options.normalize || false;
         this._stride = options.stride || 0;
@@ -120,7 +120,7 @@ export class GLBufferAttribute {
      * Panjang dari buffer (data.length = elemen * size).
      */
     get length(): number {
-        return this.count * this._size;
+        return this.data.length;
     }
 
 

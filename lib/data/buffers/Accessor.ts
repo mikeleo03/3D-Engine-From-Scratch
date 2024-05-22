@@ -7,7 +7,7 @@ export class Accessor {
     private _bufferView: BufferView;
     private _byteOffset: number;
     private _componentType: number;  // type of component in the elements
-    private _count: number;  // Number of components for 1 element
+    private _count: number;  // Number elements in the buffer (ex: number of vertices in a mesh)
     private _type: AccessorComponentType;  // element type
     private _max: number[];
     private _min: number[];

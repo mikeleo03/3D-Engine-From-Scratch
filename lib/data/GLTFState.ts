@@ -236,8 +236,12 @@ export class GLTFState {
                 accessors.push(geometries[i].attributes.position!.accessor);
             }
 
-            if (geometries[i].attributes.normal) {
-                accessors.push(geometries[i].attributes.normal!.accessor);
+            if (geometries[i].attributes.faceNormal) {
+                accessors.push(geometries[i].attributes.faceNormal!.accessor);
+            }
+
+            if (geometries[i].attributes.vertexNormal) {
+                accessors.push(geometries[i].attributes.vertexNormal!.accessor);
             }
 
             if (geometries[i].indices) {
@@ -424,7 +428,8 @@ export class GLTFState {
 
             for (let j = 0; j < geometries.length; j++) {
                 if (geometries[j].attributes.position?.accessor == accessor ||
-                    geometries[j].attributes.normal?.accessor == accessor ||
+                    geometries[j].attributes.faceNormal?.accessor == accessor ||
+                    geometries[j].attributes.vertexNormal?.accessor == accessor ||
                     geometries[j].indices?.accessor == accessor) {
                     remove = false;
                     break;

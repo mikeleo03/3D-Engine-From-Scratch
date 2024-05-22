@@ -81,7 +81,7 @@ export class MeshBufferGeometry {
             throw new Error("Indices and indices accessor cannot be used together");
         }
 
-        if (!indices && !indicesAccessor) {
+        if (attributes.position && !indices && !indicesAccessor) {
             throw new Error("Indices or indices accessor is required");
         }
 
@@ -90,7 +90,7 @@ export class MeshBufferGeometry {
         this._phongMaterial = materials.phongMaterial;
         this._indices = indices;
 
-        if (!indices && indicesAccessor) {
+        if (attributes.position && !indices && indicesAccessor) {
             this.setDefaultIndices(indicesAccessor);
         }
     }
