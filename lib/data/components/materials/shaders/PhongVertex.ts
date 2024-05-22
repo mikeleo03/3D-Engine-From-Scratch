@@ -11,7 +11,7 @@ uniform vec3 u_lightPosition;
 varying vec3 N, L, E;
 
 void main() {
-    vec3 pos = -(u_worldMatrix * a_position).xyz;
+    vec3 pos = -(u_viewMatrix * a_position).xyz;
     vec3 light = u_lightPosition;
     L = normalize(light - pos);
     E = -pos;

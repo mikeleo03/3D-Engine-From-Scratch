@@ -1364,10 +1364,10 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Shader */}
-                    <div className="w-full p-6 py-4">
+                    <div className="w-full p-6 py-4 pb-6">
                         <div className="text-lg font-semibold pb-2">🎨 Shader</div>
                         <div className="flex flex-row justify-between">   
-                            <Label htmlFor="shader-switch">Phong Shader</Label>
+                            <Label htmlFor="shader-switch" className='text-base'>Phong Shader</Label>
                             <Switch
                                 id="shader-switch"
                                 checked={shader.phongEnabled}
