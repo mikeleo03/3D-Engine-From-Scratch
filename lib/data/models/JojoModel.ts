@@ -32,7 +32,7 @@ export class JojoModel extends Model {
         });
 
         const bodyMesh = meshFactory.cuboid(50, 70, 30, 
-            [{basicMaterial: bodyMaterial, phongMaterial: phongBodyMaterial}]
+            {basicMaterial: bodyMaterial, phongMaterial: phongBodyMaterial}
         );
 
         return new SceneNode({name: 'Body', mesh: bodyMesh});
@@ -50,7 +50,7 @@ export class JojoModel extends Model {
         });
 
         const handMesh = meshFactory.cuboid(15, 60, 25, 
-            [{basicMaterial: handMaterial, phongMaterial: phongHandMaterial}], 
+            {basicMaterial: handMaterial, phongMaterial: phongHandMaterial}, 
             { offset: [0, -27, 0] }
         );
 
@@ -70,7 +70,7 @@ export class JojoModel extends Model {
 
         const headMesh = meshFactory.cuboid(
             25, 25, 25, 
-            [{basicMaterial: headMaterial, phongMaterial: phongHeadMaterial}], 
+            {basicMaterial: headMaterial, phongMaterial: phongHeadMaterial}, 
             { offset: [0, 12.5, 0] }
         );
 
@@ -89,7 +89,7 @@ export class JojoModel extends Model {
         });
 
         const legMesh = meshFactory.cuboid(23, 50, 25, 
-            [{basicMaterial: legMaterial, phongMaterial: phongLegMaterial}], 
+            {basicMaterial: legMaterial, phongMaterial: phongLegMaterial}, 
             { offset: [0, -25, 0] }
         );
 
@@ -108,7 +108,7 @@ export class JojoModel extends Model {
         });
 
         const eyeCoverMesh = meshFactory.cuboid(28, 10, 28, 
-            [{basicMaterial: eyeConverMaterial, phongMaterial: eyeConverPhongMaterial}],
+            {basicMaterial: eyeConverMaterial, phongMaterial: eyeConverPhongMaterial},
         );
 
         return new SceneNode({name: 'EyeConver', mesh: eyeCoverMesh});
@@ -126,7 +126,7 @@ export class JojoModel extends Model {
         });
 
         const mouthMesh = meshFactory.cuboid(7, 1, 1, 
-            [{basicMaterial: mouthMaterial, phongMaterial: phongMouthMaterial}]
+            {basicMaterial: mouthMaterial, phongMaterial: phongMouthMaterial}
         );
 
         return new SceneNode({name: 'Mouth', mesh: mouthMesh});

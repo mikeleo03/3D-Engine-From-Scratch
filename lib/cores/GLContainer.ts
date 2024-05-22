@@ -1,5 +1,5 @@
 import { GLBufferAttribute } from "../data/buffers/GLBufferAttribute";
-import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformDataType, UniformMapSetters, UniformSetterWebGLType, UniformSetters, UniformSingleDataType } from "./gltypes";
+import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformDataType, UniformMapSetters, UniformSetterWebGLType, UniformSetters, UniformSingleDataType, WebGLType } from "./gltypes";
 
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
 
@@ -237,6 +237,25 @@ export class GLContainer {
         if (uniformName in setters) {
             setters[uniformName](data);
         }
+    }
+
+    setIndices(indicesAttribute: GLBufferAttribute): void {
+        if (indicesAttribute.accessor.componentType !== WebGLType.UNSIGNED_SHORT) {
+            throw new Error("Indices must be of type UNSIGNED_SHORT");
+        }
+
+        const gl = this._gl;
+
+        const indexBuffer = gl.createBuffer();
+ 
+        // make this buffer the current 'ELEMENT_ARRAY_BUFFER'
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        
+        gl.bufferData(
+            gl.ELEMENT_ARRAY_BUFFER,
+            indicesAttribute.data as Uint16Array,
+            gl.STATIC_DRAW
+        );
     }
 
     setUniforms(

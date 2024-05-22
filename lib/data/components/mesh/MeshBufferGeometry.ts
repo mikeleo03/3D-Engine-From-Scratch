@@ -119,8 +119,8 @@ export class MeshBufferGeometry {
             return;
         }
 
-        if (accessor.componentType !== WebGLType.UNSIGNED_INT) {
-            throw new Error("Indices must be of type UNSIGNED_INT");
+        if (accessor.componentType !== WebGLType.UNSIGNED_SHORT) {
+            throw new Error("Indices must be of type UNSIGNED_SHORT");
         }
 
         if (accessor.type !== AccessorComponentType.SCALAR) {
@@ -315,6 +315,14 @@ export class MeshBufferGeometry {
             throw new Error("Accessor is required to calculate vertex normals");
         }
 
+        if (accessor.componentType !== WebGLType.FLOAT) {
+            throw new Error("Accessor component type must be FLOAT");
+        }
+
+        if (accessor.type !== AccessorComponentType.VEC3) {
+            throw new Error("Accessor type must be VEC3");
+        }
+
         const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
 
         if (!position) {
@@ -325,6 +333,10 @@ export class MeshBufferGeometry {
 
         if (!indices) {
             throw new Error("Indices are required to calculate normals");
+        }
+
+        if (accessor.count !== indices.count) {
+            throw new Error("Accessor count must be the same as indices count");
         }
 
         let normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL);
@@ -391,8 +403,18 @@ export class MeshBufferGeometry {
             }
         }
 
+        // define the vertex normal for each index
+        const finalVertexNormals = new Float32Array(indicesData.length * 3);
+
+        for (let i = 0; i < indicesData.length; i++) {
+            const index = indicesData[i];
+            finalVertexNormals[i * 3] = accumulatedNormals[index * 3];
+            finalVertexNormals[i * 3 + 1] = accumulatedNormals[index * 3 + 1];
+            finalVertexNormals[i * 3 + 2] = accumulatedNormals[index * 3 + 2];
+        }
+
         // Assign the calculated vertex normals to the vertex normal attribute
-        vertexNormal.setData(accumulatedNormals);
+        vertexNormal.setData(finalVertexNormals);
         this.setAttribute(MeshPrimitiveAttribute.VERTEX_NORMAL, vertexNormal);
     }
 }

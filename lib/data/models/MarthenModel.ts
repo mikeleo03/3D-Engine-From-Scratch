@@ -16,36 +16,36 @@ export class MarthenModel extends Model {
 
   private getHead() {
     const meshFactory = new MeshFactory();
-    const headMaterial = new BasicMaterial({ name: "head", color: new Color(187, 226, 236) });
-    const headMesh = meshFactory.cuboid(50, 50, 50, [{basicMaterial: headMaterial}], { offset: [0, 12.5, 0] });
+    const headMaterial = new BasicMaterial(new Color(187, 226, 236), { name: "head" });
+    const headMesh = meshFactory.cuboid(50, 50, 50, {basicMaterial: headMaterial}, { offset: [0, 12.5, 0] });
     return new SceneNode({mesh: headMesh});
   }
 
   private getBody() {
     const meshFactory = new MeshFactory();
-    const bodyMaterial = new BasicMaterial({ name: "body", color: new Color(13, 146, 118) });
-    const bodyMesh = meshFactory.cuboid(100, 70, 100, [{basicMaterial: bodyMaterial}]);
+    const bodyMaterial = new BasicMaterial(new Color(13, 146, 118), { name: "body" });
+    const bodyMesh = meshFactory.cuboid(100, 70, 100, {basicMaterial: bodyMaterial});
     return new SceneNode({mesh: bodyMesh});
   }
 
   private getLeg() {
     const meshFactory = new MeshFactory();
-    const legMaterial = new BasicMaterial({ name: "leg", color: new Color(64, 162, 227) });
-    const legMesh = meshFactory.cuboid(23, 40, 25, [{basicMaterial: legMaterial}], { offset: [0, -25, 0] });
+    const legMaterial = new BasicMaterial(new Color(64, 162, 227), { name: "leg" });
+    const legMesh = meshFactory.cuboid(23, 40, 25, {basicMaterial: legMaterial}, { offset: [0, -25, 0] });
     return new SceneNode({mesh: legMesh});
   }
 
   private getEye() {
     const meshFactory = new MeshFactory();
-    const eyeMaterial = new BasicMaterial({ name: "eye", color: new Color(0, 0, 0) });
-    const eyeMesh = meshFactory.cuboid(10, 10, 10, [{basicMaterial: eyeMaterial}]);
+    const eyeMaterial = new BasicMaterial(new Color(0, 0, 0), { name: "eye" });
+    const eyeMesh = meshFactory.cuboid(10, 10, 10, {basicMaterial: eyeMaterial});
     return new SceneNode({mesh: eyeMesh});
   }
 
   private getMouth() {
     const meshFactory = new MeshFactory();
-    const mouthMaterial = new BasicMaterial({ name: "mouth", color: new Color(0, 0, 0) });
-    const mouthMesh = meshFactory.cuboid(20, 10, 10, [{basicMaterial: mouthMaterial}]);
+    const mouthMaterial = new BasicMaterial(new Color(0, 0, 0), { name: "mouth" });
+    const mouthMesh = meshFactory.cuboid(20, 10, 10, {basicMaterial: mouthMaterial});
     return new SceneNode({mesh: mouthMesh});
   }
 

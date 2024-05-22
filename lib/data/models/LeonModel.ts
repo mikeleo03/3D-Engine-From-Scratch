@@ -34,8 +34,8 @@ export class LeonModel extends Model {
             shininess: 60
         });
         
-        const earMesh = meshFactory.cuboid(30, 40, 30, [
-            {basicMaterial: earMaterial, phongMaterial: phongEarMaterial}], { offset: [0, 15, 0] }
+        const earMesh = meshFactory.cuboid(30, 40, 30, 
+            {basicMaterial: earMaterial, phongMaterial: phongEarMaterial}, { offset: [0, 15, 0] }
         );
         
         return new SceneNode({name: 'Ear', mesh: earMesh});
@@ -52,8 +52,8 @@ export class LeonModel extends Model {
             shininess: 60
         });
 
-        const headMesh = meshFactory.cuboid(70, 70, 70, [
-            {basicMaterial: headMaterial, phongMaterial: phongHeadMaterial}], { offset: [0, 12.5, 0] }
+        const headMesh = meshFactory.cuboid(70, 70, 70, 
+            {basicMaterial: headMaterial, phongMaterial: phongHeadMaterial}, { offset: [0, 12.5, 0] }
         );
 
         return new SceneNode({name: 'Head', mesh: headMesh});
@@ -70,8 +70,8 @@ export class LeonModel extends Model {
             shininess: 60
         });
 
-        const bodyMesh = meshFactory.cuboid(100, 70, 200, [
-            {basicMaterial: bodyMaterial, phongMaterial: phongBodyMaterial}]
+        const bodyMesh = meshFactory.cuboid(100, 70, 200, 
+            {basicMaterial: bodyMaterial, phongMaterial: phongBodyMaterial}
         );
 
         return new SceneNode({name: 'Body', mesh: bodyMesh});
@@ -88,8 +88,8 @@ export class LeonModel extends Model {
             shininess: 60
         });
 
-        const legMesh = meshFactory.cuboid(23, 40, 25, [
-            {basicMaterial: legMaterial, phongMaterial: phongLegMaterial}], { offset: [0, -15, 0] }
+        const legMesh = meshFactory.cuboid(23, 40, 25, 
+            {basicMaterial: legMaterial, phongMaterial: phongLegMaterial}, { offset: [0, -15, 0] }
         );
 
         return new SceneNode({name: 'Leg', mesh: legMesh});
@@ -106,8 +106,8 @@ export class LeonModel extends Model {
             shininess: 60
         });
 
-        const eyeMesh = meshFactory.cuboid(10, 10, 10, [
-            {basicMaterial: eyeMaterial, phongMaterial: phongEyeMaterial}]
+        const eyeMesh = meshFactory.cuboid(10, 10, 10, 
+            {basicMaterial: eyeMaterial, phongMaterial: phongEyeMaterial}
         );
 
         return new SceneNode({name: 'Eye', mesh: eyeMesh});
@@ -124,8 +124,8 @@ export class LeonModel extends Model {
             shininess: 60
         });
 
-        const mouthMesh = meshFactory.cuboid(20, 10, 10, [
-            {basicMaterial: mouthMaterial, phongMaterial: phongMouthMaterial}]
+        const mouthMesh = meshFactory.cuboid(20, 10, 10, 
+            {basicMaterial: mouthMaterial, phongMaterial: phongMouthMaterial}
         );
 
         return new SceneNode({name: 'Mouth', mesh: mouthMesh});

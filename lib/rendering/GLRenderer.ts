@@ -1,7 +1,7 @@
 import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
-import { Color } from "../cores";
+import { Color, WebGLType } from "../cores";
 import { DirectionalLight } from "../data/components/lights";
 import { v4 as uuid } from "uuid";
 
@@ -58,10 +58,17 @@ export class GLRenderer {
                     worldMatrix: root.worldMatrix.transpose().buffer,
                 });
 
-                this._glContainer.setAttributes(programInfo, geometry.attributes);
+                this._glContainer.setAttributes(programInfo, geometry.attributes)
+                
+                const indicesAttribute = geometry.indices;
 
-                // draw triangles
-                gl.drawArrays(gl.TRIANGLES, 0, geometry.attributes.position?.count || 0);
+                if (!indicesAttribute) {
+                    throw new Error("Indices attribute is required");
+                }
+
+                this._glContainer.setIndices(indicesAttribute);
+
+                gl.drawElements(gl.TRIANGLES, indicesAttribute.count, gl.UNSIGNED_SHORT, 0);
             }
         }
 

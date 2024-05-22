@@ -3,7 +3,7 @@ import { Accessor } from "../../buffers/Accessor";
 import { BufferView } from "../../buffers/BufferView";
 import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
 import { GLTFBuffer } from "../../buffers/GLTFBuffer";
-import { Float32ArrayConverter, Uint32ArrayConverter } from "../../buffers/typedarrayconverters";
+import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
 import { AccessorComponentType, BufferViewTarget } from "../../types/gltftypes";
 import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
 import { MaterialOptions, MeshBufferGeometry, MeshBufferGeometryAttributes } from "./MeshBufferGeometry";
@@ -33,12 +33,12 @@ export class MeshFactory {
         const vertexCount = positions.length;
         const indicesCount = indices ? indices.length : vertexCount;
         const faceNormalCount = indicesCount;
-        const vertexNormalCount = vertexCount;
+        const vertexNormalCount = indicesCount;
 
-        const vertexBytesCount = positions.length * 4 * 3;
-        const indicesBytesCount = (indices ? indices.length : positions.length) * 4;
-        const faceNormalBytesCount = indicesBytesCount * 3;
-        const vertexNormalBytesCount = vertexBytesCount;
+        const vertexBytesCount = vertexCount * 4 * 3;
+        const indicesBytesCount = indicesCount * 2;
+        const faceNormalBytesCount = faceNormalCount * 4 * 3;
+        const vertexNormalBytesCount = vertexNormalCount * 4 * 3;
         const totalBytesCount = vertexBytesCount + faceNormalBytesCount + vertexNormalBytesCount + indicesBytesCount;
 
         const buffer = GLTFBuffer.empty(totalBytesCount);
@@ -80,7 +80,7 @@ export class MeshFactory {
         const indicesAccessor = new Accessor(
             indicesBufferView, 
             0, 
-            WebGLType.UNSIGNED_INT, 
+            WebGLType.UNSIGNED_SHORT, 
             indicesCount, 
             AccessorComponentType.SCALAR, 
             [], 
@@ -105,9 +105,9 @@ export class MeshFactory {
             []
         );
         const floatConverter = new Float32ArrayConverter();
-        const uintConverter = new Uint32ArrayConverter();
+        const ushortConverter = new Uint16ArrayConverter();
         const positionAttribute = new GLBufferAttribute(positionAccessor, 3, floatConverter);
-        const indicesAttribute = new GLBufferAttribute(indicesAccessor, 1, uintConverter);
+        const indicesAttribute = new GLBufferAttribute(indicesAccessor, 1, ushortConverter);
         const faceNormalAttribute = new GLBufferAttribute(faceNormalAccessor, 3, floatConverter);
         const vertexNormalAttribute = new GLBufferAttribute(vertexNormalAccessor, 3, floatConverter);
 
@@ -121,8 +121,8 @@ export class MeshFactory {
         positionAccessor.setData(floatConverter.tobytes(vertices));
         
         if (indices) {
-            const indexData = Uint32Array.from(indices);
-            indicesAccessor.setData(uintConverter.tobytes(indexData));
+            const indexData = Uint16Array.from(indices);
+            indicesAccessor.setData(ushortConverter.tobytes(indexData));
         }
 
         const meshBufferOptions: {indices?: GLBufferAttribute, indicesAccessor?: Accessor} = {}
@@ -157,153 +157,64 @@ export class MeshFactory {
         width: number,
         height: number,
         depth: number,
-        materialOptions: MaterialOptions[],
+        materialOption: MaterialOptions,
         options: {
             offset?: [number, number, number],
         } = {}
     ): Mesh {
-        if (materialOptions.length === 0) {
-            throw new Error("At least one material is required");
-        }
+
 
         const halfWidth = width / 2;
         const halfHeight = height / 2;
         const halfDepth = depth / 2;
-
-        var materialIndex = 0;
 
         // make sure to follow the right-hand rule
         // 6 vertex per square face
 
         const offset = options.offset || [0, 0, 0];
 
-        const data1: [number, number, number][] = [
+        // define 8 vertices of the cuboid
+        const vertices: [number, number, number][] = [
+            // front face
             [-halfWidth, -halfHeight, halfDepth],
             [halfWidth, -halfHeight, halfDepth],
             [halfWidth, halfHeight, halfDepth],
             [-halfWidth, halfHeight, halfDepth],
-            [-halfWidth, -halfHeight, halfDepth],
-            [halfWidth, halfHeight, halfDepth],
-        ];
-
-        for (let i = 0; i < data1.length; i++) {
-            data1[i][0] += offset[0];
-            data1[i][1] += offset[1];
-            data1[i][2] += offset[2];
-        }
-
-        // front face
-        this.addGeometry(data1, materialOptions[materialIndex]);
-
-        if (materialOptions.length > 1) {
-            materialIndex++;
-        }
-
-        // back face
-        const data2: [number, number, number][] = [
-            [halfWidth, -halfHeight, -halfDepth],
-            [-halfWidth, -halfHeight, -halfDepth],
-            [-halfWidth, halfHeight, -halfDepth],
-            [halfWidth, halfHeight, -halfDepth],
-            [halfWidth, -halfHeight, -halfDepth],
-            [-halfWidth, halfHeight, -halfDepth],
-        ];
-
-        for (let i = 0; i < data2.length; i++) {
-            data2[i][0] += offset[0];
-            data2[i][1] += offset[1];
-            data2[i][2] += offset[2];
-        }
-
-        this.addGeometry(data2, materialOptions[materialIndex]);
-
-        if (materialOptions.length > 2) {
-            materialIndex++;
-        }
-
-        // top face
-        const data3: [number, number, number][] = [
-            [-halfWidth, halfHeight, halfDepth],
-            [halfWidth, halfHeight, halfDepth],
-            [halfWidth, halfHeight, -halfDepth],
-            [-halfWidth, halfHeight, -halfDepth],
-            [-halfWidth, halfHeight, halfDepth],
-            [halfWidth, halfHeight, -halfDepth],
-        ];
-
-        for (let i = 0; i < data3.length; i++) {
-            data3[i][0] += offset[0];
-            data3[i][1] += offset[1];
-            data3[i][2] += offset[2];
-        }
-
-        this.addGeometry(data3, materialOptions[materialIndex]);
-
-        if (materialOptions.length > 3) {
-            materialIndex++;
-        }
-
-        // bottom face
-        const data4: [number, number, number][] = [
+            // back face
             [-halfWidth, -halfHeight, -halfDepth],
             [halfWidth, -halfHeight, -halfDepth],
-            [halfWidth, -halfHeight, halfDepth],
-            [-halfWidth, -halfHeight, halfDepth],
-            [-halfWidth, -halfHeight, -halfDepth],
-            [halfWidth, -halfHeight, halfDepth],
-        ];
-
-        for (let i = 0; i < data4.length; i++) {
-            data4[i][0] += offset[0];
-            data4[i][1] += offset[1];
-            data4[i][2] += offset[2];
-        }
-
-        this.addGeometry(data4, materialOptions[materialIndex]);
-
-        if (materialOptions.length > 4) {
-            materialIndex++;
-        }
-
-        // right face
-        const data5: [number, number, number][] = [
-            [halfWidth, -halfHeight, halfDepth],
-            [halfWidth, -halfHeight, -halfDepth],
             [halfWidth, halfHeight, -halfDepth],
-            [halfWidth, halfHeight, halfDepth],
-            [halfWidth, -halfHeight, halfDepth],
-            [halfWidth, halfHeight, -halfDepth],
-        ];
-
-        for (let i = 0; i < data5.length; i++) {
-            data5[i][0] += offset[0];
-            data5[i][1] += offset[1];
-            data5[i][2] += offset[2];
-        }
-
-        this.addGeometry(data5, materialOptions[materialIndex]);
-
-        if (materialOptions.length > 5) {
-            materialIndex++;
-        }
-
-        // left face
-        const data6: [number, number, number][] = [
-            [-halfWidth, -halfHeight, -halfDepth],
-            [-halfWidth, -halfHeight, halfDepth],
-            [-halfWidth, halfHeight, halfDepth],
             [-halfWidth, halfHeight, -halfDepth],
-            [-halfWidth, -halfHeight, -halfDepth],
-            [-halfWidth, halfHeight, halfDepth],
         ];
-
-        for (let i = 0; i < data6.length; i++) {
-            data6[i][0] += offset[0];
-            data6[i][1] += offset[1];
-            data6[i][2] += offset[2];
+        
+        // apply offset
+        for (let i = 0; i < vertices.length; i++) {
+            vertices[i][0] += offset[0];
+            vertices[i][1] += offset[1];
+            vertices[i][2] += offset[2];
         }
 
-        this.addGeometry(data6, materialOptions[materialIndex]);
+        // define the indices of the cuboid
+        const indices = [
+            0, 1, 2,
+            0, 2, 3,
+            1, 5, 6,
+            1, 6, 2,
+            5, 4, 7,
+            5, 7, 6,
+            4, 0, 3,
+            4, 3, 7,
+            3, 2, 6,
+            3, 6, 7,
+            4, 5, 1,
+            4, 1, 0,
+        ];
+
+        this.addGeometry(
+            vertices,
+            materialOption,
+            { indices }
+        );
 
         return this.createMesh();
     }
