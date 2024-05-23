@@ -255,8 +255,6 @@ export class AnimationRunner {
 
         if (currentKeyframe.rotation && nextKeyframe.rotation) {
           const easedZ = this.ease(currentKeyframe.rotation[2], nextKeyframe.rotation[2], t);
-          console.log(`Frame ${this.currentFrame}`);
-          console.log(currentKeyframe.rotation[2], nextKeyframe.rotation[2], t, easedZ);
           node.rotation = Quaternion.fromDegrees(
             this.ease(currentKeyframe.rotation[0], nextKeyframe.rotation[0], t),
             this.ease(currentKeyframe.rotation[1], nextKeyframe.rotation[1], t),
