@@ -5,7 +5,6 @@ import { DirectionalLight } from "./DirectionalLight";
 
 export class LightUtil {
     static fromRaw(raw: LightType): Light { 
-        console.log(raw);
         if (raw.type === LightTypeString.DIRECTIONAL) {
             return new DirectionalLight(
                 new Color(...raw.directional.color),

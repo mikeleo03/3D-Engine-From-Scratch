@@ -185,8 +185,6 @@ export class GLContainer {
                     throw new Error("BufferView target must be ARRAY_BUFFER");
                 }
 
-                // console.log(info.name, v.data);
-
                 this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
                 this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
 

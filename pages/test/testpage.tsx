@@ -76,12 +76,13 @@ export default function TestPage() {
         new SceneNode({ light: directionalLight, position: lightPosition })
       ]
 
+      const cube = new CubeModel();
       const jojo = new JojoModel();
       const leon = new LeonModel();
       const maggie = new MaggieModel();
 
       // change model here
-      const model = leon;
+      const model = jojo;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -102,7 +103,7 @@ export default function TestPage() {
       glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);
 
-      jojo.download();
+      // jojo.download();
       // leon.download();
       // maggie.download();
     };

@@ -300,7 +300,7 @@ export class MeshBufferGeometry {
 
 
     calculateFaceNormals(
-        accessor: Accessor,
+        accessor?: Accessor,
         forceNewAttribute = false
     ): void {
         const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
@@ -314,12 +314,18 @@ export class MeshBufferGeometry {
             throw new Error("Indices are required to calculate normals");
         }
 
-        if (accessor.count !== indices.count) {
-            throw new Error("Accessor count must be the same as indices count");
-        }
 
         let normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL);
         if (forceNewAttribute || !normal) {
+
+            if (!accessor) {
+                throw new Error("Accessor is required to calculate face normals");
+            }
+
+            if (accessor.count !== indices.count) {
+                throw new Error("Accessor count must be the same as indices count");
+            }
+
             const converter = new Float32ArrayConverter();
             normal = new GLBufferAttribute(accessor, MeshBufferGeometry.NORMAL_SIZE, converter);
         }
@@ -348,25 +354,13 @@ export class MeshBufferGeometry {
     }
 
     calculateVertexNormals(
-        accessor: Accessor,
         options: {
             forceNewAttribute: boolean,
+            accessor?: Accessor,
             faceNormalAccessor?: Accessor
         } = { forceNewAttribute: false }
     ): void {
-        const { forceNewAttribute, faceNormalAccessor } = options;
-
-        if (!accessor) {
-            throw new Error("Accessor is required to calculate vertex normals");
-        }
-
-        if (accessor.componentType !== WebGLType.FLOAT) {
-            throw new Error("Accessor component type must be FLOAT");
-        }
-
-        if (accessor.type !== AccessorComponentType.VEC3) {
-            throw new Error("Accessor type must be VEC3");
-        }
+        const { forceNewAttribute, faceNormalAccessor, accessor } = options;
 
         const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
 
@@ -378,10 +372,6 @@ export class MeshBufferGeometry {
 
         if (!indices) {
             throw new Error("Indices are required to calculate normals");
-        }
-
-        if (accessor.count !== indices.count) {
-            throw new Error("Accessor count must be the same as indices count");
         }
 
         let normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL);
@@ -399,6 +389,22 @@ export class MeshBufferGeometry {
         let vertexNormal = this.getAttribute(MeshPrimitiveAttribute.VERTEX_NORMAL);
 
         if (forceNewAttribute || !vertexNormal) {
+            if (!accessor) {
+                throw new Error("Accessor is required to calculate vertex normals");
+            }
+    
+            if (accessor.componentType !== WebGLType.FLOAT) {
+                throw new Error("Accessor component type must be FLOAT");
+            }
+    
+            if (accessor.type !== AccessorComponentType.VEC3) {
+                throw new Error("Accessor type must be VEC3");
+            }
+
+            if (accessor.count !== indices.count) {
+                throw new Error("Accessor count must be the same as indices count");
+            }
+
             const converter = new Float32ArrayConverter();
             vertexNormal = new GLBufferAttribute(accessor, MeshBufferGeometry.NORMAL_SIZE, converter);
         }

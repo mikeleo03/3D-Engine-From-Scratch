@@ -142,7 +142,7 @@ export class MeshFactory {
         );
 
         geometry.calculateFaceNormals(faceNormalAccessor);
-        geometry.calculateVertexNormals(vertexNormalAccessor);
+        geometry.calculateVertexNormals({forceNewAttribute: false, accessor: vertexNormalAccessor});
 
         this._geometries.push(geometry);
     }

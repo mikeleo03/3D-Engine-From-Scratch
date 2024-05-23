@@ -62,6 +62,9 @@ export class GLRenderer {
                     worldMatrix: root.worldMatrix.transpose().buffer,
                 });
 
+                geometry.calculateFaceNormals();
+                geometry.calculateVertexNormals();
+
                 const geometryAttributes = { ...geometry.attributes };
 
                 if (
@@ -81,10 +84,6 @@ export class GLRenderer {
                         []
                     );
                     geometryAttributes.position = geometry.getExpandedPosition(accessor);
-
-                    console.log(geometryAttributes.position.data);
-                    console.log(geometryAttributes.faceNormal!!.data);
-                    console.log(geometryAttributes.vertexNormal!!.data);
                 }
 
 

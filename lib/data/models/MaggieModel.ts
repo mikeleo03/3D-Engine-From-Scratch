@@ -39,7 +39,7 @@ export class MaggieModel extends Model {
             shininess: 4
         });
 
-        const bodyMesh = meshFactory.cuboid(60, 40, 60, [{ basicMaterial: bodyMaterial, phongMaterial: phongBodyMaterial }]);
+        const bodyMesh = meshFactory.cuboid(60, 40, 60, { basicMaterial: bodyMaterial, phongMaterial: phongBodyMaterial });
 
         return new SceneNode({ name: 'Body', mesh: bodyMesh });
     }
@@ -56,7 +56,7 @@ export class MaggieModel extends Model {
             shininess: 4
         });
 
-        const headMesh = meshFactory.cuboid(30, 30, 30, [{ basicMaterial: headMaterial, phongMaterial: phongHeadMaterial }]);
+        const headMesh = meshFactory.cuboid(30, 30, 30, { basicMaterial: headMaterial, phongMaterial: phongHeadMaterial });
 
         return new SceneNode({ name: 'Head', mesh: headMesh });
     }
@@ -73,7 +73,7 @@ export class MaggieModel extends Model {
             shininess: 4
         });
 
-        const legMesh = meshFactory.cuboid(10, 20, 10, [{ basicMaterial: legMaterial, phongMaterial: phongLegMaterial }]);
+        const legMesh = meshFactory.cuboid(10, 20, 10, { basicMaterial: legMaterial, phongMaterial: phongLegMaterial });
 
         return new SceneNode({ name: 'Leg', mesh: legMesh });
     }
@@ -90,7 +90,7 @@ export class MaggieModel extends Model {
             shininess: 4
         });
 
-        const earMesh = meshFactory.cuboid(10, 15, 5, [{ basicMaterial: earMaterial, phongMaterial: phongEarMaterial }]);
+        const earMesh = meshFactory.cuboid(10, 15, 5, { basicMaterial: earMaterial, phongMaterial: phongEarMaterial });
 
         return new SceneNode({ name: 'Ear', mesh: earMesh });
     }
@@ -107,7 +107,7 @@ export class MaggieModel extends Model {
             shininess: 4
         });
 
-        const tailMesh = meshFactory.cuboid(5, 5, 30, [{ basicMaterial: tailMaterial, phongMaterial: phongTailMaterial }]);
+        const tailMesh = meshFactory.cuboid(5, 5, 30, { basicMaterial: tailMaterial, phongMaterial: phongTailMaterial });
 
         return new SceneNode({ name: 'Tail', mesh: tailMesh });
     }
@@ -124,7 +124,7 @@ export class MaggieModel extends Model {
             shininess: 4
         });
 
-        const eyeMesh = meshFactory.cuboid(3, 3, 3, [{ basicMaterial: eyeMaterial, phongMaterial: phongEyeMaterial }]);
+        const eyeMesh = meshFactory.cuboid(3, 3, 3, { basicMaterial: eyeMaterial, phongMaterial: phongEyeMaterial });
 
         return new SceneNode({ name: 'Eye', mesh: eyeMesh });
     }
@@ -141,7 +141,7 @@ export class MaggieModel extends Model {
             shininess: 4
         });
 
-        const noseMesh = meshFactory.cuboid(10, 5, 5, [{ basicMaterial: noseMaterial, phongMaterial: phongNoseMaterial }]);
+        const noseMesh = meshFactory.cuboid(10, 5, 5, { basicMaterial: noseMaterial, phongMaterial: phongNoseMaterial });
 
         return new SceneNode({ name: 'Nose', mesh: noseMesh });
     }
@@ -419,8 +419,6 @@ export class MaggieModel extends Model {
         const backLeftLegMovements = this.getBackLeftLegMovements();
         const backRightLegMovements = this.getBackRightLegMovements();
         const tailMovements = this.getTailMovements();
-
-        console.log(headMovements.length, leftEarMovements.length, rightEarMovements.length, frontLeftLegMovements.length, frontRightLegMovements.length, backLeftLegMovements.length, backRightLegMovements.length, tailMovements.length);
 
         // assert all keyframes have the same length
         const length = headMovements.length;
