@@ -203,7 +203,7 @@ export type LightType = {
     "directional": {
         "color": number[],
         "intensity": number,
-        "target": Vector3,
+        "target": number[],
         "ambientColor": number[],
         "diffuseColor": number[],
         "specularColor": number[]
