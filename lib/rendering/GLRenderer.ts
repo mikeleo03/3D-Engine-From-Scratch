@@ -28,6 +28,7 @@ export class GLRenderer {
     private renderRoot(root: SceneNode, uniforms: {
         viewMatrix: Float32Array;
         lightPosition: Float32Array;
+        lightTarget: Float32Array;
         lightColor: Color;
         lightAmbient: Color;
         lightDiffuse: Color;
@@ -115,6 +116,7 @@ export class GLRenderer {
 
         const lightUniforms = {
             lightPosition: lightNode.position.buffer,
+            lightTarget: light.target.buffer,
             lightColor: light.color,
             lightAmbient: light.ambientColor,
             lightDiffuse: light.diffuseColor,

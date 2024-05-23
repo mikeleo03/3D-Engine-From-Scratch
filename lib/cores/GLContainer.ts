@@ -138,6 +138,8 @@ export class GLContainer {
         return (values: UniformSingleDataType) => {
             const typeString = UniformSetterWebGLType[type];
             const setter = `uniform${typeString}`;
+
+            console.log(info.name, values);
             
             if (typeString.startsWith("Matrix")) {
                 // @ts-ignore
