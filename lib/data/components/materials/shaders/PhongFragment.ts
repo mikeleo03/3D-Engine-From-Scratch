@@ -12,36 +12,37 @@ uniform vec4 u_lightColor;
 uniform vec4 u_lightAmbient; 
 uniform vec4 u_lightDiffuse; 
 uniform vec4 u_lightSpecular; 
+uniform vec3 u_lightPosition;
 
-varying vec3 N, L, E;
+varying vec3 normalSurface;
+varying vec3 vertexPosition;
 
 void main() {
-    vec3 H = normalize(L + E);
+    vec3 N = normalize(normalSurface);
+    vec3 L = normalize(u_lightPosition - vertexPosition);
 
     // Convert colors from 0-255 to 0-1
-    vec3 ambient = u_ambientColor.rgb / 255.0;
-    vec3 diffuse = u_diffuseColor.rgb / 255.0;
-    vec3 specular = u_specularColor.rgb / 255.0;
+    vec3 ambientColor = u_ambientColor.rgb / 255.0;
+    vec3 diffuseColor = u_diffuseColor.rgb / 255.0;
+    vec3 specularColor = u_specularColor.rgb / 255.0;
     vec3 lightAmbient = u_lightAmbient.rgb / 255.0;
     vec3 lightDiffuse = u_lightDiffuse.rgb / 255.0;
     vec3 lightSpecular = u_lightSpecular.rgb / 255.0;
-
-    // Ambient composition
-    vec3 ambientComp = lightAmbient * ambient;
-
-    // Diffuse composition
-    float Kd = max(dot(N, L), 0.0);
-    vec3 diffuseComp = lightDiffuse * diffuse * Kd;
-
-    // Specular composition
-    float Ks = pow(max(dot(N, H), 0.0), u_shininess);
-    vec3 specularComp = lightSpecular * specular * Ks;
-    if(dot(N, L) < 0.0) {
-        specularComp = vec3(0.0, 0.0, 0.0);
+  
+    // Lambert's cosine law
+    float lambertian = max(dot(N, L), 0.0);
+    float specular = 0.0;
+    if (lambertian > 0.0) {
+        vec3 R = reflect(-L, N);       // Reflected light vector
+        vec3 V = normalize(-vertexPosition);  // Vector to viewer
+        
+        // Compute the specular term
+        float specAngle = max(dot(R, V), 0.0);
+        specular = pow(specAngle, u_shininess);
     }
 
-    // Combine all
-    vec3 fColor = ambientComp + diffuseComp + specularComp;
-    gl_FragColor = vec4(fColor, 1.0);
+    gl_FragColor = vec4(lightAmbient * ambientColor +
+        lightDiffuse * lambertian * diffuseColor +
+        lightSpecular * specular * specularColor, 1.0);
 }
 `;
