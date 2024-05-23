@@ -96,6 +96,7 @@ export default function Home() {
     const [easingMode, setEasingMode] = useState<AnimationState>({ 
         type: AnimationEasingTypeString.LINEAR
     });
+    const [fps, setFps] = useState<number>(20);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isReversing, setIsReversing] = useState(false);
@@ -460,6 +461,20 @@ export default function Home() {
 
         setEasingMode({ type: type });
     }
+
+    const handleFPSChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value !== null && e.target.value !== undefined) {
+            let value = parseFloat(e.target.value);
+
+            if (isNaN(value)) {
+                return;
+            }
+
+            // TODO (Marthen) : process the value
+
+            setFps(value);
+        }
+    };
 
     const handleCurrentNodeChange = () => {
         setCurrentNode(currentNodeRef.current);
@@ -1108,19 +1123,35 @@ export default function Home() {
                                 <SelectItem value={AnimationEasingTypeString.CIRC}>Circ</SelectItem>
                             </SelectContent>
                         </Select>
-                        <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
-                        <div className="flex flex-row w-full pb-1 space-x-2">
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleFirstFrame()}>First</Button>
+                        <div className='w-full flex flex-row space-x-4'>
+                            <div className='w-full flex-col'>
+                                <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
+                                <div className="flex flex-row w-full pb-1 space-x-2">
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handleFirstFrame()}>First</Button>
+                                    </div>
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handlePrevFrame()}>Prev</Button>
+                                    </div>
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handleNextFrame()}>Next</Button>
+                                    </div>
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handleLastFrame()}>Last</Button>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handlePrevFrame()}>Prev</Button>
-                            </div>
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleNextFrame()}>Next</Button>
-                            </div>
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleLastFrame()}>Last</Button>
+                            <div className='w-full flex-col'>
+                                <div className="text-base font-semibold pt-2 py-1">FPS</div>
+                                <div className="flex flex-row w-full pb-1 space-x-2">
+                                    <Input
+                                        className="h-10 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={isNaN(fps) ? '' : fps}
+                                        onChange={(e) => handleFPSChange(e)}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
