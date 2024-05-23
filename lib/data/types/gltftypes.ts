@@ -253,13 +253,14 @@ export type AnimationClipType = {
 }
 
 export enum AnimationEasingTypeString {
-    LINEAR = "linear",
-    SINE = "sine",
-    QUAD = "quad",
-    CUBIC = "cubic",
-    QUART = "quart",
-    EXPO = "expo",
-    CIRC = "circ"
+    LINEAR = "Linear",
+    SINE = "Sine",
+    QUAD = "Quad",
+    CUBIC = "Cubic",
+    QUART = "Quart",
+    EXPO = "Expo",
+    CIRC = "Circ",
+    NONE = "None"
 }
 
 export type GLTFType = {
