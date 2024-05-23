@@ -20,7 +20,7 @@ import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
-import { CameraTypeString, LightTypeString } from '@/lib/data/types/gltftypes';
+import { AnimationEasingTypeString, CameraTypeString, LightTypeString } from '@/lib/data/types/gltftypes';
 import NodeView from '@/components/NodeView';
 import { Camera } from 'lucide-react';
 import { Label } from '@/components/ui/label';
@@ -41,6 +41,10 @@ interface CameraState {
     zoom: number;
     obliqueAngleX?: number;
     obliqueAngleY?: number;
+}
+
+interface AnimationState {
+    type: AnimationEasingTypeString;
 }
 
 interface ShaderState {
@@ -89,11 +93,13 @@ export default function Home() {
         type: CameraTypeString.PERSPECTIVE,
         zoom: 1,
     });
+    const [easingMode, setEasingMode] = useState<AnimationState>({ 
+        type: AnimationEasingTypeString.LINEAR
+    });
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isReversing, setIsReversing] = useState(false);
     const [isLooping, setIsLooping] = useState(false);
-    const [easingMode, setEasingMode] = useState({ mode: "Linear" });
     const [currentNode, setCurrentNode] = useState<SceneNode>();
     const [disableTRS, setDisableTRS] = useState(true);
     const [shader, setShader] = useState<ShaderState>({ phongEnabled: false });
@@ -437,9 +443,23 @@ export default function Home() {
         setIsLooping(prevState => !prevState);
     };
 
-    const handleEasingModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
-        setEasingMode({ mode: (e.target as HTMLSelectElement).value });
+    const handleEasingModeChange = (type: string) => {
+        const value = type as AnimationEasingTypeString;
+        changeCurrentAnimationEasing(value);
     };
+
+    const changeCurrentAnimationEasing = (type: AnimationEasingTypeString) => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            setEasingMode({ type: type });
+            return;
+        }
+
+        // TODO (Marthen) : handle gimana mekanismenya
+
+        setEasingMode({ type: type });
+    }
 
     const handleCurrentNodeChange = () => {
         setCurrentNode(currentNodeRef.current);
@@ -960,7 +980,7 @@ export default function Home() {
     }
 
     useEffect(() => {
-        let animationId;
+        let animationId: number;
 
         const animate = () => {
             if (isPlaying) {
@@ -980,7 +1000,7 @@ export default function Home() {
     useEffect(()=>{
         const animationRunners = animationRunnersRef.current;
         for (const animationRunner of animationRunners) {
-            animationRunner.setEasingFunction(easingMode.mode);
+            animationRunner.setEasingFunction(easingMode.type);
             animationRunner.isPlaying = isPlaying;
             animationRunner.isReverse = isReversing;
             animationRunner.isLoop = isLooping;
@@ -1074,18 +1094,18 @@ export default function Home() {
                             <Button onClick={toggleLoop}>{isLooping ? '🔂 Stop' : '🔁 Loop'}</Button>
                         </div>
                         <div className="text-base font-semibold py-1">Easing Functions</div>
-                        <Select>
+                        <Select value={easingMode.type} onValueChange={handleEasingModeChange}>
                             <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Easing Functions" />
                             </SelectTrigger>
-                            <SelectContent onChange={handleEasingModeChange}>
-                                <SelectItem value="Linear">Linear</SelectItem>
-                                <SelectItem value="Sine">Sine</SelectItem>
-                                <SelectItem value="Quad">Quad</SelectItem>
-                                <SelectItem value="Cubic">Cubic</SelectItem>
-                                <SelectItem value="Quart">Quart</SelectItem>
-                                <SelectItem value="Expo">Expo</SelectItem>
-                                <SelectItem value="Circ">Circ</SelectItem>
+                            <SelectContent>
+                                <SelectItem value={AnimationEasingTypeString.LINEAR}>Linear</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.SINE}>Sine</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.QUAD}>Quad</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.CUBIC}>Cubic</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.QUART}>Quart</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.EXPO}>Expo</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.CIRC}>Circ</SelectItem>
                             </SelectContent>
                         </Select>
                         <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
