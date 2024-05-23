@@ -65,6 +65,7 @@ export class AnimationRunner {
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
   private lastUpdate: number;
+  private t: number; // for tweening
 
   constructor({fps = 20} = {}) {
     this.fps = fps;
@@ -191,6 +192,8 @@ export class AnimationRunner {
           this.deltaFrame *= -1;
         }
 
+        this.t = this.deltaFrame / (1000 / this.fps);
+
         if (this.deltaFrame > 0) {
           if (this.currentFrame < this.length - 1) {
             this.nextFrame();
@@ -229,7 +232,7 @@ export class AnimationRunner {
     }
 
     const nextFrame = this.currentAnimation!.frames[nextFrameIndex];
-    this.updateFrame(currentFrame, nextFrame, this.deltaFrame);
+    this.updateFrame(currentFrame, nextFrame, this.t);
   }
 
   private updateFrame(currentFrame: AnimationPath, nextFrame: AnimationPath | undefined, t: number) {
@@ -289,7 +292,6 @@ export class AnimationRunner {
     }
   }
 
-  // TODO: fix quart, expo, circ
   private ease(start: number, end: number, t: number) {
     switch (this.easeFunction) {
       case EasingFunction.SINE:
