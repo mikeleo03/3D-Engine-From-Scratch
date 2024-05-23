@@ -457,7 +457,10 @@ export default function Home() {
             return;
         }
 
-        // TODO (Marthen) : handle gimana mekanismenya
+        const animationRunners = animationRunnersRef.current;
+        for (const animationRunner of animationRunners) {
+            animationRunner.setEasingFunction(type);
+        }
 
         setEasingMode({ type: type });
     }
@@ -470,7 +473,9 @@ export default function Home() {
                 return;
             }
 
-            // TODO (Marthen) : process the value
+            for (const animationRunner of animationRunnersRef.current) {
+                animationRunner.fps = value;
+            }
 
             setFps(value);
         }
@@ -995,6 +1000,11 @@ export default function Home() {
     }
 
     useEffect(() => {
+        const animationRunners = animationRunnersRef.current;
+        for (const animationRunner of animationRunners) {
+            animationRunner.isPlaying = isPlaying;
+        }
+
         let animationId: number;
 
         const animate = () => {
@@ -1015,12 +1025,10 @@ export default function Home() {
     useEffect(()=>{
         const animationRunners = animationRunnersRef.current;
         for (const animationRunner of animationRunners) {
-            animationRunner.setEasingFunction(easingMode.type);
-            animationRunner.isPlaying = isPlaying;
             animationRunner.isReverse = isReversing;
             animationRunner.isLoop = isLooping;
         }
-    }, [isPlaying, isReversing, isLooping, easingMode]);
+    }, [isReversing, isLooping]);
 
     const resetCameraPosition = () => {
         const cameraNode = getCurrentCameraNode();
