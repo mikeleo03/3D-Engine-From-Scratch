@@ -26,11 +26,17 @@ export class CubeModel extends Model {
             shininess: 60
         });
 
-        const cubeMesh = meshFactory.cuboid(80, 80, 80, 
+        /* const cubeMesh = meshFactory.cuboid(80, 80, 80, 
             {basicMaterial: cubeMaterial, phongMaterial: phongCubeMaterial}
+        ); */
+
+        const hollowCubeMesh = meshFactory.hollowCuboid(
+            80, 80, 80,    // outer dimensions
+            60, 60, 60,    // inner dimensions (to create the hollow effect)
+            { basicMaterial: cubeMaterial, phongMaterial: phongCubeMaterial }
         );
 
-        return new SceneNode({name: 'Cube', mesh: cubeMesh});
+        return new SceneNode({name: 'Cube', mesh: hollowCubeMesh});
     }
 
     protected override getScene() {
@@ -44,7 +50,7 @@ export class CubeModel extends Model {
         parent.add(cube);
 
         parent.translate(new Vector3(0, 0, 0));
-        parent.rotateByDegrees(new Vector3(30, -30, 0));
+        parent.rotateByDegrees(new Vector3(30, 30, 0));
 
         nodes.push(parent);
 

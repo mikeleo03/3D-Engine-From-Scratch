@@ -19,7 +19,6 @@ export class MeshFactory {
             indices?: number[]
         } = {}
     ): void {
-
         const indices = options.indices;
 
         if (indices && indices.length % 3 !== 0) {
@@ -162,8 +161,6 @@ export class MeshFactory {
             offset?: [number, number, number],
         } = {}
     ): Mesh {
-
-
         const halfWidth = width / 2;
         const halfHeight = height / 2;
         const halfDepth = depth / 2;
@@ -208,6 +205,127 @@ export class MeshFactory {
             3, 6, 7,
             4, 5, 1,
             4, 1, 0,
+        ];
+
+        this.addGeometry(
+            vertices,
+            materialOption,
+            { indices }
+        );
+
+        return this.createMesh();
+    }
+
+    hollowCuboid(
+        outerWidth: number,
+        outerHeight: number,
+        outerDepth: number,
+        innerWidth: number,
+        innerHeight: number,
+        innerDepth: number,
+        materialOption: MaterialOptions,
+        options: {
+            offset?: [number, number, number],
+        } = {}
+    ): Mesh {
+        const halfOuterWidth = outerWidth / 2;
+        const halfOuterHeight = outerHeight / 2;
+        const halfOuterDepth = outerDepth / 2;
+        const halfInnerWidth = innerWidth / 2;
+        const halfInnerHeight = innerHeight / 2;
+        const halfInnerDepth = innerDepth / 2;
+
+        const offset = options.offset || [0, 0, 0];
+
+        // define 16 vertices of the hollow cuboid
+        const vertices: [number, number, number][] = [
+            // outer front face
+            [-halfOuterWidth, -halfOuterHeight, halfOuterDepth],
+            [halfOuterWidth, -halfOuterHeight, halfOuterDepth],
+            [halfOuterWidth, halfOuterHeight, halfOuterDepth],
+            [-halfOuterWidth, halfOuterHeight, halfOuterDepth],
+            // outer back face
+            [-halfOuterWidth, -halfOuterHeight, -halfOuterDepth],
+            [halfOuterWidth, -halfOuterHeight, -halfOuterDepth],
+            [halfOuterWidth, halfOuterHeight, -halfOuterDepth],
+            [-halfOuterWidth, halfOuterHeight, -halfOuterDepth],
+
+            // inner front face
+            [-halfInnerWidth, -halfInnerHeight, halfInnerDepth],
+            [halfInnerWidth, -halfInnerHeight, halfInnerDepth],
+            [halfInnerWidth, halfInnerHeight, halfInnerDepth],
+            [-halfInnerWidth, halfInnerHeight, halfInnerDepth],
+            // inner back face
+            [-halfInnerWidth, -halfInnerHeight, -halfInnerDepth],
+            [halfInnerWidth, -halfInnerHeight, -halfInnerDepth],
+            [halfInnerWidth, halfInnerHeight, -halfInnerDepth],
+            [-halfInnerWidth, halfInnerHeight, -halfInnerDepth],
+        ];
+
+        // apply offset
+        for (let i = 0; i < vertices.length; i++) {
+            vertices[i][0] += offset[0];
+            vertices[i][1] += offset[1];
+            vertices[i][2] += offset[2];
+        }
+
+        // define the indices of the hollow cuboid
+        const indices = [
+            // outer front face
+            0, 1, 2,
+            0, 2, 3,
+            // outer back face
+            4, 5, 6,
+            4, 6, 7,
+            // outer left face
+            0, 3, 7,
+            0, 7, 4,
+            // outer right face
+            1, 2, 6,
+            1, 6, 5,
+            // outer top face
+            2, 3, 7,
+            2, 7, 6,
+            // outer bottom face
+            0, 1, 5,
+            0, 5, 4,
+
+            // inner front face
+            8, 9, 10,
+            8, 10, 11,
+            // inner back face
+            12, 13, 14,
+            12, 14, 15,
+            // inner left face
+            8, 11, 15,
+            8, 15, 12,
+            // inner right face
+            9, 10, 14,
+            9, 14, 13,
+            // inner top face
+            10, 11, 15,
+            10, 15, 14,
+            // inner bottom face
+            8, 9, 13,
+            8, 13, 12,
+
+            // connecting faces
+            0, 1, 9,
+            0, 9, 8,
+            1, 5, 13,
+            1, 13, 9,
+            5, 4, 12,
+            5, 12, 13,
+            4, 0, 8,
+            4, 8, 12,
+            3, 2, 10,
+            3, 10, 11,
+            2, 6, 14,
+            2, 14, 10,
+            6, 7, 15,
+            6, 15, 14,
+            7, 3, 11,
+            7, 11, 15,
         ];
 
         this.addGeometry(
