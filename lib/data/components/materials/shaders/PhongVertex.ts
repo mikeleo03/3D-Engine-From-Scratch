@@ -3,6 +3,7 @@ precision mediump float;
 
 attribute vec4 a_position;
 attribute vec4 a_faceNormal;
+attribute vec4 a_vertexNormal;
 
 uniform mat4 u_worldMatrix;
 uniform mat4 u_viewMatrix;
@@ -15,7 +16,7 @@ void main() {
     vec3 light = u_lightPosition;
     L = normalize(light - pos);
     E = -pos;
-    N = normalize((u_worldMatrix * a_faceNormal).xyz);
+    N = normalize((u_viewMatrix * u_worldMatrix * a_faceNormal).xyz);
     gl_Position = u_viewMatrix * u_worldMatrix * a_position;
 }
 `;

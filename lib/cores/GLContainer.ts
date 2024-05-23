@@ -176,18 +176,24 @@ export class GLContainer {
         return (...values) => {
             // Render Time (saat memanggil setAttributes() pada render loop)
             
+            this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
 
             const v = values[0];
 
             if (v instanceof GLBufferAttribute) {
-                this._gl.bindBuffer(v.accessor.bufferView.target, buf);
-                this._gl.bufferData(v.accessor.bufferView.target, v.data as TypedArray, this._gl.STATIC_DRAW);
+                if (v.accessor.bufferView.target !== this._gl.ARRAY_BUFFER) {
+                    throw new Error("BufferView target must be ARRAY_BUFFER");
+                }
+
+                // console.log(info.name, v.data);
+
+                this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
+                this._gl.bufferData(this._gl.ARRAY_BUFFER, v.data as TypedArray, this._gl.STATIC_DRAW);
 
                 this._gl.enableVertexAttribArray(loc);
                 this._gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
                 
             } else {
-                this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
                 this._gl.disableVertexAttribArray(loc);
                 if (v instanceof Float32Array)
                     // @ts-ignore
