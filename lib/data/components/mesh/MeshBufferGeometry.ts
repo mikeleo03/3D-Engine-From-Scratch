@@ -249,6 +249,55 @@ export class MeshBufferGeometry {
         delete this._attributes[name];
     }
 
+    getExpandedPosition(
+        accessor: Accessor
+    ): GLBufferAttribute {
+        if (accessor.componentType !== WebGLType.FLOAT) {
+            throw new Error("Accessor component type must be FLOAT");
+        }
+
+        if (accessor.type !== AccessorComponentType.VEC3) {
+            throw new Error("Accessor type must be VEC3");
+        }
+
+        const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
+
+        if (!position) {
+            throw new Error("Position attribute is required to expand positions");
+        }
+
+        const indices = this._indices;
+
+        if (!indices) {
+            throw new Error("Indices are required to expand positions");
+        }
+
+        if (accessor.count !== indices.count) {
+            throw new Error("Accessor count must be the same as indices count");
+        }
+
+        const indicesData = indices.data;
+        const positionData = position.data;
+
+        const expandedPosition = new Float32Array(accessor.count * 3);
+
+        for (let i = 0; i < indices.count; i++) {
+            const index = indicesData[i] * 3;
+            const expandedIndex = i * 3;
+
+            expandedPosition[expandedIndex] = positionData[index];
+            expandedPosition[expandedIndex + 1] = positionData[index + 1];
+            expandedPosition[expandedIndex + 2] = positionData[index + 2];
+        }
+
+        const expandedPositionAttribute = new GLBufferAttribute(
+            accessor, MeshBufferGeometry.POSITION_SIZE, new Float32ArrayConverter());
+
+        expandedPositionAttribute.setData(expandedPosition);
+
+        return expandedPositionAttribute;
+    }
+
 
     calculateFaceNormals(
         accessor: Accessor,
@@ -298,10 +347,6 @@ export class MeshBufferGeometry {
         this.setAttribute(MeshPrimitiveAttribute.FACE_NORMAL, normal);
     }
 
-    private isNumberEqual(a: number, b: number, epsilon = 1e-9): boolean {
-        return Math.abs(a - b) < epsilon;
-    }
-
     calculateVertexNormals(
         accessor: Accessor,
         options: {
@@ -335,8 +380,8 @@ export class MeshBufferGeometry {
             throw new Error("Indices are required to calculate normals");
         }
 
-        if (accessor.count !== position.count) {
-            throw new Error("Accessor count must be the same as position count");
+        if (accessor.count !== indices.count) {
+            throw new Error("Accessor count must be the same as indices count");
         }
 
         let normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL);
@@ -403,7 +448,18 @@ export class MeshBufferGeometry {
             }
         }
 
-        vertexNormal.setData(accumulatedNormals);
+        // define the vertex normal for each index
+        const finalVertexNormals = new Float32Array(indicesData.length * 3);
+
+        for (let i = 0; i < indicesData.length; i++) {
+            const index = indicesData[i];
+            finalVertexNormals[i * 3] = accumulatedNormals[index * 3];
+            finalVertexNormals[i * 3 + 1] = accumulatedNormals[index * 3 + 1];
+            finalVertexNormals[i * 3 + 2] = accumulatedNormals[index * 3 + 2];
+        }
+
+        // Assign the calculated vertex normals to the vertex normal attribute
+        vertexNormal.setData(finalVertexNormals);
         this.setAttribute(MeshPrimitiveAttribute.VERTEX_NORMAL, vertexNormal);
     }
 }

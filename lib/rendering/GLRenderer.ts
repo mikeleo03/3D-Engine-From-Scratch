@@ -4,6 +4,10 @@ import { Scene } from "../data/Scene";
 import { Color, WebGLType } from "../cores";
 import { DirectionalLight } from "../data/components/lights";
 import { v4 as uuid } from "uuid";
+import { GLTFBuffer } from "../data/buffers/GLTFBuffer";
+import { BufferView } from "../data/buffers/BufferView";
+import { AccessorComponentType, BufferViewTarget } from "../data/types/gltftypes";
+import { Accessor } from "../data/buffers/Accessor";
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -36,7 +40,7 @@ export class GLRenderer {
         if (mesh) {
             for (const geometry of mesh.geometries) {
                 const material = this._enablePhongShading ? geometry.phongMaterial : geometry.basicMaterial;
-                
+
                 if (!material) {
                     continue;
                 }
@@ -58,17 +62,35 @@ export class GLRenderer {
                     worldMatrix: root.worldMatrix.transpose().buffer,
                 });
 
-                this._glContainer.setAttributes(programInfo, geometry.attributes)
-                
-                const indicesAttribute = geometry.indices;
+                const geometryAttributes = { ...geometry.attributes };
 
-                if (!indicesAttribute) {
-                    throw new Error("Indices attribute is required");
+                if (
+                    geometryAttributes.position
+                    && geometry.indices
+                ) {
+                    const bytesCount = geometry.indices.count * 3 * 4;
+                    const newBuffer = GLTFBuffer.empty(bytesCount);
+                    const bufferView = new BufferView(newBuffer, 0, bytesCount, BufferViewTarget.ARRAY_BUFFER);
+                    const accessor = new Accessor(
+                        bufferView,
+                        0,
+                        WebGLType.FLOAT,
+                        geometry.indices.count,
+                        AccessorComponentType.VEC3,
+                        [],
+                        []
+                    );
+                    geometryAttributes.position = geometry.getExpandedPosition(accessor);
+
+                    console.log(geometryAttributes.position.data);
+                    console.log(geometryAttributes.faceNormal!!.data);
+                    console.log(geometryAttributes.vertexNormal!!.data);
                 }
 
-                this._glContainer.setIndices(indicesAttribute);
 
-                gl.drawElements(gl.TRIANGLES, indicesAttribute.count, gl.UNSIGNED_SHORT, 0);
+                this._glContainer.setAttributes(programInfo, geometryAttributes)
+
+                gl.drawArrays(gl.TRIANGLES, 0, geometryAttributes.position?.count ?? 0);
             }
         }
 
