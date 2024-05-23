@@ -94,7 +94,7 @@ export default function Home() {
         zoom: 1,
     });
     const [easingMode, setEasingMode] = useState<AnimationState>({ 
-        type: AnimationEasingTypeString.LINEAR
+        type: AnimationEasingTypeString.NONE
     });
     const [fps, setFps] = useState<number>(20);
 
@@ -1126,6 +1126,7 @@ export default function Home() {
                                 <SelectValue placeholder="Choose Easing Functions" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value={AnimationEasingTypeString.NONE}>None</SelectItem>
                                 <SelectItem value={AnimationEasingTypeString.LINEAR}>Linear</SelectItem>
                                 <SelectItem value={AnimationEasingTypeString.SINE}>Sine</SelectItem>
                                 <SelectItem value={AnimationEasingTypeString.QUAD}>Quad</SelectItem>

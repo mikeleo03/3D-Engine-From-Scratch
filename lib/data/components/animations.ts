@@ -52,6 +52,7 @@ export enum EasingFunction {
   QUART = 'Quart',
   EXPO = 'Expo',
   CIRC = 'Circ',
+  NONE = 'None'
 }
 
 export class AnimationRunner {
@@ -59,7 +60,7 @@ export class AnimationRunner {
   isReverse: boolean = false;
   isLoop: boolean = false;
   fps: number = 30;
-  easeFunction: EasingFunction = EasingFunction.LINEAR;
+  easeFunction: EasingFunction = EasingFunction.NONE;
   private currentFrame: number = 0;
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
@@ -93,72 +94,47 @@ export class AnimationRunner {
     return this.currentAnimation!.frames[this.currentFrame];
   }
 
-  private calculateEasing(currentTime: number, startValue: number, changeInValue: number, duration: number): number {
-    switch (this.easeFunction) {
-      case EasingFunction.SINE: //ease inout
-        return changeInValue * Math.sin(currentTime / duration * Math.PI / 2) + startValue;
-      case EasingFunction.QUAD: //ease inout
-        currentTime /= duration / 2;
-        if (currentTime < 1) return changeInValue / 2 * currentTime * currentTime + startValue;
-        return -changeInValue / 2 * ((--currentTime) * (currentTime - 2) - 1) + startValue;
-      case EasingFunction.CUBIC: //ease inout
-        return changeInValue * ((currentTime = currentTime / duration - 1) * currentTime * currentTime + 1) + startValue;
-      case EasingFunction.QUART: //ease inout
-        return changeInValue * ((currentTime = currentTime / duration - 1) * currentTime * currentTime * currentTime + 1) + startValue;
-      case EasingFunction.EXPO: //ease inout
-        currentTime /= duration / 2;
-        if (currentTime < 1) return changeInValue / 2 * Math.pow(2, 10 * (currentTime - 1)) + startValue;
-        return changeInValue / 2 * (-Math.pow(2, -10 * --currentTime) + 2) + startValue;
-      case EasingFunction.CIRC: //ease inout
-        return changeInValue * (1 - Math.sqrt(1 - (currentTime /= duration) * currentTime)) + startValue;
-      default: // linear
-        return changeInValue * currentTime / duration + startValue;
-    }
-  }
-
   nextFrame() {
     if (this.currentFrame < this.length - 1) {
       this.currentFrame++;
-      this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
       this.updateCurrentNode();
+      this.deltaFrame = 0;
     }
   }
 
   prevFrame() {
     if (this.currentFrame > 0) {
       this.currentFrame--;
-      this.deltaFrame = 0; // ensure that the animation is playing from the start of the frame
       this.updateCurrentNode();
+      this.deltaFrame = 0;
     }
   }
 
   firstFrame() {
     this.currentFrame = 0;
-    this.deltaFrame = 0;
     this.updateCurrentNode();
+    this.deltaFrame = 0;
   }
 
   lastFrame() {
     this.currentFrame = this.length - 1;
-    this.deltaFrame = 0;
     this.updateCurrentNode();
+    this.deltaFrame = 0;
   }
 
   update() {
-    console.log(this.fps)
     if (this.isPlaying) {
       const now = Date.now();
       const elapsed = now - this.lastUpdate;
       if (elapsed >= 1000 / this.fps) {
         this.lastUpdate = now;
+        this.deltaFrame += elapsed / 1000 * this.fps;
+
         if (this.isReverse) {
-          this.deltaFrame -= 1;
-        } else {
-          this.deltaFrame += 1;
+          this.deltaFrame *= -1;
         }
 
-        if (this.deltaFrame >= 1) {
-          this.deltaFrame = 0;
+        if (this.deltaFrame) {
           if (this.currentFrame < this.length - 1) {
             this.nextFrame();
           } else if (this.isLoop) {
@@ -168,7 +144,6 @@ export class AnimationRunner {
             return false;
           }
         } else if (this.deltaFrame <= -1) {
-          this.deltaFrame = 0;
           if (this.currentFrame > 0) {
             this.prevFrame();
           } else if (this.isLoop) {
@@ -185,13 +160,49 @@ export class AnimationRunner {
 
   private updateCurrentNode() {
     // update the scene graph based on the current frame
-    const frame = this.frame;
-    this.updateFrame(frame);
+    const currentFrame = this.frame;
+    const nextFrame = this.currentAnimation!.frames[this.currentFrame + 1];
+    this.updateFrame(currentFrame, nextFrame, this.deltaFrame);
   }
 
-  private updateFrame(frame: AnimationPath) {
-    if (frame.nodeKeyframePairs) {
-      for (let pair of frame.nodeKeyframePairs) {
+  private updateFrame(currentFrame: AnimationPath, nextFrame: AnimationPath | undefined, t: number) {
+    if (currentFrame.nodeKeyframePairs && nextFrame && nextFrame.nodeKeyframePairs && this.easeFunction != EasingFunction.NONE) {
+      for (let i = 0; i < currentFrame.nodeKeyframePairs.length; i++) {
+        const currentNodePair = currentFrame.nodeKeyframePairs[i];
+        const nextNodePair = nextFrame.nodeKeyframePairs[i];
+
+        const node = currentNodePair.node;
+        const currentKeyframe = currentNodePair.keyframe;
+        const nextKeyframe = nextNodePair.keyframe;
+
+        if (currentKeyframe.translation && nextKeyframe.translation) {
+          node.position = new Vector3(
+            this.ease(currentKeyframe.translation[0], nextKeyframe.translation[0], t),
+            this.ease(currentKeyframe.translation[1], nextKeyframe.translation[1], t),
+            this.ease(currentKeyframe.translation[2], nextKeyframe.translation[2], t)
+          );
+        }
+
+        if (currentKeyframe.rotation && nextKeyframe.rotation) {
+          node.rotation = Quaternion.fromDegrees(
+            this.ease(currentKeyframe.rotation[0], nextKeyframe.rotation[0], t),
+            this.ease(currentKeyframe.rotation[1], nextKeyframe.rotation[1], t),
+            this.ease(currentKeyframe.rotation[2], nextKeyframe.rotation[2], t)
+          );
+        }
+
+        if (currentKeyframe.scale && nextKeyframe.scale) {
+          node.scale = new Vector3(
+            this.ease(currentKeyframe.scale[0], nextKeyframe.scale[0], t),
+            this.ease(currentKeyframe.scale[1], nextKeyframe.scale[1], t),
+            this.ease(currentKeyframe.scale[2], nextKeyframe.scale[2], t)
+          );
+        }
+      }
+    }
+
+    else if (currentFrame.nodeKeyframePairs) {
+      for (let pair of currentFrame.nodeKeyframePairs) {
         const node = pair.node;
         const keyframe = pair.keyframe;
 
@@ -205,6 +216,25 @@ export class AnimationRunner {
           node.scale = new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2]);
         }
       }
+    }
+  }
+
+  private ease(start: number, end: number, t: number) {
+    switch (this.easeFunction) {
+      case EasingFunction.SINE:
+        return start + (end - start) * Math.sin(1 - Math.cos(t * Math.PI / 2));
+      case EasingFunction.QUAD:
+        return start + (end - start) * Math.pow(t, 2);
+      case EasingFunction.CUBIC:
+        return start + (end - start) * Math.pow(t, 3);
+      case EasingFunction.QUART:
+        return start + (end - start) * Math.pow(t, 4);
+      case EasingFunction.EXPO:
+        return start + (end - start) * Math.pow(2, 10 * (t - 1));
+      case EasingFunction.CIRC:
+        return start + (end - start) * (1 - Math.sqrt(1 - Math.pow(t, 2)));
+      default: // LINEAR
+        return start + (end - start) * t;
     }
   }
 }
