@@ -1100,7 +1100,7 @@ export default function Home() {
                 {/* Left controller */}
                 <div className="w-[400px] bg-gray-700 h-full text-white overflow-y-auto overflow-x-hidden">
                     {/* Animation */}
-                    <div className="w-full p-6 py-4 pt-4">
+                    <div className="w-full p-6 py-4 pt-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
                         <div className="text-base font-semibold pb-1">Animation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
@@ -1110,7 +1110,7 @@ export default function Home() {
                         </div>
                         <div className="text-base font-semibold py-1">Easing Functions</div>
                         <Select value={easingMode.type} onValueChange={handleEasingModeChange}>
-                            <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
+                            <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Easing Functions" />
                             </SelectTrigger>
                             <SelectContent>
@@ -1145,6 +1145,7 @@ export default function Home() {
                                 <div className="text-base font-semibold pt-2 py-1">FPS</div>
                                 <div className="flex flex-row w-full pb-1 space-x-2">
                                     <Input
+                                        disabled={disableTRS}
                                         className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
@@ -1160,7 +1161,7 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Tree */}
-                    <div className="w-full h-auto p-6 py-4 pt-4">
+                    <div className="w-full h-auto p-6 py-4 pt-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
                         <div className="flex flex-col w-full h-auto px-3 overflow-x-hidden">
                             {gltfStateRef.current && gltfStateRef.current.CurrentScene && gltfStateRef.current.CurrentScene.roots.map((root, index) => (
@@ -1183,7 +1184,7 @@ export default function Home() {
                 {/* Right controller */}
                 <div className="w-[400px] bg-gray-700 overflow-y-auto h-full text-white ">
                     {/* TRS */}
-                    <div className="w-full p-6 py-4 pt-5">
+                    <div className="w-full p-6 py-4 pt-5 space-y-1">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
                         <div className="text-base font-semibold pb-1">Translation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
@@ -1192,7 +1193,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(translation.x) ? '' : translation.x}
@@ -1205,7 +1206,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(translation.y) ? '' : translation.y}
@@ -1218,7 +1219,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(translation.z) ? '' : translation.z}
@@ -1234,7 +1235,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(rotation.x) ? '' : rotation.x}
@@ -1247,7 +1248,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(rotation.y) ? '' : rotation.y}
@@ -1260,7 +1261,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(rotation.z) ? '' : rotation.z}
@@ -1276,7 +1277,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(scale.x) ? '' : scale.x}
@@ -1289,7 +1290,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(scale.y) ? '' : scale.y}
@@ -1302,7 +1303,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(scale.z) ? '' : scale.z}
@@ -1317,11 +1318,11 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Camera */}
-                    <div className="w-full p-6 py-4">
+                    <div className="w-full p-6 py-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">📷 Main Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
                         <Select value={camera.type} onValueChange={handleCameraModeChange}>
-                            <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
+                            <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -1382,11 +1383,11 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Second Camera */}
-                    <div className="w-full p-6 py-4">
+                    <div className="w-full p-6 py-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">📷 Second Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
                         <Select value={secondCamera.type} onValueChange={handleSecondCameraModeChange}>
-                            <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
+                            <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -1447,7 +1448,7 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Shader */}
-                    <div className="w-full p-6 py-4 pb-6">
+                    <div className="w-full p-6 py-4 pb-6 space-y-1">
                         <div className="text-lg font-semibold pb-2">🎨 Shader</div>
                         <div className="flex flex-row justify-between">   
                             <Label htmlFor="shader-switch" className='text-base'>Phong Shader</Label>
