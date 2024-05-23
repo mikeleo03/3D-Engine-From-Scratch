@@ -32,7 +32,7 @@ export default function TestPage() {
         canvas.width / 2,
         0.01,
         1000,
-        1
+        5
       );
 
       const perspectiveCamera = new PerspectiveCamera(
@@ -100,7 +100,7 @@ export default function TestPage() {
       scene.addNode(cameraNodes[0]);
       scene.addNode(lightNodes[0]);
 
-      glRenderer.enablePhongShading = true;
+      glRenderer.enablePhongShading = false;
       glRenderer.render(scene, cameraNodes[0]);
 
       // jojo.download();
