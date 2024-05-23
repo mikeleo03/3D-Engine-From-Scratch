@@ -138,7 +138,8 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
-                  translation: [0, 0, 45]
+                  translation: [0, 0, 45],
+                  rotation: [0, 0, 30]
                 }
               }
             ]
@@ -148,6 +149,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 60]
                 }
               }
@@ -158,6 +160,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 75]
                 }
               }
@@ -168,6 +171,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 90]
                 }
               }
@@ -178,6 +182,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 105]
                 }
               }
@@ -188,6 +193,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 120]
                 }
               }
@@ -198,6 +204,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 135]
                 }
               }
@@ -208,6 +215,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 150]
                 }
               }
@@ -218,6 +226,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 165]
                 }
               }
@@ -228,6 +237,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 180]
                 }
               }
@@ -238,6 +248,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 195]
                 }
               }
@@ -248,6 +259,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 210]
                 }
               }
@@ -258,6 +270,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 225]
                 }
               }
@@ -268,6 +281,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 240]
                 }
               }
@@ -278,6 +292,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 255]
                 }
               }
@@ -288,6 +303,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 270]
                 }
               }
@@ -298,6 +314,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 285]
                 }
               }
@@ -308,6 +325,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 300]
                 }
               }
@@ -318,6 +336,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 315]
                 }
               }
@@ -328,6 +347,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 330]
                 }
               }
@@ -338,6 +358,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 345]
                 }
               }
@@ -348,6 +369,7 @@ export class MarthenModel extends Model {
               {
                 node: headRef,
                 keyframe: {
+                  translation: [0, 0, 45],
                   rotation: [0, 0, 360]
                 }
               }
