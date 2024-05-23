@@ -167,8 +167,8 @@ export enum CameraTypeString {
     PERSPECTIVE = "perspective",
     ORTHOGRAPHIC = "orthographic",
     OBLIQUE = "oblique"
-
 }
+
 export type CameraType = {
     "type": CameraTypeString.PERSPECTIVE,
     "perspective": {
@@ -250,6 +250,17 @@ export type AnimationPathType = {
 export type AnimationClipType = {
     name: string;
     frames: AnimationPathType[];
+}
+
+export enum AnimationEasingTypeString {
+    LINEAR = "Linear",
+    SINE = "Sine",
+    QUAD = "Quad",
+    CUBIC = "Cubic",
+    QUART = "Quart",
+    EXPO = "Expo",
+    CIRC = "Circ",
+    NONE = "None"
 }
 
 export type GLTFType = {

@@ -20,7 +20,7 @@ import { RenderManager } from '@/lib/rendering/RenderManager';
 import { FileUtil } from '@/lib/utils/FileUtil';
 import { AnimationRunner } from "@/lib/data/components/animations";
 import { Quaternion, Vector3 } from '@/lib/data/math';
-import { CameraTypeString, LightTypeString } from '@/lib/data/types/gltftypes';
+import { AnimationEasingTypeString, CameraTypeString, LightTypeString } from '@/lib/data/types/gltftypes';
 import NodeView from '@/components/NodeView';
 import { Camera } from 'lucide-react';
 import { Label } from '@/components/ui/label';
@@ -41,6 +41,10 @@ interface CameraState {
     zoom: number;
     obliqueAngleX?: number;
     obliqueAngleY?: number;
+}
+
+interface AnimationState {
+    type: AnimationEasingTypeString;
 }
 
 interface ShaderState {
@@ -89,11 +93,14 @@ export default function Home() {
         type: CameraTypeString.PERSPECTIVE,
         zoom: 1,
     });
+    const [easingMode, setEasingMode] = useState<AnimationState>({ 
+        type: AnimationEasingTypeString.NONE
+    });
+    const [fps, setFps] = useState<number>(20);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isReversing, setIsReversing] = useState(false);
     const [isLooping, setIsLooping] = useState(false);
-    const [easingMode, setEasingMode] = useState({ mode: "Linear" });
     const [currentNode, setCurrentNode] = useState<SceneNode>();
     const [disableTRS, setDisableTRS] = useState(true);
     const [shader, setShader] = useState<ShaderState>({ phongEnabled: false });
@@ -437,8 +444,41 @@ export default function Home() {
         setIsLooping(prevState => !prevState);
     };
 
-    const handleEasingModeChange: React.FormEventHandler<HTMLDivElement> = (e) => {
-        setEasingMode({ mode: (e.target as HTMLSelectElement).value });
+    const handleEasingModeChange = (type: string) => {
+        const value = type as AnimationEasingTypeString;
+        changeCurrentAnimationEasing(value);
+    };
+
+    const changeCurrentAnimationEasing = (type: AnimationEasingTypeString) => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            setEasingMode({ type: type });
+            return;
+        }
+
+        const animationRunners = animationRunnersRef.current;
+        for (const animationRunner of animationRunners) {
+            animationRunner.setEasingFunction(type);
+        }
+
+        setEasingMode({ type: type });
+    }
+
+    const handleFPSChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value !== null && e.target.value !== undefined) {
+            let value = parseFloat(e.target.value);
+
+            if (isNaN(value)) {
+                return;
+            }
+
+            for (const animationRunner of animationRunnersRef.current) {
+                animationRunner.fps = value;
+            }
+
+            setFps(value);
+        }
     };
 
     const handleCurrentNodeChange = () => {
@@ -598,6 +638,8 @@ export default function Home() {
             }
 
             else {
+                setFps(20);
+                setEasingMode({ type: AnimationEasingTypeString.NONE });
                 const file = input.files[0];
                 const gltfState = await gltfParser.parse(file)
                 gltfStateRef.current = gltfState;
@@ -960,13 +1002,22 @@ export default function Home() {
     }
 
     useEffect(() => {
-        let animationId;
+        const animationRunners = animationRunnersRef.current;
+        for (const animationRunner of animationRunners) {
+            animationRunner.setIsPlaying(isPlaying);
+        }
+
+        let animationId: number;
 
         const animate = () => {
             if (isPlaying) {
                 const animationRunners = animationRunnersRef.current;
                 for (const animationRunner of animationRunners) {
-                    animationRunner.update();
+                    const isStillPlaying = animationRunner.update();
+                    if (!isStillPlaying) {
+                        setIsPlaying(false);
+                        return;
+                    }
                 }
             }
             animationId = requestAnimationFrame(animate);
@@ -980,12 +1031,10 @@ export default function Home() {
     useEffect(()=>{
         const animationRunners = animationRunnersRef.current;
         for (const animationRunner of animationRunners) {
-            animationRunner.setEasingFunction(easingMode.mode);
-            animationRunner.isPlaying = isPlaying;
             animationRunner.isReverse = isReversing;
             animationRunner.isLoop = isLooping;
         }
-    }, [isPlaying, isReversing, isLooping, easingMode]);
+    }, [isReversing, isLooping]);
 
     const resetCameraPosition = () => {
         const cameraNode = getCurrentCameraNode();
@@ -1065,7 +1114,7 @@ export default function Home() {
                 {/* Left controller */}
                 <div className="w-[400px] bg-gray-700 h-full text-white overflow-y-auto overflow-x-hidden">
                     {/* Animation */}
-                    <div className="w-full p-6 py-4 pt-4">
+                    <div className="w-full p-6 py-4 pt-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">🎞️ Animation Controller</div>
                         <div className="text-base font-semibold pb-1">Animation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
@@ -1074,33 +1123,51 @@ export default function Home() {
                             <Button onClick={toggleLoop}>{isLooping ? '🔂 Stop' : '🔁 Loop'}</Button>
                         </div>
                         <div className="text-base font-semibold py-1">Easing Functions</div>
-                        <Select>
-                            <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
+                        <Select value={easingMode.type} onValueChange={handleEasingModeChange}>
+                            <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Easing Functions" />
                             </SelectTrigger>
-                            <SelectContent onChange={handleEasingModeChange}>
-                                <SelectItem value="Linear">Linear</SelectItem>
-                                <SelectItem value="Sine">Sine</SelectItem>
-                                <SelectItem value="Quad">Quad</SelectItem>
-                                <SelectItem value="Cubic">Cubic</SelectItem>
-                                <SelectItem value="Quart">Quart</SelectItem>
-                                <SelectItem value="Expo">Expo</SelectItem>
-                                <SelectItem value="Circ">Circ</SelectItem>
+                            <SelectContent>
+                                <SelectItem value={AnimationEasingTypeString.NONE}>None</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.LINEAR}>Linear</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.SINE}>Sine</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.QUAD}>Quad</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.CUBIC}>Cubic</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.QUART}>Quart</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.EXPO}>Expo</SelectItem>
+                                <SelectItem value={AnimationEasingTypeString.CIRC}>Circ</SelectItem>
                             </SelectContent>
                         </Select>
-                        <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
-                        <div className="flex flex-row w-full pb-1 space-x-2">
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleFirstFrame()}>First</Button>
+                        <div className='w-full flex flex-row space-x-4'>
+                            <div className='w-full flex-col'>
+                                <div className="text-base font-semibold pt-2 py-1">Frame Selector</div>
+                                <div className="flex flex-row w-full pb-1 space-x-2">
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handleFirstFrame()}>First</Button>
+                                    </div>
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handlePrevFrame()}>Prev</Button>
+                                    </div>
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handleNextFrame()}>Next</Button>
+                                    </div>
+                                    <div className="flex flex-row justify-center items-center text-center">
+                                        <Button onClick={() => handleLastFrame()}>Last</Button>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handlePrevFrame()}>Prev</Button>
-                            </div>
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleNextFrame()}>Next</Button>
-                            </div>
-                            <div className="flex flex-row justify-center items-center text-center">
-                                <Button onClick={() => handleLastFrame()}>Last</Button>
+                            <div className='w-full flex-col'>
+                                <div className="text-base font-semibold pt-2 py-1">FPS</div>
+                                <div className="flex flex-row w-full pb-1 space-x-2">
+                                    <Input
+                                        disabled={disableTRS}
+                                        className="h-10 bg-gray-800 border-none"
+                                        type="number"
+                                        placeholder="0"
+                                        value={isNaN(fps) ? '' : fps}
+                                        onChange={(e) => handleFPSChange(e)}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1109,7 +1176,7 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Tree */}
-                    <div className="w-full h-auto p-6 py-4 pt-4">
+                    <div className="w-full h-auto p-6 py-4 pt-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">🌲 Component Tree</div>
                         <div className="flex flex-col w-full h-auto px-3 overflow-x-hidden">
                             {gltfStateRef.current && gltfStateRef.current.CurrentScene && gltfStateRef.current.CurrentScene.roots.map((root, index) => (
@@ -1132,7 +1199,7 @@ export default function Home() {
                 {/* Right controller */}
                 <div className="w-[400px] bg-gray-700 overflow-y-auto h-full text-white ">
                     {/* TRS */}
-                    <div className="w-full p-6 py-4 pt-5">
+                    <div className="w-full p-6 py-4 pt-5 space-y-1">
                         <div className="text-lg font-semibold pb-2">🎯 Translation, Rotation, and Scale</div>
                         <div className="text-base font-semibold pb-1">Translation</div>
                         <div className="flex flex-row w-full pb-1 space-x-2">
@@ -1141,7 +1208,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(translation.x) ? '' : translation.x}
@@ -1154,7 +1221,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(translation.y) ? '' : translation.y}
@@ -1167,7 +1234,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(translation.z) ? '' : translation.z}
@@ -1183,7 +1250,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(rotation.x) ? '' : rotation.x}
@@ -1196,7 +1263,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(rotation.y) ? '' : rotation.y}
@@ -1209,7 +1276,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(rotation.z) ? '' : rotation.z}
@@ -1225,7 +1292,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(scale.x) ? '' : scale.x}
@@ -1238,7 +1305,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(scale.y) ? '' : scale.y}
@@ -1251,7 +1318,7 @@ export default function Home() {
                                 <div className="w-3/4">
                                     <Input
                                         disabled={disableTRS}
-                                        className="h-8 bg-gray-800 border-none"
+                                        className="h-10 bg-gray-800 border-none"
                                         type="number"
                                         placeholder="0"
                                         value={isNaN(scale.z) ? '' : scale.z}
@@ -1266,11 +1333,11 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Camera */}
-                    <div className="w-full p-6 py-4">
+                    <div className="w-full p-6 py-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">📷 Main Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
                         <Select value={camera.type} onValueChange={handleCameraModeChange}>
-                            <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
+                            <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -1331,11 +1398,11 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Second Camera */}
-                    <div className="w-full p-6 py-4">
+                    <div className="w-full p-6 py-4 space-y-1">
                         <div className="text-lg font-semibold pb-2">📷 Second Camera</div>
                         <div className="text-base font-semibold pb-1">Camera Mode</div>
                         <Select value={secondCamera.type} onValueChange={handleSecondCameraModeChange}>
-                            <SelectTrigger className="w-full h-8 bg-gray-800 border-none">
+                            <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
                                 <SelectValue placeholder="Choose Camera Mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -1396,7 +1463,7 @@ export default function Home() {
                     <Separator className="w-full" />
 
                     {/* Shader */}
-                    <div className="w-full p-6 py-4 pb-6">
+                    <div className="w-full p-6 py-4 pb-6 space-y-1">
                         <div className="text-lg font-semibold pb-2">🎨 Shader</div>
                         <div className="flex flex-row justify-between">   
                             <Label htmlFor="shader-switch" className='text-base'>Phong Shader</Label>
