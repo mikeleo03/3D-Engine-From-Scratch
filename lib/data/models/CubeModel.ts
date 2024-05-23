@@ -92,13 +92,12 @@ export class CubeModel extends Model {
             {basicMaterial: cubeMaterial, phongMaterial: phongCubeMaterial}
         ); */
 
-        const hollowCubeMesh = meshFactory.hollowCuboid(
-            80, 80, 80,    // outer dimensions
-            60, 60, 60,    // inner dimensions (to create the hollow effect)
+        const cubeMesh = meshFactory.cuboid(
+            80, 80, 80,
             { basicMaterial: cubeMaterial, phongMaterial: phongCubeMaterial }
         );
 
-        return new SceneNode({name: 'Cube', mesh: hollowCubeMesh});
+        return new SceneNode({name: 'Cube', mesh: cubeMesh});
     }
 
     protected override getScene() {

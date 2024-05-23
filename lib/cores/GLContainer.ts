@@ -370,6 +370,7 @@ export class GLContainer {
         uniforms: { [uniformName: string]: UniformSingleDataType },
     ): void {
         for (let uniformName in uniforms) {
+            if (uniforms[uniformName] == undefined) continue;
             this.setUniform(programInfo, uniformName, uniforms[uniformName]);
         }
     }
