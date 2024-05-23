@@ -63,9 +63,11 @@ export class AnimationRunner {
   private currentFrame: number = 0;
   private deltaFrame: number = 0;
   private currentAnimation?: AnimationClip;
+  private lastUpdate: number;
 
   constructor({fps = 30} = {}) {
     this.fps = fps;
+    this.lastUpdate = Date.now();
   }
 
   get CurrentFrame() {
@@ -81,6 +83,10 @@ export class AnimationRunner {
     this.currentFrame = 0;
     this.deltaFrame = 0;
     this.updateCurrentNode();
+  }
+
+  public setEasingFunction(easeFunction: string){
+    this.easeFunction = easeFunction as EasingFunction;
   }
 
   private get frame() {
@@ -138,23 +144,35 @@ export class AnimationRunner {
 
   update() {
     if (this.isPlaying) {
-      this.deltaFrame = this.calculateEasing(Math.abs(this.currentFrame / this.fps), 0, 1, this.length)
-      if (this.deltaFrame >= 1) {
-        let newFrame = this.currentFrame + (this.isReverse ? -1 : 1) * Math.floor(this.deltaFrame);
-        if (newFrame < 0 || newFrame >= this.length) {
-          if (this.isLoop) {
-            this.currentFrame = (newFrame + this.length) % this.length;
-          } else {
-            this.isPlaying = false;
-            return;
-          }
-        } else {
-          this.currentFrame = newFrame;
-        }
-        this.deltaFrame = this.deltaFrame % 1;
-        this.updateCurrentNode();
+      const now = Date.now();
+      const elapsed = now - this.lastUpdate;
+      if (elapsed > 1000 / this.fps) {
+        this.lastUpdate = now;
+        this.nextFrame();
       }
     }
+
+    // TODO: fix kalkulasi tweening ini
+    // if (this.isPlaying) {
+    //   this.deltaFrame = this.calculateEasing(Math.abs(this.currentFrame / this.fps), 0, 1, this.length)
+    //   console.log(this.deltaFrame);
+    //   this.deltaFrame = 1;
+    //   if (this.deltaFrame >= 1) {
+    //     let newFrame = this.currentFrame + (this.isReverse ? -1 : 1) * Math.floor(this.deltaFrame);
+    //     if (newFrame < 0 || newFrame >= this.length) {
+    //       if (this.isLoop) {
+    //         this.currentFrame = (newFrame + this.length) % this.length;
+    //       } else {
+    //         this.isPlaying = false;
+    //         return;
+    //       }
+    //     } else {
+    //       this.currentFrame = newFrame;
+    //     }
+    //     this.deltaFrame = this.deltaFrame % 1;
+    //     this.updateCurrentNode();
+    //   }
+    // }
   }
 
   private updateCurrentNode() {

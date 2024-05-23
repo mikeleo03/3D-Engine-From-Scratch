@@ -932,28 +932,60 @@ export default function Home() {
     }, [canvasRef.current]);
 
     const handleNextFrame = () => {
+        if (isPlaying) return;
         for (const animationRunner of animationRunnersRef.current) {
             animationRunner.nextFrame();
         }
     }
 
     const handlePrevFrame = () => {
+        if (isPlaying) return;
         for (const animationRunner of animationRunnersRef.current) {
             animationRunner.prevFrame();
         }
     }
 
     const handleFirstFrame = () => {
+        if (isPlaying) return;
         for (const animationRunner of animationRunnersRef.current) {
             animationRunner.firstFrame();
         }
     }
 
     const handleLastFrame = () => {
+        if (isPlaying) return;
         for (const animationRunner of animationRunnersRef.current) {
             animationRunner.lastFrame();
         }
     }
+
+    useEffect(() => {
+        let animationId;
+
+        const animate = () => {
+            if (isPlaying) {
+                const animationRunners = animationRunnersRef.current;
+                for (const animationRunner of animationRunners) {
+                    animationRunner.update();
+                }
+            }
+            animationId = requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        return () => cancelAnimationFrame(animationId);
+    }, [isPlaying]);
+
+    useEffect(()=>{
+        const animationRunners = animationRunnersRef.current;
+        for (const animationRunner of animationRunners) {
+            animationRunner.setEasingFunction(easingMode.mode);
+            animationRunner.isPlaying = isPlaying;
+            animationRunner.isReverse = isReversing;
+            animationRunner.isLoop = isLooping;
+        }
+    }, [isPlaying, isReversing, isLooping, easingMode]);
 
     const resetCameraPosition = () => {
         const cameraNode = getCurrentCameraNode();
