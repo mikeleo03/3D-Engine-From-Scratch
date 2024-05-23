@@ -12,11 +12,16 @@ uniform vec3 u_lightPosition;
 varying vec3 N, L, E;
 
 void main() {
+    vec4 worldPosition = u_worldMatrix * a_position;
+    vec4 viewPosition = u_viewMatrix * worldPosition;
+    
     vec3 pos = -(u_viewMatrix * a_position).xyz;
-    vec3 light = u_lightPosition;
-    L = normalize(light - pos);
-    E = -pos;
+    vec3 lightPos = (u_viewMatrix * vec4(u_lightPosition, 1.0)).xyz;
+    
+    L = normalize(lightPos - pos);
+    E = normalize(-pos);
     N = normalize((u_viewMatrix * u_worldMatrix * a_faceNormal).xyz);
-    gl_Position = u_viewMatrix * u_worldMatrix * a_position;
+    
+    gl_Position = viewPosition;
 }
 `;

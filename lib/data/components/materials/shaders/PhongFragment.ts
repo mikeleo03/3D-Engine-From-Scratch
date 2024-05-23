@@ -16,7 +16,6 @@ uniform vec4 u_lightSpecular;
 varying vec3 N, L, E;
 
 void main() {
-    vec3 fColor;
     vec3 H = normalize(L + E);
 
     // Convert colors from 0-255 to 0-1
@@ -28,21 +27,21 @@ void main() {
     vec3 lightSpecular = u_lightSpecular.rgb / 255.0;
 
     // Ambient composition
-    vec3 ambientComp = lightAmbient * (ambient * u_ambientColor.a / 255.0);
+    vec3 ambientComp = lightAmbient * ambient;
 
     // Diffuse composition
-    float Kd = max(dot(L, N), 0.0);
-    vec3 diffuseComp = lightDiffuse * (Kd * diffuse * u_diffuseColor.a / 255.0);
+    float Kd = max(dot(N, L), 0.0);
+    vec3 diffuseComp = lightDiffuse * diffuse * Kd;
 
     // Specular composition
     float Ks = pow(max(dot(N, H), 0.0), u_shininess);
-    vec3 specularComp = lightSpecular * (Ks * specular * u_specularColor.a / 255.0);
-    if(dot(L, N) < 0.0) {
+    vec3 specularComp = lightSpecular * specular * Ks;
+    if(dot(N, L) < 0.0) {
         specularComp = vec3(0.0, 0.0, 0.0);
     }
 
     // Combine all
-    fColor = ambientComp + diffuseComp + specularComp;
+    vec3 fColor = ambientComp + diffuseComp + specularComp;
     gl_FragColor = vec4(fColor, 1.0);
 }
 `;
