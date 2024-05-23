@@ -63,7 +63,7 @@ export default function TestPage() {
         new Color(255, 255, 255)
       );
 
-      const lightPosition = new Vector3(0, 0, 3000000);
+      const lightPosition = new Vector3(2.6, -1.8, 0);
 
       const cameraNodes = [
         new SceneNode({ camera: orthographicCamera, position: new Vector3(0, 0, 200) }),
@@ -92,12 +92,12 @@ export default function TestPage() {
       const obj = model.scene.nodes[0];
 
       cameraNodes[0].lookAt(obj.position);
-      lightNodes[0].translate(new Vector3(0, 0, 10));
+      lightNodes[0].translate(new Vector3(0, 0, 0));
       lightNodes[0].lookAt(obj.position);
 
       // change camera here
-      scene.addNode(cameraNodes[0]);
-      scene.addNode(lightNodes[0]);
+      // scene.addNode(cameraNodes[0]);
+      // scene.addNode(lightNodes[0]);
 
       glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);

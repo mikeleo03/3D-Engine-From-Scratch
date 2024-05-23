@@ -17,13 +17,13 @@ export class CubeModel extends Model {
 
     private getCube(): SceneNode {
         const meshFactory = new MeshFactory();
-        const cubeMaterial = new BasicMaterial(new Color(1 * 255, 0.5 * 255, 0.31 * 255), { name: "cube" });
+        const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "cube" });
         const phongCubeMaterial = new PhongMaterial({ 
             name: "cube-phong", 
-            ambientColor: new Color(1 * 255, 0.5 * 255, 0.31 * 255), 
-            diffuseColor: new Color(1 * 255, 0.5 * 255, 0.31 * 255), 
-            specularColor: new Color(0.5 * 255, 0.5 * 255, 0.5 * 255), 
-            shininess: 100
+            ambientColor: new Color(52, 25, 0), 
+            diffuseColor: new Color(204, 102, 0), 
+            specularColor: new Color(255, 255, 255), 
+            shininess: 60
         });
 
         const cubeMesh = meshFactory.cuboid(80, 80, 80, 
