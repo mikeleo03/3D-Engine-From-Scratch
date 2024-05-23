@@ -1,14 +1,21 @@
 import { TextureType } from "@/lib/data/types/gltftypes";
 import { Sampler } from "./Sampler";
 import { TextureImage } from "./TextureImage";
+import { Color } from "@/lib/cores";
 
 export class Texture {
     private _sampler: Sampler;
     private _source: TextureImage;
+    private _defaultColor: Color;
 
-    constructor(sampler: Sampler, source: TextureImage) {
+    private _texture: WebGLTexture | null = null; // JANGAN DIUBAH! Hanya untuk renderer.
+    private _needUpload: boolean = true;  // Upload ulang gambar ke tekstur.
+    private _parameterChanged: boolean = true;  // Ubah parameter tekstur di awal minimal sekali.
+
+    constructor(sampler: Sampler, source: TextureImage, defaultColor: Color = Color.white()) {
         this._sampler = sampler;
         this._source = source;
+        this._defaultColor = defaultColor;
     }
 
     get sampler() {
@@ -19,12 +26,48 @@ export class Texture {
         return this._source;
     }
 
+    get isLoaded() {
+        return this._texture !== null;
+    }
+
+    get needUpload() {
+        return this._needUpload;
+    }
+
+    get texture() {
+        return this._texture;
+    }
+
+    get parameterChanged() {
+        return this._parameterChanged;
+    }
+
+    get defaultColor() {
+        return this._defaultColor.clone();
+    }
+
     set sampler(value: Sampler) {
         this._sampler = value;
     }
 
     set source(value: TextureImage) {
         this._source = value;
+    }
+
+    set texture(value: WebGLTexture | null) {
+        this._texture = value;
+    }
+
+    set needUpload(value: boolean) {
+        this._needUpload = value;
+    }
+
+    set parameterChanged(value: boolean) {
+        this._parameterChanged = value;
+    }
+
+    set defaultColor(value: Color) {
+        this._defaultColor = value;
     }
 
     toRaw(samplerMap: Map<Sampler, number>, sourceMap: Map<TextureImage, number>): TextureType {

@@ -26,13 +26,23 @@ export class TextureImage {
             throw new Error('Must have either image or array.');
         }
 
+        if (arrayData) {
+            if (arrayData.width <= 0) {
+                throw new Error('Width must be greater than 0.');
+            }
+
+            if (arrayData.height <= 0) {
+                throw new Error('Height must be greater than 0.');
+            }
+        }
+
         this._image = image;
         this._arrayData = arrayData;
         this._format = format;
         this._type = type;
     }
 
-    get array() {
+    get arrayData() {
         return this._arrayData;
     }
 

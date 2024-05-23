@@ -1,6 +1,7 @@
 "use client";
 
 import { GLBufferAttribute } from "../data/buffers/GLBufferAttribute";
+import { Texture } from "../data/components/materials/textures/Texture";
 import { Color } from "./Color";
 
 export enum ShaderType {
@@ -108,7 +109,7 @@ export type AttributeDataType = [AttributeSingleDataType] | number[];
 export type AttributeSetters = (...v: AttributeDataType) => void;
 export type AttributeMapSetters = { [key: string]: AttributeSetters };
 
-export type UniformSingleDataType =  number[] | Float32Array | number | Color;
+export type UniformSingleDataType =  number[] | Float32Array | number | Color | Texture;
 export type UniformDataType = [UniformSingleDataType] | number[];
 export type UniformSetters = (v: UniformSingleDataType) => void;
 export type UniformMapSetters = { [key: string]: UniformSetters };

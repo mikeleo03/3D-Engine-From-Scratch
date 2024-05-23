@@ -1,4 +1,6 @@
 import { GLBufferAttribute } from "../data/buffers/GLBufferAttribute";
+import { Texture } from "../data/components/materials/textures/Texture";
+import { MathUtil } from "../utils/MathUtil";
 import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformDataType, UniformMapSetters, UniformSetterWebGLType, UniformSetters, UniformSingleDataType, WebGLType } from "./gltypes";
 
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
@@ -6,6 +8,8 @@ type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Ar
 export class GLContainer {
     private _canvas: HTMLCanvasElement;
     private _gl: WebGLRenderingContext;
+
+    private _textureUnit: number = 0;
 
     constructor(
         canvas: HTMLCanvasElement
@@ -29,7 +33,7 @@ export class GLContainer {
         this._gl.clearColor(0, 0, 0, 0.9);
         this._gl.clearDepth(1.0);
         this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
-        
+
     }
 
     private initGL(canvas: HTMLCanvasElement = this._canvas): WebGLRenderingContext {
@@ -135,37 +139,135 @@ export class GLContainer {
 
         const type = info.type;
 
-        return (values: UniformSingleDataType) => {
-            const typeString = UniformSetterWebGLType[type];
-            const setter = `uniform${typeString}`;
+        return (value: UniformSingleDataType) => {
+            if (type == WebGLType.SAMPLER_2D) {
+                if (info.size > 1) {
+                    throw new Error("Array of texture is not supported");
+                }
+                
+                if (!(value instanceof Texture)) {
+                    throw new Error("Uniform type mismatch");
+                }
 
-            console.log(info.name, values);
-            
-            if (typeString.startsWith("Matrix")) {
-                // @ts-ignore
-                this._gl[setter](loc, false, values);
-            }
+                const unit = this._textureUnit;
+                const gl = this._gl;
 
-            else if (typeString == '1f') {
-                // @ts-ignore
-                this._gl[setter](loc, values);
+                const setupTexture = (v: Texture) => {
+                    let webglTexture = v.texture;
+
+                    if (!webglTexture) {
+                        webglTexture = gl.createTexture();
+                        v.texture = webglTexture;
+                    }
+
+                    gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
+                    const isPOT = (
+                        v.source.arrayData 
+                        && MathUtil.isPowerOf2(v.source.arrayData!.width) 
+                        && MathUtil.isPowerOf2(v.source.arrayData!.height)
+                    );
+                   
+                    if (v.needUpload) {
+                        // Jika butuh upload data, lakukan upload
+                        v.needUpload = false;
+                        if (v.isLoaded) {
+                            // Sudah load, gaskan upload
+                            const param = [
+                                gl.TEXTURE_2D,
+                                0,
+                                v.source.format,
+                                v.source.format,
+                                v.source.type,
+                                v.source.image ?? v.source.arrayData!.bytes
+                            ];
+
+                            if (v.source.arrayData) {
+                                param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
+                            }
+                           
+                            // @ts-ignore: agak curang but hey less code it is :)
+                            gl.texImage2D(...param);
+                            if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
+
+                        } else {
+                            // Belum load / gak ada data
+                            gl.texImage2D(
+                                gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
+                                gl.RGBA, gl.UNSIGNED_BYTE,
+                                new Uint8Array(v.defaultColor)
+                            );
+                        }
+                    }
+                    if (v.parameterChanged) {
+                        // Jika parameter berubah, lakukan set parameter
+                        v.parameterChanged = false;
+                        if (!isPOT) {
+                            v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
+                            v.sampler.minFilter = gl.LINEAR;
+                            console.log("image is not POT, fallback params", v);
+                        }
+                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.sampler.wrapS);
+                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.sampler.wrapT);
+                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.sampler.minFilter);
+                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, v.sampler.magFilter);
+                    }
+                    gl.bindTexture(gl.TEXTURE_2D, null); // balikkan bind ke null
+                }
+
+                const renderTexture = (v: Texture) => {
+                    // Pilih tekstur unit, bind tekstur ke unit, set uniform sampler ke unit.
+                    gl.activeTexture(gl.TEXTURE0 + unit);
+                    gl.bindTexture(gl.TEXTURE_2D, v.texture);
+                }
+
+                const render = (v: Texture) => {
+                    setupTexture(v); renderTexture(v);
+                }
+
+                return (v: Texture) => {
+                    // == Render Time
+                    render(v);
+                    gl.uniform1i(loc, unit);
+                };
+
             }
 
             else {
-                // @ts-ignore
-                this._gl[setter](loc, ...values);
+                const typeString = UniformSetterWebGLType[type];
+                const setter = `uniform${typeString}`;
+
+                if (typeString.startsWith("Matrix")) {
+                    // @ts-ignore
+                    this._gl[setter](loc, false, value);
+                }
+
+                else if (typeString == '1f') {
+                    // @ts-ignore
+                    this._gl[setter](loc, value);
+                }
+
+                else {
+                    // @ts-ignore
+                    this._gl[setter](loc, ...value);
+                }
             }
         }
     }
 
     private createUniformSetters(program: WebGLProgram): UniformMapSetters {
+        this._textureUnit = 0;
+
         const uniformSetters: UniformMapSetters = {};
         const numUniforms = this._gl.getProgramParameter(program, this._gl.ACTIVE_UNIFORMS);
- 
+
         for (let i = 0; i < numUniforms; i++) {
             const info = this._gl.getActiveUniform(program, i);
             if (!info) continue;
             uniformSetters[info.name] = this.createUniformSetter(info, program);
+
+            if (info.type == WebGLType.SAMPLER_2D) {
+                this._textureUnit += info.size;
+            }
         }
 
         return uniformSetters;
@@ -177,7 +279,7 @@ export class GLContainer {
         const buf = this._gl.createBuffer();
         return (...values) => {
             // Render Time (saat memanggil setAttributes() pada render loop)
-            
+
             this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buf);
 
             const v = values[0];
@@ -192,7 +294,7 @@ export class GLContainer {
 
                 this._gl.enableVertexAttribArray(loc);
                 this._gl.vertexAttribPointer(loc, v.size, v.dtype, v.normalize, v.stride, v.offset);
-                
+
             } else {
                 this._gl.disableVertexAttribArray(loc);
                 if (v instanceof Float32Array)
@@ -256,10 +358,10 @@ export class GLContainer {
         const gl = this._gl;
 
         const indexBuffer = gl.createBuffer();
- 
+
         // make this buffer the current 'ELEMENT_ARRAY_BUFFER'
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        
+
         gl.bufferData(
             gl.ELEMENT_ARRAY_BUFFER,
             indicesAttribute.data as Uint16Array,
@@ -271,9 +373,8 @@ export class GLContainer {
         programInfo: ProgramInfo,
         uniforms: { [uniformName: string]: UniformSingleDataType },
     ): void {
-        for (let uniformName in uniforms)
-        {
-            this.setUniform(programInfo, uniformName, uniforms[uniformName]); 
+        for (let uniformName in uniforms) {
+            this.setUniform(programInfo, uniformName, uniforms[uniformName]);
         }
     }
 
