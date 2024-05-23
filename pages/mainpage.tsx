@@ -638,6 +638,8 @@ export default function Home() {
             }
 
             else {
+                setFps(20);
+                setEasingMode({ type: AnimationEasingTypeString.NONE });
                 const file = input.files[0];
                 const gltfState = await gltfParser.parse(file)
                 gltfStateRef.current = gltfState;
