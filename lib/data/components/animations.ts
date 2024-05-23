@@ -137,13 +137,45 @@ export class AnimationRunner {
 
   firstFrame() {
     this.currentFrame = 0;
-    this.updateCurrentNode();
+    const firstFrame = this.currentAnimation?.frames[0];
+    if (firstFrame?.nodeKeyframePairs) {
+      for (let pair of firstFrame.nodeKeyframePairs) {
+        const node = pair.node;
+        const keyframe = pair.keyframe;
+
+        if (keyframe.translation) {
+          node.position = new Vector3(keyframe.translation[0], keyframe.translation[1], keyframe.translation[2]);
+        }
+        if (keyframe.rotation) {
+          node.rotation = Quaternion.fromDegrees(keyframe.rotation[0], keyframe.rotation[1], keyframe.rotation[2]);
+        }
+        if (keyframe.scale) {
+          node.scale = new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2]);
+        }
+      }
+    }
     this.deltaFrame = 0;
   }
 
   lastFrame() {
     this.currentFrame = this.length - 1;
-    this.updateCurrentNode();
+    const lastFrame = this.currentAnimation?.frames[this.length - 1];
+    if (lastFrame?.nodeKeyframePairs) {
+      for (let pair of lastFrame.nodeKeyframePairs) {
+        const node = pair.node;
+        const keyframe = pair.keyframe;
+
+        if (keyframe.translation) {
+          node.position = new Vector3(keyframe.translation[0], keyframe.translation[1], keyframe.translation[2]);
+        }
+        if (keyframe.rotation) {
+          node.rotation = Quaternion.fromDegrees(keyframe.rotation[0], keyframe.rotation[1], keyframe.rotation[2]);
+        }
+        if (keyframe.scale) {
+          node.scale = new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2]);
+        }
+      }
+    }
     this.deltaFrame = 0;
   }
 
@@ -186,7 +218,17 @@ export class AnimationRunner {
   private updateCurrentNode() {
     // update the scene graph based on the current frame
     const currentFrame = this.frame;
-    const nextFrame = this.currentAnimation!.frames[this.currentFrame + 1];
+    let nextFrameIndex = this.isReverse ? this.currentFrame - 1 : this.currentFrame + 1;
+
+    if (this.isLoop) {
+      if (nextFrameIndex < 0) {
+        nextFrameIndex = this.length - 1;
+      } else if (nextFrameIndex >= this.length) {
+        nextFrameIndex = 0;
+      }
+    }
+
+    const nextFrame = this.currentAnimation!.frames[nextFrameIndex];
     this.updateFrame(currentFrame, nextFrame, this.deltaFrame);
   }
 
