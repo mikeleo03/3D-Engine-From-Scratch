@@ -19,7 +19,7 @@ export class CubeModel extends Model {
             ambientColor: new Color(1 * 255, 0.5 * 255, 0.31 * 255), 
             diffuseColor: new Color(1 * 255, 0.5 * 255, 0.31 * 255), 
             specularColor: new Color(0.5 * 255, 0.5 * 255, 0.5 * 255), 
-            shininess: 32
+            shininess: 100
         });
         const cubeMesh = meshFactory.cuboid(80, 80, 80, {phongMaterial: cubeMaterial});
         return new SceneNode({name: 'Cube', mesh: cubeMesh});
