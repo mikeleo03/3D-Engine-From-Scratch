@@ -1,5 +1,6 @@
 import { SamplerType } from "@/lib/data/types/gltftypes";
 
+
 export class Sampler {
     private _magFilter: number;
     private _minFilter: number;

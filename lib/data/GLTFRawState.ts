@@ -125,7 +125,7 @@ export class GLTFRawState {
         return this._scene;
     }
 
-    static async fromGLTFState(state: GLTFState): Promise<GLTFRawState> {
+    static fromGLTFState(state: GLTFState): GLTFRawState {
         const bufferMap = new Map<GLTFBuffer, number>();
         const bufferViewMap = new Map<BufferView, number>();
         const accessorMap = new Map<Accessor, number>();
@@ -170,7 +170,7 @@ export class GLTFRawState {
 
         for (let i = 0; i < state.images.length; i++) {
             const image = state.images[i];
-            const raw = await image.toRaw();
+            const raw = image.toRaw();
             const index = i;
             imageMap.set(image, index);
             imageRaws.push(raw);

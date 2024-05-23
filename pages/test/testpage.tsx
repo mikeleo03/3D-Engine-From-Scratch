@@ -81,13 +81,11 @@ export default function TestPage() {
       const maggie = new MaggieModel();
 
       // change model here
-      const model = cube;
+      const model = maggie;
 
       const glRenderer = new GLRenderer(glContainer);
 
       const scene = model.scene;
-
-      scene.addNode(lightNodes[0])
 
       const obj = model.scene.nodes[0];
 
@@ -99,10 +97,10 @@ export default function TestPage() {
       scene.addNode(cameraNodes[0]);
       scene.addNode(lightNodes[0]);
 
-      glRenderer.enablePhongShading = true;
+      // glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);
 
-      cube.download();
+      // cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();

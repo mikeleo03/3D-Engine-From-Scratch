@@ -1,13 +1,14 @@
-import { BufferViewType } from "../types/gltftypes";
+import { ValueOf } from "next/dist/shared/lib/constants";
+import { BufferViewTarget, BufferViewType } from "../types/gltftypes";
 import { GLTFBuffer } from "./GLTFBuffer";
 
 export class BufferView implements ArrayBufferView {
     private _buffer: GLTFBuffer;
     private _byteOffset: number;
     private _byteLength: number;
-    private _target: number;
+    private _target: ValueOf<typeof BufferViewTarget>;
 
-    constructor(buffer: GLTFBuffer, byteOffset: number, byteLength: number, target: number) {
+    constructor(buffer: GLTFBuffer, byteOffset: number, byteLength: number, target: ValueOf<typeof BufferViewTarget>) {
         this._buffer = buffer;
         this._byteOffset = byteOffset;
         this._byteLength = byteLength;

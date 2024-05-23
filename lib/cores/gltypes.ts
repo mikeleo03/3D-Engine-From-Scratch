@@ -72,6 +72,37 @@ export function getByteCountForWebGLType(type: number): number {
     }
 }
 
+export const WrapMode = Object.freeze({
+    ClampToEdge         : WebGLRenderingContext.CLAMP_TO_EDGE,
+    Repeat              : WebGLRenderingContext.REPEAT,
+    MirroredRepeat      : WebGLRenderingContext.MIRRORED_REPEAT,
+})
+export const MagFilter = Object.freeze({
+    Nearest             : WebGLRenderingContext.NEAREST,
+    Linear              : WebGLRenderingContext.LINEAR,
+})
+export const MinFilter = Object.freeze({
+    Nearest             : WebGLRenderingContext.NEAREST,
+    Linear              : WebGLRenderingContext.LINEAR,
+    NearestMipmapNearest: WebGLRenderingContext.NEAREST_MIPMAP_NEAREST,
+    NearestMipmapLinear : WebGLRenderingContext.NEAREST_MIPMAP_LINEAR,
+    LinearMipmapNearest : WebGLRenderingContext.LINEAR_MIPMAP_NEAREST,
+    LinearMipmapLinear  : WebGLRenderingContext.LINEAR_MIPMAP_LINEAR,
+})
+
+export const ImageFormat = Object.freeze({
+    RGBA                : WebGLRenderingContext.RGBA,
+    RGB                 : WebGLRenderingContext.RGB,
+    LuminanceAlpha      : WebGLRenderingContext.LUMINANCE_ALPHA,
+    Luminance           : WebGLRenderingContext.LUMINANCE,
+})
+export const ImageType = Object.freeze({
+    UnsignedByte        : WebGLRenderingContext.UNSIGNED_BYTE,
+    UnsignedShort4444   : WebGLRenderingContext.UNSIGNED_SHORT_4_4_4_4,
+    UnsignedShort5551   : WebGLRenderingContext.UNSIGNED_SHORT_5_5_5_1,
+    UnsignedShort565    : WebGLRenderingContext.UNSIGNED_SHORT_5_6_5,
+})
+
 export type AttributeSingleDataType = GLBufferAttribute | Float32Array | number[];
 export type AttributeDataType = [AttributeSingleDataType] | number[];
 export type AttributeSetters = (...v: AttributeDataType) => void;

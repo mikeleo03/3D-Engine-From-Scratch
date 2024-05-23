@@ -1,12 +1,13 @@
-import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
+import { WebGLType, getByteCountForWebGLType } from "@/lib/cores/gltypes";
 import { AccessorComponentType, AccessorType, getAccessorComponentType, getByteCountForComponentType } from "../types/gltftypes";
 import { BufferView } from "./BufferView";
 import { TypedArrayConverter } from "./typedarrayconverters";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 export class Accessor {
     private _bufferView: BufferView;
     private _byteOffset: number;
-    private _componentType: number;  // type of component in the elements
+    private _componentType: ValueOf<typeof WebGLType>;  // type of component in the elements
     private _count: number;  // Number elements in the buffer (ex: number of vertices in a mesh)
     private _type: AccessorComponentType;  // element type
     private _max: number[];
@@ -15,7 +16,7 @@ export class Accessor {
     constructor(
         bufferView: BufferView, 
         byteOffset: number, 
-        componentType: number, 
+        componentType: ValueOf<typeof WebGLType>, 
         count: number, 
         type: AccessorComponentType, 
         max: number[], 

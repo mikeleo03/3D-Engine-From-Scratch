@@ -1,6 +1,7 @@
 import { Color } from "@/lib/cores";
-import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
+import { WebGLType, getByteCountForWebGLType } from "@/lib/cores/gltypes";
 import { Vector3 } from "../math";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 export type BufferType = { "byteLength": number, "uri": string };
 
@@ -13,7 +14,7 @@ export type BufferViewType = { "buffer": number, "byteOffset": number, "byteLeng
 export type AccessorType = {
     "bufferView": number,
     "byteOffset": number,
-    "componentType": number,
+    "componentType": ValueOf<typeof WebGLType>,
     "count": number,
     "type": string,
     "max": number[],
@@ -77,9 +78,18 @@ export type SamplerType = {
     "wrapT": number
 }
 
+export type TextureArrayData = {
+    "bytes": Uint8Array,
+    "width": number,
+    "height": number
+}
 export type TextureImageType = {
-    "uri": string,
-    "name": string,
+    "data": {
+        "image"?: HTMLImageElement,
+        "arrayData"?: TextureArrayData
+    },
+    "type": number,
+    "format": number,
 }
 
 export type TextureType = {

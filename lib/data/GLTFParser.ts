@@ -50,10 +50,10 @@ export class GLTFParser {
     }
 
     // Write method to convert GLTFState object to a File
-    async write(state: GLTFState): Promise<File> {
+    write(state: GLTFState): File {
         // Implementation of write method
         // Convert GLTFState to JSON string
-        const raw = await GLTFRawState.fromGLTFState(state)
+        const raw = GLTFRawState.fromGLTFState(state)
         const jsonObject: GLTFType = {
             buffers: raw.buffers,
             bufferViews: raw.bufferViews,

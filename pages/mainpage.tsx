@@ -651,7 +651,7 @@ export default function Home() {
             gltfState.CurrentScene?.removeNode(node);
         }
 
-        const gltf = await gltfParser.write(gltfState);
+        const gltf = gltfParser.write(gltfState);
 
         FileUtil.downloadFile(gltf);
     }
