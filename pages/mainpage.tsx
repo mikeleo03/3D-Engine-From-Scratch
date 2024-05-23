@@ -1004,7 +1004,7 @@ export default function Home() {
     useEffect(() => {
         const animationRunners = animationRunnersRef.current;
         for (const animationRunner of animationRunners) {
-            animationRunner.isPlaying = isPlaying;
+            animationRunner.setIsPlaying(isPlaying);
         }
 
         let animationId: number;

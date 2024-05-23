@@ -79,11 +79,36 @@ export class AnimationRunner {
     return this.currentAnimation ? this.currentAnimation.frames.length : 0;
   }
 
+  public setIsPlaying(isPlaying: boolean) {
+    this.isPlaying = isPlaying;
+
+    if (isPlaying) {
+      this.lastUpdate = Date.now();
+    }
+  }
+
   public setAnimation(animation: AnimationClip) {
     this.currentAnimation = animation;
     this.currentFrame = 0;
     this.deltaFrame = 0;
-    this.updateCurrentNode();
+
+    const firstFrame = this.currentAnimation.frames[0];
+    if (firstFrame.nodeKeyframePairs) {
+      for (let pair of firstFrame.nodeKeyframePairs) {
+        const node = pair.node;
+        const keyframe = pair.keyframe;
+
+        if (keyframe.translation) {
+          node.position = new Vector3(keyframe.translation[0], keyframe.translation[1], keyframe.translation[2]);
+        }
+        if (keyframe.rotation) {
+          node.rotation = Quaternion.fromDegrees(keyframe.rotation[0], keyframe.rotation[1], keyframe.rotation[2]);
+        }
+        if (keyframe.scale) {
+          node.scale = new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2]);
+        }
+      }
+    }
   }
 
   public setEasingFunction(easeFunction: string){
@@ -130,11 +155,11 @@ export class AnimationRunner {
         this.lastUpdate = now;
         this.deltaFrame += elapsed / 1000 * this.fps;
 
-        if (this.isReverse) {
+        if (this.isReverse){
           this.deltaFrame *= -1;
         }
 
-        if (this.deltaFrame) {
+        if (this.deltaFrame > 0) {
           if (this.currentFrame < this.length - 1) {
             this.nextFrame();
           } else if (this.isLoop) {
@@ -143,7 +168,7 @@ export class AnimationRunner {
             this.isPlaying = false;
             return false;
           }
-        } else if (this.deltaFrame <= -1) {
+        } else if (this.deltaFrame < 0) {
           if (this.currentFrame > 0) {
             this.prevFrame();
           } else if (this.isLoop) {
@@ -184,6 +209,9 @@ export class AnimationRunner {
         }
 
         if (currentKeyframe.rotation && nextKeyframe.rotation) {
+          const easedZ = this.ease(currentKeyframe.rotation[2], nextKeyframe.rotation[2], t);
+          console.log(`Frame ${this.currentFrame}`);
+          console.log(currentKeyframe.rotation[2], nextKeyframe.rotation[2], t, easedZ);
           node.rotation = Quaternion.fromDegrees(
             this.ease(currentKeyframe.rotation[0], nextKeyframe.rotation[0], t),
             this.ease(currentKeyframe.rotation[1], nextKeyframe.rotation[1], t),
@@ -219,6 +247,7 @@ export class AnimationRunner {
     }
   }
 
+  // TODO: fix quart, expo, circ
   private ease(start: number, end: number, t: number) {
     switch (this.easeFunction) {
       case EasingFunction.SINE:
