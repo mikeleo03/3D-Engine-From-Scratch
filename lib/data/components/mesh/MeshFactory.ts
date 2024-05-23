@@ -33,7 +33,7 @@ export class MeshFactory {
         const vertexCount = positions.length;
         const indicesCount = indices ? indices.length : vertexCount;
         const faceNormalCount = indicesCount;
-        const vertexNormalCount = indicesCount;
+        const vertexNormalCount = vertexCount;
 
         const vertexBytesCount = vertexCount * 4 * 3;
         const indicesBytesCount = indicesCount * 2;
@@ -59,7 +59,7 @@ export class MeshFactory {
             buffer, 
             vertexBytesCount + indicesBytesCount, 
             faceNormalBytesCount, 
-            BufferViewTarget.ARRAY_BUFFER
+            BufferViewTarget.ELEMENT_ARRAY_BUFFER
         )
         const vertexNormalBufferView = new BufferView(
             buffer, 

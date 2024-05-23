@@ -335,8 +335,8 @@ export class MeshBufferGeometry {
             throw new Error("Indices are required to calculate normals");
         }
 
-        if (accessor.count !== indices.count) {
-            throw new Error("Accessor count must be the same as indices count");
+        if (accessor.count !== position.count) {
+            throw new Error("Accessor count must be the same as position count");
         }
 
         let normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL);
@@ -403,18 +403,7 @@ export class MeshBufferGeometry {
             }
         }
 
-        // define the vertex normal for each index
-        const finalVertexNormals = new Float32Array(indicesData.length * 3);
-
-        for (let i = 0; i < indicesData.length; i++) {
-            const index = indicesData[i];
-            finalVertexNormals[i * 3] = accumulatedNormals[index * 3];
-            finalVertexNormals[i * 3 + 1] = accumulatedNormals[index * 3 + 1];
-            finalVertexNormals[i * 3 + 2] = accumulatedNormals[index * 3 + 2];
-        }
-
-        // Assign the calculated vertex normals to the vertex normal attribute
-        vertexNormal.setData(finalVertexNormals);
+        vertexNormal.setData(accumulatedNormals);
         this.setAttribute(MeshPrimitiveAttribute.VERTEX_NORMAL, vertexNormal);
     }
 }
