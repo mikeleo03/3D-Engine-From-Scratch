@@ -36,10 +36,16 @@ export class TextureImage {
             }
         }
 
-        this._image = image;
+        this._image = undefined;
         this._arrayData = arrayData;
         this._format = format;
         this._type = type;
+
+        if (image) {
+            image.onload = () => {
+                this._image = image;
+            };
+        }
     }
 
     get arrayData() {

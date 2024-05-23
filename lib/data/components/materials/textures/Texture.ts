@@ -18,6 +18,14 @@ export class Texture {
         this._defaultColor = defaultColor;
     }
 
+    get width(): number {
+        return this._source.arrayData?.width ?? this._source.image?.width ?? -1;
+    }
+
+    get height(): number {
+        return this._source.arrayData?.height ?? this._source.image?.height ?? -1;
+    }
+
     get sampler() {
         return this._sampler;
     }

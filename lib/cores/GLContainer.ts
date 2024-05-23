@@ -162,9 +162,8 @@ export class GLContainer {
 
                     gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
                     const isPOT = (
-                        v.source.arrayData 
-                        && MathUtil.isPowerOf2(v.source.arrayData!.width) 
-                        && MathUtil.isPowerOf2(v.source.arrayData!.height)
+                        MathUtil.isPowerOf2(v.width) 
+                        && MathUtil.isPowerOf2(v.height)
                     );
                    
                     if (v.needUpload) {
