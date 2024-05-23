@@ -21,7 +21,7 @@ export class CubeModel extends Model {
             specularColor: new Color(0.5 * 255, 0.5 * 255, 0.5 * 255), 
             shininess: 32
         });
-        const cubeMesh = meshFactory.cuboid(80, 80, 80, [{phongMaterial: cubeMaterial}]);
+        const cubeMesh = meshFactory.cuboid(80, 80, 80, {phongMaterial: cubeMaterial});
         return new SceneNode({name: 'Cube', mesh: cubeMesh});
     }
 
