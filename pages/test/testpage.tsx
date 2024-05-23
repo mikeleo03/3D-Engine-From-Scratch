@@ -1,4 +1,3 @@
-
 import { GLContainer } from "@/lib/cores";
 import { SceneNode } from "@/lib/data/SceneNode";
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data/components/cameras";
@@ -32,7 +31,7 @@ export default function TestPage() {
         canvas.width / 2,
         0.01,
         1000,
-        5
+        3
       );
 
       const perspectiveCamera = new PerspectiveCamera(
@@ -67,7 +66,7 @@ export default function TestPage() {
       const lightPosition = new Vector3(0, 0, 3000000);
 
       const cameraNodes = [
-        new SceneNode({ camera: orthographicCamera, position: new Vector3(0, 0, 100) }),
+        new SceneNode({ camera: orthographicCamera, position: new Vector3(0, 0, 200) }),
         new SceneNode({ camera: perspectiveCamera, position: new Vector3(0, 0, 100) }),
         new SceneNode({ camera: obliqueCamera, position: new Vector3(0, 0, 100) })
       ]
@@ -82,7 +81,7 @@ export default function TestPage() {
       const maggie = new MaggieModel();
 
       // change model here
-      const model = jojo;
+      const model = cube;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -93,16 +92,17 @@ export default function TestPage() {
       const obj = model.scene.nodes[0];
 
       cameraNodes[0].lookAt(obj.position);
-      lightNodes[0].translate(new Vector3(0, 0, 700));
+      lightNodes[0].translate(new Vector3(0, 0, 10));
       lightNodes[0].lookAt(obj.position);
 
       // change camera here
       scene.addNode(cameraNodes[0]);
       scene.addNode(lightNodes[0]);
 
-      glRenderer.enablePhongShading = false;
+      glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);
 
+      cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();
