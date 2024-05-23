@@ -1011,7 +1011,11 @@ export default function Home() {
             if (isPlaying) {
                 const animationRunners = animationRunnersRef.current;
                 for (const animationRunner of animationRunners) {
-                    animationRunner.update();
+                    const isStillPlaying = animationRunner.update();
+                    if (!isStillPlaying) {
+                        setIsPlaying(false);
+                        return;
+                    }
                 }
             }
             animationId = requestAnimationFrame(animate);

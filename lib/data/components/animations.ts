@@ -65,7 +65,7 @@ export class AnimationRunner {
   private currentAnimation?: AnimationClip;
   private lastUpdate: number;
 
-  constructor({fps = 30} = {}) {
+  constructor({fps = 20} = {}) {
     this.fps = fps;
     this.lastUpdate = Date.now();
   }
@@ -134,45 +134,53 @@ export class AnimationRunner {
 
   firstFrame() {
     this.currentFrame = 0;
+    this.deltaFrame = 0;
     this.updateCurrentNode();
   }
 
   lastFrame() {
     this.currentFrame = this.length - 1;
+    this.deltaFrame = 0;
     this.updateCurrentNode();
   }
 
   update() {
+    console.log(this.fps)
     if (this.isPlaying) {
       const now = Date.now();
       const elapsed = now - this.lastUpdate;
-      if (elapsed > 1000 / this.fps) {
+      if (elapsed >= 1000 / this.fps) {
         this.lastUpdate = now;
-        this.nextFrame();
-      }
-    }
+        if (this.isReverse) {
+          this.deltaFrame -= 1;
+        } else {
+          this.deltaFrame += 1;
+        }
 
-    // TODO: fix kalkulasi tweening ini
-    // if (this.isPlaying) {
-    //   this.deltaFrame = this.calculateEasing(Math.abs(this.currentFrame / this.fps), 0, 1, this.length)
-    //   console.log(this.deltaFrame);
-    //   this.deltaFrame = 1;
-    //   if (this.deltaFrame >= 1) {
-    //     let newFrame = this.currentFrame + (this.isReverse ? -1 : 1) * Math.floor(this.deltaFrame);
-    //     if (newFrame < 0 || newFrame >= this.length) {
-    //       if (this.isLoop) {
-    //         this.currentFrame = (newFrame + this.length) % this.length;
-    //       } else {
-    //         this.isPlaying = false;
-    //         return;
-    //       }
-    //     } else {
-    //       this.currentFrame = newFrame;
-    //     }
-    //     this.deltaFrame = this.deltaFrame % 1;
-    //     this.updateCurrentNode();
-    //   }
-    // }
+        if (this.deltaFrame >= 1) {
+          this.deltaFrame = 0;
+          if (this.currentFrame < this.length - 1) {
+            this.nextFrame();
+          } else if (this.isLoop) {
+            this.firstFrame();
+          } else {
+            this.isPlaying = false;
+            return false;
+          }
+        } else if (this.deltaFrame <= -1) {
+          this.deltaFrame = 0;
+          if (this.currentFrame > 0) {
+            this.prevFrame();
+          } else if (this.isLoop) {
+            this.lastFrame();
+          } else {
+            this.isPlaying = false;
+            return false;
+          }
+        }
+      }
+      return true;
+    }
   }
 
   private updateCurrentNode() {
