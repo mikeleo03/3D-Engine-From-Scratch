@@ -112,7 +112,8 @@ export class Mesh extends NodeComponent {
             const primitive: MeshPrimitiveType = {
                 attributes: {
                     POSITION: position ? accessorMap.get(position.accessor)!! : undefined,
-                    FACE_NORMAL: faceNormal ? accessorMap.get(faceNormal.accessor)!! : undefined
+                    FACE_NORMAL: faceNormal ? accessorMap.get(faceNormal.accessor)!! : undefined,
+                    VERTEX_NORMAL: vertexNormal ? accessorMap.get(vertexNormal.accessor)!! : undefined,
                 },
                 basicMaterial: geometry.basicMaterial ? materialMap.get(geometry.basicMaterial)!! : undefined,
                 phongMaterial: geometry.phongMaterial ? materialMap.get(geometry.phongMaterial)!! : undefined,
