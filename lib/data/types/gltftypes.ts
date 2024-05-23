@@ -1,4 +1,4 @@
-import { Color } from "@/lib/cores";
+import { Color, MagFilter, MinFilter, WrapMode } from "@/lib/cores";
 import { WebGLType, getByteCountForWebGLType } from "@/lib/cores/gltypes";
 import { Vector3 } from "../math";
 import { ValueOf } from "next/dist/shared/lib/constants";
@@ -72,10 +72,10 @@ export function getByteCountForComponentType(elementType: number, accessorType: 
 }
 
 export type SamplerType = {
-    "magFilter": number,
-    "minFilter": number,
-    "wrapS": number,
-    "wrapT": number
+    "magFilter": ValueOf<typeof MagFilter>,
+    "minFilter": ValueOf<typeof MinFilter>,
+    "wrapS": ValueOf<typeof WrapMode>,
+    "wrapT": ValueOf<typeof WrapMode>
 }
 
 export type TextureArrayData = {

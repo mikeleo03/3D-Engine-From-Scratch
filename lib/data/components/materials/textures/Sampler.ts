@@ -1,17 +1,19 @@
+import { ImageFormat, MagFilter, MinFilter, WrapMode } from "@/lib/cores";
 import { SamplerType } from "@/lib/data/types/gltftypes";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 
 export class Sampler {
-    private _magFilter: number;
-    private _minFilter: number;
-    private _wrapS: number;
-    private _wrapT: number;
+    private _magFilter: ValueOf<typeof MagFilter>;
+    private _minFilter: ValueOf<typeof MinFilter>;
+    private _wrapS: ValueOf<typeof WrapMode>;
+    private _wrapT: ValueOf<typeof WrapMode>;
 
     constructor(
-        magFilter: number,
-        minFilter: number,
-        wrapS: number,
-        wrapT: number
+        magFilter: ValueOf<typeof MagFilter>,
+        minFilter: ValueOf<typeof MinFilter>,
+        wrapS: ValueOf<typeof WrapMode>,
+        wrapT: ValueOf<typeof WrapMode>
     ) {
         this._magFilter = magFilter;
         this._minFilter = minFilter;
@@ -35,19 +37,19 @@ export class Sampler {
         return this._wrapT;
     }
 
-    set magFilter(value: number) {
+    set magFilter(value: ValueOf<typeof MagFilter>) {
         this._magFilter = value;
     }
 
-    set minFilter(value: number) {
+    set minFilter(value: ValueOf<typeof MinFilter>) {
         this._minFilter = value;
     }
 
-    set wrapS(value: number) {
+    set wrapS(value: ValueOf<typeof WrapMode>) {
         this._wrapS = value;
     }
 
-    set wrapT(value: number) {
+    set wrapT(value: ValueOf<typeof WrapMode>) {
         this._wrapT = value;
     }
 

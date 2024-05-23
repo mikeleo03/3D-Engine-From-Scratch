@@ -1,13 +1,15 @@
 import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
-import { Color, WebGLType } from "../cores";
+import { Color, UniformSingleDataType, WebGLType } from "../cores";
 import { DirectionalLight } from "../data/components/lights";
 import { v4 as uuid } from "uuid";
 import { GLTFBuffer } from "../data/buffers/GLTFBuffer";
 import { BufferView } from "../data/buffers/BufferView";
 import { AccessorComponentType, BufferViewTarget } from "../data/types/gltftypes";
 import { Accessor } from "../data/buffers/Accessor";
+import { DisplacementData, PhongMaterial, TextureData } from "../data/components/materials";
+import { Texture } from "../data/components/materials/textures/Texture";
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -57,8 +59,24 @@ export class GLRenderer {
 
                 this._glContainer.setProgram(programInfo);
 
+                const textureUniforms: {
+                    [key: string]: UniformSingleDataType | undefined;
+                } = {};
+
+                if (material instanceof PhongMaterial) {
+                    textureUniforms["displacementMap"] = material.displacementMap?.textureData.texture;
+                    textureUniforms["displacementScale"] = material.displacementMap?.scale;
+                    textureUniforms["displacementBias"] = material.displacementMap?.bias;
+                    textureUniforms["normalMap"] = material.normalMap?.texture;
+                    textureUniforms["diffuseMap"] = material.diffuseMap?.texture;
+                    textureUniforms["specularMap"] = material.specularMap?.texture;
+                }
+
+                console.log(textureUniforms)
+                
                 this._glContainer.setUniforms(programInfo, {
                     ...material.getBufferUniforms(),
+                    ...textureUniforms,
                     ...uniforms,
                     worldMatrix: root.worldMatrix.transpose().buffer,
                 });

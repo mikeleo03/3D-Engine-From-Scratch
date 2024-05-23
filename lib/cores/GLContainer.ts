@@ -223,12 +223,9 @@ export class GLContainer {
                     setupTexture(v); renderTexture(v);
                 }
 
-                return (v: Texture) => {
-                    // == Render Time
-                    render(v);
-                    gl.uniform1i(loc, unit);
-                };
-
+                // == Render Time
+                render(value);
+                gl.uniform1i(loc, unit);
             }
 
             else {
