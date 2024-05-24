@@ -2,14 +2,26 @@ import { GLContainer } from "../cores/GLContainer";
 import { SceneNode } from "../data/SceneNode";
 import { Scene } from "../data/Scene";
 import { Color, UniformSingleDataType, WebGLType } from "../cores";
-import { DirectionalLight } from "../data/components/lights";
+import { DirectionalLight, PointLight } from "../data/components/lights";
 import { v4 as uuid } from "uuid";
 import { GLTFBuffer } from "../data/buffers/GLTFBuffer";
 import { BufferView } from "../data/buffers/BufferView";
-import { AccessorComponentType, BufferViewTarget } from "../data/types/gltftypes";
+import { AccessorComponentType, BufferViewTarget, LightTypeString } from "../data/types/gltftypes";
 import { Accessor } from "../data/buffers/Accessor";
 import { DisplacementData, PhongMaterial, TextureData } from "../data/components/materials";
 import { Texture } from "../data/components/materials/textures/Texture";
+
+interface LightUniforms {
+    lightPosition: Float32Array;
+    lightColor: Color;
+    lightTarget?: Float32Array;
+    lightAmbient?: Color;
+    lightDiffuse?: Color;
+    lightSpecular?: Color;
+    lightConstant?: number;
+    lightLinear?: number;
+    lightQuadratic?: number;
+}
 
 export class GLRenderer {
     private _glContainer: GLContainer
@@ -29,14 +41,8 @@ export class GLRenderer {
 
     private renderRoot(root: SceneNode, uniforms: {
         viewMatrix: Float32Array;
-        lightPosition: Float32Array;
-        lightTarget: Float32Array;
-        lightColor: Color;
-        lightAmbient: Color;
-        lightDiffuse: Color;
-        lightSpecular: Color;
         cameraPosition: Float32Array;
-    }) {
+    } & LightUniforms) {
         const mesh = root.mesh;
         const gl = this._glContainer.glContext;
 
@@ -131,43 +137,63 @@ export class GLRenderer {
         }
     }
 
-    render(scene: Scene, cameraNode: SceneNode) {
+    render(scene: Scene, cameraNode: SceneNode, lightNode: SceneNode) {
         this.clearCanvas();
-
-        const lightNode = scene.getActiveLightNode();
-
-        if (!cameraNode || !lightNode) {
+    
+        if (!cameraNode || !lightNode || !lightNode.light) {
             return;
         }
-
+    
         const camera = cameraNode.camera;
-        const light = lightNode.light as DirectionalLight;
-        if (!camera || !light) {
+        const light = lightNode.light;
+    
+        if (!camera) {
             return;
         }
-
-        const lightUniforms = {
+    
+        let lightUniforms: LightUniforms = {
             lightPosition: lightNode.position.buffer,
-            lightTarget: light.target.buffer,
             lightColor: light.color,
-            lightAmbient: light.ambientColor,
-            lightDiffuse: light.diffuseColor,
-            lightSpecular: light.specularColor
         };
-
+    
+        if (light.type === LightTypeString.DIRECTIONAL) {
+            const directionalLight = light as DirectionalLight;
+            lightUniforms = {
+                ...lightUniforms,
+                lightAmbient: directionalLight.ambientColor,
+                lightDiffuse: directionalLight.diffuseColor,
+                lightSpecular: directionalLight.specularColor,
+                lightTarget: directionalLight.target.buffer,
+            };
+        } else if (light.type === LightTypeString.POINT) {
+            const pointLight = light as PointLight;
+            lightUniforms = {
+                ...lightUniforms,
+                lightAmbient: pointLight.ambientColor,
+                lightDiffuse: pointLight.diffuseColor,
+                lightSpecular: pointLight.specularColor,
+                lightConstant: pointLight.constant,
+                lightLinear: pointLight.linear,
+                lightQuadratic: pointLight.quadratic
+            };
+        }
+    
         const viewMatrix = camera.getFinalProjectionMatrix(cameraNode).buffer;
         const cameraPosition = cameraNode.position.buffer;
-
-        const nodes = scene.roots;
-
-        for (const node of nodes) {
-            const defaultUniform = {
+    
+        const roots = scene.roots;
+    
+        for (const root of roots) {
+            const defaultUniform: {
+                viewMatrix: Float32Array;
+                cameraPosition: Float32Array;
+            } & LightUniforms = {
                 viewMatrix,
+                cameraPosition,
                 ...lightUniforms,
-                cameraPosition
             };
-
-            this.renderRoot(node, defaultUniform);
+    
+            this.renderRoot(root, defaultUniform);
         }
-    }
+    }     
 }
