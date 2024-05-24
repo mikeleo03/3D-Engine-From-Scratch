@@ -239,7 +239,6 @@ export class GLContainer {
 
                 // == Render Time
                 this.render(value);
-                console.log(value.textureUnit);
                 this._gl.uniform1i(loc, value.textureUnit);
                 
             }

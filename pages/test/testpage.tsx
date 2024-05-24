@@ -10,6 +10,8 @@ import { MaggieModel } from "@/lib/data/models/MaggieModel";
 import { CubeModel } from "@/lib/data/models/CubeModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
+import { RenderManager } from "@/lib/rendering/RenderManager";
+import { GLTFState } from "@/lib/data/GLTFState";
 
 export default function TestPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -31,7 +33,7 @@ export default function TestPage() {
         canvas.width / 2,
         0.01,
         1000,
-        3
+        1
       );
 
       const perspectiveCamera = new PerspectiveCamera(
@@ -81,7 +83,7 @@ export default function TestPage() {
       const maggie = new MaggieModel();
 
       // change model here
-      const model = maggie;
+      const model = cube;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -94,11 +96,17 @@ export default function TestPage() {
       lightNodes[0].lookAt(obj.position);
 
       // change camera here
-      // scene.addNode(cameraNodes[0]);
-      // scene.addNode(lightNodes[0]);
+      scene.addNode(cameraNodes[0]);
+      scene.addNode(lightNodes[0]);
 
-      // glRenderer.enablePhongShading = true;
+      const gltfState = new GLTFState();
+      gltfState.addScene(scene);
+
+      glRenderer.enablePhongShading = true;
       glRenderer.render(scene, cameraNodes[0]);
+
+      // const renderManager = new RenderManager(gltfState, glRenderer);
+      // renderManager.loop()
 
       // cube.download();
       // jojo.download();
