@@ -248,13 +248,6 @@ export default function Home() {
         }
 
         const cameras = currentScene.cameras;
-        const lights = currentScene.lights;
-
-        for (const lightNode of lights) {
-            if (lightNode.light && lightNode.light.type === LightTypeString.DIRECTIONAL) {
-                currentScene.setActiveLightNode(lightNode);
-            }
-        }
 
         for (const cameraNode of cameras) {
             if (cameraNode.camera && cameraNode.camera.type === type) {
@@ -439,16 +432,31 @@ export default function Home() {
     };
 
     const toggleDirectionalLight = (isChecked: boolean) => {
-        // TODO (Leon): ini mau ngapain
-
+        handleLightChanges(LightTypeString.DIRECTIONAL, isChecked);
         setLightState(prevState => ({...prevState, directionalLight: isChecked }));
     };
 
     const togglePointLight = (isChecked: boolean) => {
-        // TODO (Leon): ini mau ngapain
-
+        handleLightChanges(LightTypeString.POINT, isChecked);
         setLightState(prevState => ({...prevState, pointLight: isChecked }));
     };
+
+    const handleLightChanges = (type: LightTypeString, isChecked: boolean) => {
+        const currentScene = gltfStateRef.current?.CurrentScene;
+
+        if (!currentScene) {
+            return;
+        }
+
+        const lights = currentScene.lights;
+
+        for (const lightNode of lights) {
+            if (lightNode.light && lightNode.light.type === type && isChecked) {
+                currentScene.setActiveLightNode(lightNode);
+                break;
+            }
+        }
+    }
 
     const togglePlay = () => {
         setIsPlaying(prevState => !prevState);
