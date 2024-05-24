@@ -34,7 +34,7 @@ export default function TestPage() {
         canvas.width / 2,
         0.01,
         1000,
-        4
+        2
       );
 
       const perspectiveCamera = new PerspectiveCamera(
@@ -60,10 +60,19 @@ export default function TestPage() {
       const directionalLight = new DirectionalLight(
         new Color(255, 255, 255),
         1,
-        new Vector3(0, 0, 0),
+        new Vector3(-80, -120, -100),
         new Color(255, 255, 255),
         new Color(255, 255, 255),
         new Color(255, 255, 255)
+      );
+
+      const directionalLight2 = new DirectionalLight(
+        new Color(255, 255, 255),
+        1,
+        new Vector3(0, 0, 0),
+        new Color(255 * 0.9, 255 * 0.2, 255 * 0.2),
+        new Color(255 * 0.9, 255 * 0.2, 255 * 0.2),
+        new Color(255 * 0.9, 255 * 0.1, 255 * 0.1)
       );
 
       const pointLight = new PointLight(
@@ -84,8 +93,8 @@ export default function TestPage() {
       ]
 
       const lightNodes = [
-        new SceneNode({ light: directionalLight, position: new Vector3(0, 0, 0) }),
-        new SceneNode({ light: pointLight, position: new Vector3(10, 40, 30) })
+        new SceneNode({ light: pointLight, position: new Vector3(70, 70, 30) }),
+        new SceneNode({ light: pointLight, position: new Vector3(-70, 30, 30) })
       ]
 
       const cube = new CubeModel();
@@ -95,7 +104,7 @@ export default function TestPage() {
       const maggie = new MaggieModel();
 
       // change model here
-      const model = baseCube;
+      const model = cube;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -115,7 +124,8 @@ export default function TestPage() {
       gltfState.addScene(scene);
 
       glRenderer.enablePhongShading = true;
-      glRenderer.render(scene, cameraNodes[0], lightNodes[1]);
+      // glRenderer.render(scene, cameraNodes[0], [lightNodes[0]]);
+      glRenderer.render(scene, cameraNodes[0], lightNodes);
 
       // const renderManager = new RenderManager(gltfState, glRenderer);
       // renderManager.loop()
