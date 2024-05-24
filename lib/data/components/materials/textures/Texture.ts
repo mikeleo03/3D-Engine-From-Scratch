@@ -12,7 +12,7 @@ export class Texture {
     private _source: TextureImage;
     private _defaultColor: Color;
 
-    private _textureRecordMap: Map<string, TextureRecord> = new Map();
+    private _textureRecordMap: Map<string, TextureRecord> = new Map(); // Don't modify, only for renderer.
     
     private _needUpload: boolean = true;  // Upload ulang gambar ke tekstur.
     private _parameterChanged: boolean = true;  // Ubah parameter tekstur di awal minimal sekali.
@@ -39,8 +39,8 @@ export class Texture {
         return this._source;
     }
 
-    isLoaded(rendererId: string): boolean {
-        return this._textureRecordMap.has(rendererId) && this._textureRecordMap.get(rendererId)!!.texture !== null;
+    get isLoaded(): boolean {
+        return this._source.arrayData !== undefined || this._source.image !== undefined;
     }
 
     get needUpload() {

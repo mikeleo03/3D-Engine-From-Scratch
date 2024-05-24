@@ -148,7 +148,7 @@ export class GLContainer {
         if (v.needUpload) {
             // Jika butuh upload data, lakukan upload
             v.needUpload = false;
-            if (v.isLoaded(rendererId)) {
+            if (v.isLoaded) {
                 // Sudah load, gaskan upload
                 const param = [
                     gl.TEXTURE_2D,
