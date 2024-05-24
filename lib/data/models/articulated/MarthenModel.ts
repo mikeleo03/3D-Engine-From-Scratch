@@ -1,13 +1,13 @@
 import { Color } from "@/lib/cores"
-import { Scene } from "../Scene"
-import { SceneNode } from "../SceneNode"
-import { AnimationClip } from "../components/animations"
-import {BasicMaterial, PhongMaterial} from "../components/materials"
-import { MeshFactory } from "../components/mesh/MeshFactory"
-import { Model } from "./Model"
-import { Quaternion, Vector3 } from "../math"
-import { OrthographicCamera } from "../components/cameras"
-import { Camera } from "../components/cameras/Camera"
+import { Scene } from "../../Scene"
+import { SceneNode } from "../../SceneNode"
+import { AnimationClip } from "../../components/animations"
+import {BasicMaterial, PhongMaterial} from "../../components/materials"
+import { MeshFactory } from "../../components/mesh/MeshFactory"
+import { Model } from "../Model"
+import { Quaternion, Vector3 } from "../../math"
+import { OrthographicCamera } from "../../components/cameras"
+import { Camera } from "../../components/cameras/Camera"
 
 export class MarthenModel extends Model {
   constructor() {

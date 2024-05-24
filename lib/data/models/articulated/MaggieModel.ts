@@ -1,12 +1,12 @@
 import { Color } from "@/lib/cores";
-import { Scene } from "../Scene";
-import { SceneNode } from "../SceneNode";
-import { AnimationClip, AnimationPath } from "../components/animations";
-import { BasicMaterial, PhongMaterial } from "../components/materials";
-import { MeshFactory } from "../components/mesh/MeshFactory";
-import { Model } from "./Model";
-import { Vector3 } from "../math";
-import { AnimationTRS } from "../types/gltftypes";
+import { Scene } from "../../Scene";
+import { SceneNode } from "../../SceneNode";
+import { AnimationClip, AnimationPath } from "../../components/animations";
+import { BasicMaterial, PhongMaterial } from "../../components/materials";
+import { MeshFactory } from "../../components/mesh/MeshFactory";
+import { Model } from "../Model";
+import { Vector3 } from "../../math";
+import { AnimationTRS } from "../../types/gltftypes";
 import { AssertionError } from "assert";
 
 export class MaggieModel extends Model {
