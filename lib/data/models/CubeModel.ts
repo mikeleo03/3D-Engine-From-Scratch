@@ -74,7 +74,7 @@ export class CubeModel extends Model {
         const textureData = new TextureData(texture, coord);
         textureData.expandTexCoords(MeshFactory.CUBOID_INDICES)
 
-        return new DisplacementData(textureData, 50, 20);
+        return new DisplacementData(textureData, 40, 0);
     }
 
     private getCube(): SceneNode {

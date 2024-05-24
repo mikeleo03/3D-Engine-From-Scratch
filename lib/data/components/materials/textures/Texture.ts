@@ -3,13 +3,17 @@ import { Sampler } from "./Sampler";
 import { TextureImage } from "./TextureImage";
 import { Color } from "@/lib/cores";
 
+export type TextureRecord = {
+    texture: WebGLTexture | null;
+    unit: number;
+}
 export class Texture {
     private _sampler: Sampler;
     private _source: TextureImage;
     private _defaultColor: Color;
 
-    private _texture: WebGLTexture | null = null; // JANGAN DIUBAH! Hanya untuk renderer.
-    private _textureUnit: number = -1;  // JANGAN DIUBAH! Hanya untuk renderer.
+    private _textureRecordMap: Map<string, TextureRecord> = new Map();
+    
     private _needUpload: boolean = true;  // Upload ulang gambar ke tekstur.
     private _parameterChanged: boolean = true;  // Ubah parameter tekstur di awal minimal sekali.
 
@@ -35,20 +39,24 @@ export class Texture {
         return this._source;
     }
 
-    get isLoaded() {
-        return this._texture !== null;
+    isLoaded(rendererId: string): boolean {
+        return this._textureRecordMap.has(rendererId) && this._textureRecordMap.get(rendererId)!!.texture !== null;
     }
 
     get needUpload() {
         return this._needUpload;
     }
 
-    get texture() {
-        return this._texture;
+    getTextureRecord(rendererId: string): TextureRecord | null {
+        return this._textureRecordMap.get(rendererId) ?? null;
     }
 
-    get textureUnit() {
-        return this._textureUnit;
+    getTexture(rendererId: string): WebGLTexture | null {
+        return this._textureRecordMap.get(rendererId)?.texture ?? null;
+    }
+
+    getTextureUnit(rendererId: string): number {
+        return this._textureRecordMap.get(rendererId)?.unit ?? -1;
     }
 
     get parameterChanged() {
@@ -67,8 +75,14 @@ export class Texture {
         this._source = value;
     }
 
-    set texture(value: WebGLTexture | null) {
-        this._texture = value;
+    setTexture(rendererId: string, texture: WebGLTexture | null) {
+        const unit = this._textureRecordMap.has(rendererId) ? this._textureRecordMap.get(rendererId)!!.unit : -1;
+        this._textureRecordMap.set(rendererId, { texture, unit });
+    }
+
+    setTextureUnit(rendererId: string, unit: number) {
+        const texture = this._textureRecordMap.has(rendererId) ? this._textureRecordMap.get(rendererId)!!.texture : null;
+        this._textureRecordMap.set(rendererId, { texture, unit });
     }
 
     set needUpload(value: boolean) {
@@ -81,10 +95,6 @@ export class Texture {
 
     set defaultColor(value: Color) {
         this._defaultColor = value;
-    }
-
-    set textureUnit(value: number) {
-        this._textureUnit = value;
     }
 
     toRaw(samplerMap: Map<Sampler, number>, sourceMap: Map<TextureImage, number>): TextureType {

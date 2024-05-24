@@ -670,12 +670,6 @@ export default function Home() {
                     }
                 }
 
-                renderManagerRef.current = new RenderManager(gltfState, glRendererRef.current!!);
-                renderManagerRef.current.loop();
-
-                secondRenderManagerRef.current = new RenderManager(gltfState, secondGLRendererRef.current!!);
-                secondRenderManagerRef.current.loop();
-
                 setNewState(gltfState);
             }
         }

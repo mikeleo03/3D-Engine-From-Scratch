@@ -111,7 +111,9 @@ export class GLContainer {
         return program;
     }
 
-    getProgramInfo(vertexSource: string, fragmentSource: string): ProgramInfo {
+    getProgramInfo(vertexSource: string, fragmentSource: string, options: { rendererId?: string } = {}): ProgramInfo {
+        const { rendererId } = options;
+
         const vertexShader = this.createShader(vertexSource, ShaderType.VERTEX);
         const fragmentShader = this.createShader(fragmentSource, ShaderType.FRAGMENT);
 
@@ -119,7 +121,7 @@ export class GLContainer {
 
         return {
             program: program,
-            uniformSetters: this.createUniformSetters(program),
+            uniformSetters: this.createUniformSetters(program, { rendererId }),
             attributeSetters: this.createAttributeSetters(program),
         };
     }
@@ -128,13 +130,13 @@ export class GLContainer {
         this._gl.useProgram(programInfo.program);
     }
 
-    private setupTexture(v: Texture) {
+    private setupTexture(v: Texture, rendererId: string) {
         const gl = this._gl;
-        let webglTexture = v.texture;
+        let webglTexture = v.getTexture(rendererId);
 
         if (!webglTexture) {
             webglTexture = gl.createTexture();
-            v.texture = webglTexture;
+            v.setTexture(rendererId, webglTexture);
         }
 
         gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
@@ -146,7 +148,7 @@ export class GLContainer {
         if (v.needUpload) {
             // Jika butuh upload data, lakukan upload
             v.needUpload = false;
-            if (v.isLoaded) {
+            if (v.isLoaded(rendererId)) {
                 // Sudah load, gaskan upload
                 const param = [
                     gl.TEXTURE_2D,
@@ -190,23 +192,24 @@ export class GLContainer {
         gl.bindTexture(gl.TEXTURE_2D, null); // balikkan bind ke null
     }
 
-    private renderTexture(v: Texture) {
+    private renderTexture(v: Texture, rendererId: string) {
         // Pilih tekstur unit, bind tekstur ke unit, set uniform sampler ke unit.
         const gl = this._gl;
-        gl.activeTexture(gl.TEXTURE0 + v.textureUnit);
-        gl.bindTexture(gl.TEXTURE_2D, v.texture);
+        gl.activeTexture(gl.TEXTURE0 + v.getTextureUnit(rendererId));
+        gl.bindTexture(gl.TEXTURE_2D, v.getTexture(rendererId));
     }
 
-    private render(v: Texture) {
-        this.setupTexture(v); 
-        this.renderTexture(v);
+    private render(v: Texture, rendererId: string) {
+        this.setupTexture(v, rendererId); 
+        this.renderTexture(v, rendererId);
     }
 
     private createUniformSetter(
         info: WebGLActiveInfo, 
         program: WebGLProgram, 
         options: {
-            textureUnit?: number
+            textureUnit?: number,
+            rendererId?: string
         } = {}
     ): UniformSetters {
         const loc = this._gl.getUniformLocation(program, info.name);
@@ -227,19 +230,28 @@ export class GLContainer {
                     throw new Error("Uniform type mismatch");
                 }
 
+                const rendererId = options.rendererId;
+
+                if (!rendererId) {
+                    throw new Error("Renderer ID is not defined");
+                }
+
                 value = value as Texture;
 
-                if (value.textureUnit == -1) {
+                let textureUnit = value.getTextureUnit(rendererId);
+
+                if (textureUnit == -1) {
                     if (options.textureUnit == undefined) {
                         throw new Error("Texture unit is not defined");
                     }
 
-                    value.textureUnit = options.textureUnit;
+                   textureUnit = options.textureUnit;
+                    value.setTextureUnit(rendererId, textureUnit);
                 }
 
                 // == Render Time
-                this.render(value);
-                this._gl.uniform1i(loc, value.textureUnit);
+                this.render(value, rendererId);
+                this._gl.uniform1i(loc, textureUnit);
                 
             }
         }
@@ -266,7 +278,8 @@ export class GLContainer {
         
     }
 
-    private createUniformSetters(program: WebGLProgram): UniformMapSetters {
+    private createUniformSetters(program: WebGLProgram, options: {rendererId?: string} = {}): UniformMapSetters {
+        const { rendererId } = options;
         let textureUnit = 0;
 
         const uniformSetters: UniformMapSetters = {};
@@ -275,7 +288,7 @@ export class GLContainer {
         for (let i = 0; i < numUniforms; i++) {
             const info = this._gl.getActiveUniform(program, i);
             if (!info) continue;
-            uniformSetters[info.name] = this.createUniformSetter(info, program, { textureUnit });
+            uniformSetters[info.name] = this.createUniformSetter(info, program, { textureUnit, rendererId });
 
             if (info.type == WebGLType.SAMPLER_2D) {
                 textureUnit += info.size;

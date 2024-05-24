@@ -51,7 +51,13 @@ export class GLRenderer {
                 if (!material.getProgramInfo(this._id)) {
                     material.setProgramInfo(
                         this._id,
-                        this._glContainer.getProgramInfo(material.vertexShader, material.fragmentShader)
+                        this._glContainer.getProgramInfo(
+                            material.vertexShader, 
+                            material.fragmentShader,
+                            {
+                                rendererId: this._id
+                            }
+                        )
                     );
                 }
 
@@ -80,12 +86,14 @@ export class GLRenderer {
                     textureUniforms["specularMap"] = material.specularMap?.texture;
                 }
 
-                this._glContainer.setUniforms(programInfo, {
-                    ...material.getBufferUniforms(),
-                    ...textureUniforms,
-                    ...uniforms,
-                    worldMatrix: root.worldMatrix.transpose().buffer,
-                });
+                this._glContainer.setUniforms(
+                    programInfo, {
+                        ...material.getBufferUniforms(),
+                        ...textureUniforms,
+                        ...uniforms,
+                        worldMatrix: root.worldMatrix.transpose().buffer,
+                    }
+                );
 
                 geometry.calculateFaceNormals();
                 geometry.calculateVertexNormals();
