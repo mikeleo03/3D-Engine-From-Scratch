@@ -12,6 +12,7 @@ import { DisplacementData, PhongMaterial, TextureData } from "../data/components
 import { Texture } from "../data/components/materials/textures/Texture";
 
 interface LightUniforms {
+    lightType: number;
     lightPosition: Float32Array;
     lightColor: Color;
     lightTarget?: Float32Array;
@@ -152,6 +153,7 @@ export class GLRenderer {
         }
     
         let lightUniforms: LightUniforms = {
+            lightType: light.type === LightTypeString.DIRECTIONAL ? 0 : 1,
             lightPosition: lightNode.position.buffer,
             lightColor: light.color,
         };
