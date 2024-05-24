@@ -33,6 +33,10 @@ export class MaterialUtil {
                 diffuseColor: Color,
                 specularColor: Color,
                 shininess: number,
+                diffuseMaps: TextureData[],
+                normalMaps: TextureData[],
+                displacementMaps: DisplacementData[],
+                specularMaps: TextureData[],
                 diffuseMap?: TextureData,
                 normalMap?: TextureData,
                 displacementMap?: DisplacementData,
@@ -44,22 +48,47 @@ export class MaterialUtil {
                 diffuseColor: Color.fromRaw(raw.uniforms.diffuseColor),
                 specularColor: Color.fromRaw(raw.uniforms.specularColor),
                 shininess: raw.uniforms.shininess,
+                diffuseMaps: [],
+                normalMaps: [],
+                displacementMaps: [],
+                specularMaps: []
             };
 
-            if (raw.uniforms.diffuseMap) {
-                params.diffuseMap = TextureData.fromRaw(raw.uniforms.diffuseMap, options.textures, options.accessors);
+            const  diffuseMaps = raw.uniforms.diffuseMaps.map((rawMap) => {
+                return TextureData.fromRaw(rawMap, options.textures!, options.accessors!);
+            });
+
+            const normalMaps = raw.uniforms.normalMaps.map((rawMap) => {
+                return TextureData.fromRaw(rawMap, options.textures!, options.accessors!);
+            });
+
+            const displacementMaps = raw.uniforms.displacementMaps.map((rawMap) => {
+                return DisplacementData.fromRaw(rawMap, options.textures!, options.accessors!);
+            });
+
+            const specularMaps = raw.uniforms.specularMaps.map((rawMap) => {
+                return TextureData.fromRaw(rawMap, options.textures!, options.accessors!);
+            });
+
+            params.diffuseMaps = diffuseMaps;
+            params.normalMaps = normalMaps;
+            params.displacementMaps = displacementMaps;
+            params.specularMaps = specularMaps;
+
+            if (raw.uniforms.diffuseMap !== undefined) {
+                params.diffuseMap = diffuseMaps[raw.uniforms.diffuseMap];
             }
 
-            if (raw.uniforms.normalMap) {
-                params.normalMap = TextureData.fromRaw(raw.uniforms.normalMap, options.textures, options.accessors);
+            if (raw.uniforms.normalMap !== -1) {
+                params.normalMap = normalMaps[raw.uniforms.normalMap];
             }
 
-            if (raw.uniforms.displacementMap) {
-                params.displacementMap = DisplacementData.fromRaw(raw.uniforms.displacementMap, options.textures, options.accessors);
+            if (raw.uniforms.displacementMap !== -1) {
+                params.displacementMap = displacementMaps[raw.uniforms.displacementMap];
             }
 
-            if (raw.uniforms.specularMap) {
-                params.specularMap = TextureData.fromRaw(raw.uniforms.specularMap, options.textures, options.accessors);
+            if (raw.uniforms.specularMap !== -1) {
+                params.specularMap = specularMaps[raw.uniforms.specularMap];
             }
 
             return new PhongMaterial(params);

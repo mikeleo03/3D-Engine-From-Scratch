@@ -205,6 +205,11 @@ export class PhongMaterial extends ShaderMaterial {
     private _displacementMap?: DisplacementData;
     private _specularMap?: TextureData;
 
+    private _diffuseMaps: TextureData[] = [];
+    private _normalMaps: TextureData[] = [];
+    private _displacementMaps: DisplacementData[] = [];
+    private _specularMaps: TextureData[] = [];
+
     constructor(
         options: {
             name?: string,
@@ -216,7 +221,16 @@ export class PhongMaterial extends ShaderMaterial {
             normalMap?: TextureData;
             displacementMap?: DisplacementData;
             specularMap?: TextureData;
-        } = {}
+            diffuseMaps?: TextureData[];
+            normalMaps?: TextureData[];
+            displacementMaps?: DisplacementData[];
+            specularMaps?: TextureData[];
+        } = {
+            diffuseMaps: [],
+            normalMaps: [],
+            displacementMaps: [],
+            specularMaps: []
+        }
     ) {
         const {
             ambientColor,
@@ -246,6 +260,27 @@ export class PhongMaterial extends ShaderMaterial {
         this._normalMap = normalMap;
         this._displacementMap = displacementMap;
         this._specularMap = specularMap;
+
+        this._diffuseMaps = options.diffuseMaps || [];
+        this._normalMaps = options.normalMaps || [];
+        this._displacementMaps = options.displacementMaps || [];
+        this._specularMaps = options.specularMaps || [];
+
+        if (this._diffuseMap && !this._diffuseMaps.includes(this._diffuseMap)) {
+            this._diffuseMaps.push(this._diffuseMap);
+        }
+
+        if (this._normalMap && !this._normalMaps.includes(this._normalMap)) {
+            this._normalMaps.push(this._normalMap);
+        }
+
+        if (this._displacementMap && !this._displacementMaps.includes(this._displacementMap)) {
+            this._displacementMaps.push(this._displacementMap);
+        }
+
+        if (this._specularMap && !this._specularMaps.includes(this._specularMap)) {
+            this._specularMaps.push(this._specularMap);
+        }
     }
 
     get ambientColor(): Color {
@@ -278,6 +313,22 @@ export class PhongMaterial extends ShaderMaterial {
 
     get specularMap(): TextureData | undefined {
         return this._specularMap;
+    }
+
+    get diffuseMaps(): TextureData[] {
+        return this._diffuseMaps.slice();
+    }
+
+    get normalMaps(): TextureData[] {
+        return this._normalMaps.slice();
+    }
+
+    get displacementMaps(): DisplacementData[] {
+        return this._displacementMaps.slice();
+    }
+
+    get specularMaps(): TextureData[] {
+        return this._specularMaps.slice();
     }
 
     set diffuseColor(val: Color) {
@@ -325,28 +376,41 @@ export class PhongMaterial extends ShaderMaterial {
             throw new Error('Accessor map is required.');
         }
 
+        const diffuseMapRaws = this._diffuseMaps.map(
+            (diffuseMap) => diffuseMap.toRaw(options.textureMap!, options.accessorMap!)
+        );
+
+        const normalMapRaws = this._normalMaps.map(
+            (normalMap) => normalMap.toRaw(options.textureMap!, options.accessorMap!)
+        );
+
+        const displacementMapRaws = this._displacementMaps.map(
+            (displacementMap) => displacementMap.toRaw(options.textureMap!, options.accessorMap!)
+        );
+
+        const specularMapRaws = this._specularMaps.map(
+            (specularMap) => specularMap.toRaw(options.textureMap!, options.accessorMap!)
+        );
+
         const uniforms: PhongMaterialUniformType = {
             ambientColor: this._ambientColor.toRaw(),
             diffuseColor: this._diffuseColor.toRaw(),
             specularColor: this._specularColor.toRaw(),
-            shininess: this._shininess
+            shininess: this._shininess,
+            diffuseMaps: diffuseMapRaws,
+            normalMaps: normalMapRaws,
+            displacementMaps: displacementMapRaws,
+            specularMaps: specularMapRaws,
+            diffuseMap: -1,
+            normalMap: -1,
+            displacementMap: -1,
+            specularMap: -1
         };
 
-        if (this._diffuseMap) {
-            uniforms.diffuseMap = this._diffuseMap.toRaw(options.textureMap, options.accessorMap);
-        }
-
-        if (this._normalMap) {
-            uniforms.normalMap = this._normalMap.toRaw(options.textureMap, options.accessorMap);
-        }
-
-        if (this._displacementMap) {
-            uniforms.displacementMap = this._displacementMap.toRaw(options.textureMap, options.accessorMap);
-        }
-
-        if (this._specularMap) {
-            uniforms.specularMap = this._specularMap.toRaw(options.textureMap, options.accessorMap);
-        }
+        uniforms.diffuseMap = this._diffuseMap ? this._diffuseMaps.findIndex((map) => map === this._diffuseMap) : -1;
+        uniforms.normalMap = this._normalMap ? this._normalMaps.findIndex((map) => map === this._normalMap) : -1;
+        uniforms.displacementMap = this._displacementMap ? this._displacementMaps.findIndex((map) => map === this._displacementMap) : -1;
+        uniforms.specularMap = this._specularMap ? this._specularMaps.findIndex((map) => map === this._specularMap) : -1;
 
         return {
             type: MaterialTypeString.PHONG,

@@ -163,6 +163,8 @@ export class GLContainer {
                     param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
                 }
 
+                // fix alignment problem: process per 1 byte
+                gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
                 // @ts-ignore: agak curang but hey less code it is :)
                 gl.texImage2D(...param);
                 if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);

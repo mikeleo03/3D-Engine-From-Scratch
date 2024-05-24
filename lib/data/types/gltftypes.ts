@@ -124,10 +124,14 @@ export type PhongMaterialUniformType = {
     "diffuseColor": number[],
     "specularColor": number[],
     "shininess": number,
-    "diffuseMap"?: TextureDataType,
-    "normalMap"?: TextureDataType,
-    "displacementMap"?: DisplacementDataType,
-    "specularMap"?: TextureDataType
+    "diffuseMap": number,
+    "normalMap": number,
+    "displacementMap": number,
+    "specularMap": number,
+    "diffuseMaps": TextureDataType[],
+    "normalMaps": TextureDataType[],
+    "displacementMaps": DisplacementDataType[],
+    "specularMaps": TextureDataType[]
 }
 
 export type MaterialType = {

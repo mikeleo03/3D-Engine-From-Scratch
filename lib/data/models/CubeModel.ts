@@ -50,10 +50,7 @@ export class CubeModel extends Model {
         )
 
         const data = new Uint8Array([
-            255, 255, 255, 255,
-            0, 255, 255, 255,
-            255, 255, 255, 255,
-            255, 255, 255, 255,
+            255, 25, 0, 255
         ])
 
         const source = new TextureImage(
@@ -64,7 +61,7 @@ export class CubeModel extends Model {
                     height: 2
                 }
             },
-            ImageFormat.RGBA,
+            ImageFormat.Luminance,
             ImageType.UnsignedByte
         )
 
@@ -74,7 +71,7 @@ export class CubeModel extends Model {
         const textureData = new TextureData(texture, coord);
         textureData.expandTexCoords(MeshFactory.CUBOID_INDICES)
 
-        return new DisplacementData(textureData, 40, 0);
+        return new DisplacementData(textureData, 40, 20);
     }
 
     private getCube(): SceneNode {
@@ -89,12 +86,12 @@ export class CubeModel extends Model {
             diffuseColor: new Color(204, 102, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
-            displacementMap: displacementData
+            displacementMap: displacementData,
+            diffuseMaps: [],
+            normalMaps: [],
+            displacementMaps: [],
+            specularMaps: []
         });
-
-        /* const cubeMesh = meshFactory.cuboid(80, 80, 80, 
-            {basicMaterial: cubeMaterial, phongMaterial: phongCubeMaterial}
-        ); */
 
         const cubeMesh = meshFactory.cuboid(
             80, 80, 80,

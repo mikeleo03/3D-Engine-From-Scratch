@@ -207,21 +207,21 @@ export class GLTFState {
         }
 
         if (material instanceof PhongMaterial) {
-            if (material.normalMap) {
-                this.addTexture(material.normalMap.texture);
+            for (const map of material.diffuseMaps) {
+                this.addTexture(map.texture);
             }
 
-            if (material.diffuseMap) {
-                this.addTexture(material.diffuseMap.texture);
+            for (const map of material.normalMaps) {
+                this.addTexture(map.texture);
             }
 
-            if (material.specularMap) {
-                this.addTexture(material.specularMap.texture);
+            for (const map of material.specularMaps) {
+                this.addTexture(map.texture);
             }
 
-            if (material.displacementMap) {
-                this.addTexture(material.displacementMap.textureData.texture);
-                this.addAccessor(material.displacementMap.textureData.textCoords);
+            for (const map of material.displacementMaps) {
+                this.addTexture(map.textureData.texture);
+                this.addAccessor(map.textureData.textCoords);
             }
         }
 
@@ -462,9 +462,16 @@ export class GLTFState {
         for (let i = 0; i < this._materials.length; i++) {
             if (this._materials[i] instanceof PhongMaterial) {
                 const material = this._materials[i] as PhongMaterial;
+                const displacementMaps = material.displacementMaps;
 
-                if (material.displacementMap?.textureData.textCoords == accessor) {
-                    remove = false;
+                for (let j = 0; j < displacementMaps.length; j++) {
+                    if (displacementMaps[j].textureData.textCoords == accessor) {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (!remove) {
                     break;
                 }
             }
@@ -537,11 +544,52 @@ export class GLTFState {
             if (this._materials[i] instanceof PhongMaterial) {
                 const material = this._materials[i] as PhongMaterial;
 
-                if (material.normalMap?.texture == texture ||
-                    material.diffuseMap?.texture == texture ||
-                    material.specularMap?.texture == texture ||
-                    material.displacementMap?.textureData.texture == texture) {
-                    remove = false;
+                const diffuseMaps = material.diffuseMaps;
+                const normalMaps = material.normalMaps;
+                const specularMaps = material.specularMaps;
+                const displacementMaps = material.displacementMaps;
+
+                for (let j = 0; j < diffuseMaps.length; j++) {
+                    if (diffuseMaps[j].texture == texture) {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (!remove) {
+                    break;
+                }
+
+                for (let j = 0; j < normalMaps.length; j++) {
+                    if (normalMaps[j].texture == texture) {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (!remove) {
+                    break;
+                }
+
+                for (let j = 0; j < specularMaps.length; j++) {
+                    if (specularMaps[j].texture == texture) {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (!remove) {
+                    break;
+                }
+
+                for (let j = 0; j < displacementMaps.length; j++) {
+                    if (displacementMaps[j].textureData.texture == texture) {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (!remove) {
                     break;
                 }
             }

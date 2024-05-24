@@ -28,7 +28,11 @@ export class JojoModel extends Model {
             ambientColor: new Color(251, 231, 239), 
             diffuseColor: new Color(251, 231, 239), 
             specularColor: Color.white(),
-            shininess: 5
+            shininess: 5,
+            diffuseMaps: [],
+            normalMaps: [],
+            displacementMaps: [],
+            specularMaps: []
         });
 
         const bodyMesh = meshFactory.cuboid(50, 70, 30, 
@@ -46,7 +50,7 @@ export class JojoModel extends Model {
             ambientColor: new Color(251, 231, 239),
             diffuseColor: new Color(251, 231, 239),
             specularColor: Color.white(),
-            shininess: 4
+            shininess: 4,
         });
 
         const handMesh = meshFactory.cuboid(15, 60, 25, 
