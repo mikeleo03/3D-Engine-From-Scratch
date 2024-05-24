@@ -220,7 +220,7 @@ export type LightType = {
     "directional": {
         "color": number[],
         "intensity": number,
-        "target": number[],
+        "target": Float32Array,
         "ambientColor": number[],
         "diffuseColor": number[],
         "specularColor": number[]
