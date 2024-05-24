@@ -8,14 +8,12 @@ attribute vec2 a_displacementUV;
 
 uniform mat4 u_worldMatrix;
 uniform mat4 u_viewMatrix;
-uniform vec3 u_lightPosition;
 uniform sampler2D u_displacementMap;
 uniform float u_displacementScale;
 uniform float u_displacementBias;
 
 varying vec3 normalSurface;
 varying vec3 vertexPosition;
-
 
 void main() {
     vec4 displacement = texture2D(u_displacementMap, a_displacementUV);
