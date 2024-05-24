@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { GLTFState } from '@/lib/data/GLTFState';
 import { Color, GLContainer } from '@/lib/cores';
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from '@/lib/data/components/cameras';
-import { DirectionalLight } from '@/lib/data/components/lights';
+import { DirectionalLight, PointLight } from '@/lib/data/components/lights';
 import { SceneNode } from '@/lib/data/SceneNode';
 import { GLRenderer } from '@/lib/rendering/GLRenderer';
 import { GLTFParser } from '@/lib/data/GLTFParser';
@@ -932,13 +932,27 @@ export default function Home() {
                 new Color(255, 255, 255)
             );
 
-            const lightPosition = new Vector3(0, 0, 0);
+            const pointLight = new PointLight(
+                new Color(255, 255, 255),
+                1,
+                new Color(255, 255, 255),
+                new Color(255, 255, 255),
+                new Color(255, 255, 255),
+                0.01,
+                0.01,
+                0.001
+            );
 
             const lightNodes = [
                 new SceneNode({
                     name: 'Directional Light',
                     light: directionalLight,
-                    position: lightPosition
+                    position: new Vector3(0, 0, 0)
+                }),
+                new SceneNode({
+                    name: 'Point Light',
+                    light: pointLight,
+                    position: new Vector3(10, 40, 30)
                 })
             ]
 
