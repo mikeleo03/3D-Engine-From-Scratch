@@ -145,9 +145,9 @@ export class GLContainer {
             && MathUtil.isPowerOf2(v.height)
         );
 
-        if (v.needUpload) {
+        if (v.isNeedUpload(rendererId)) {
             // Jika butuh upload data, lakukan upload
-            v.needUpload = false;
+            v.setNeedUpload(rendererId, false);
             if (v.isLoaded) {
                 // Sudah load, gaskan upload
                 const param = [
@@ -176,9 +176,9 @@ export class GLContainer {
                 );
             }
         }
-        if (v.parameterChanged) {
+        if (v.isParameterChanged(rendererId)) {
             // Jika parameter berubah, lakukan set parameter
-            v.parameterChanged = false;
+            v.setParameterChanged(rendererId, false);
             if (!isPOT) {
                 v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
                 v.sampler.minFilter = gl.LINEAR;

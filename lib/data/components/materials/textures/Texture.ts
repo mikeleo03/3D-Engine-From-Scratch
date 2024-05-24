@@ -13,9 +13,8 @@ export class Texture {
     private _defaultColor: Color;
 
     private _textureRecordMap: Map<string, TextureRecord> = new Map(); // Don't modify, only for renderer.
-    
-    private _needUpload: boolean = true;  // Upload ulang gambar ke tekstur.
-    private _parameterChanged: boolean = true;  // Ubah parameter tekstur di awal minimal sekali.
+    private _needUploadMap: Map<string, boolean> = new Map();  // Don't modify, only for renderer.
+    private _parameterChangedMap: Map<string, boolean> = new Map();  // Don't modify, only for renderer.
 
     constructor(sampler: Sampler, source: TextureImage, defaultColor: Color = Color.white()) {
         this._sampler = sampler;
@@ -43,8 +42,8 @@ export class Texture {
         return this._source.arrayData !== undefined || this._source.image !== undefined;
     }
 
-    get needUpload() {
-        return this._needUpload;
+    isNeedUpload(rendererId: string) {
+        return this._needUploadMap.has(rendererId) ? this._needUploadMap.get(rendererId)!! : true;
     }
 
     getTextureRecord(rendererId: string): TextureRecord | null {
@@ -59,8 +58,8 @@ export class Texture {
         return this._textureRecordMap.get(rendererId)?.unit ?? -1;
     }
 
-    get parameterChanged() {
-        return this._parameterChanged;
+    isParameterChanged(rendererId: string) {
+        return this._parameterChangedMap.has(rendererId) ? this._parameterChangedMap.get(rendererId)!! : true;
     }
 
     get defaultColor() {
@@ -85,12 +84,12 @@ export class Texture {
         this._textureRecordMap.set(rendererId, { texture, unit });
     }
 
-    set needUpload(value: boolean) {
-        this._needUpload = value;
+    setNeedUpload(rendererId: string, value: boolean) {
+        this._needUploadMap.set(rendererId, value);
     }
 
-    set parameterChanged(value: boolean) {
-        this._parameterChanged = value;
+    setParameterChanged(rendererId: string, value: boolean) {
+        this._parameterChangedMap.set(rendererId, value);
     }
 
     set defaultColor(value: Color) {
