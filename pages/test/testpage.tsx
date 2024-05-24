@@ -12,6 +12,7 @@ import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
 import { RenderManager } from "@/lib/rendering/RenderManager";
 import { GLTFState } from "@/lib/data/GLTFState";
+import { BaseCubeModel } from "@/lib/data/models/BaseCubeModel";
 
 export default function TestPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -78,12 +79,13 @@ export default function TestPage() {
       ]
 
       const cube = new CubeModel();
+      const baseCube = new BaseCubeModel();
       const jojo = new JojoModel();
       const leon = new LeonModel();
       const maggie = new MaggieModel();
 
       // change model here
-      const model = leon;
+      const model = baseCube;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -103,11 +105,12 @@ export default function TestPage() {
       gltfState.addScene(scene);
 
       glRenderer.enablePhongShading = true;
-      glRenderer.render(scene, cameraNodes[0]);
+      glRenderer.render(scene, cameraNodes[0], lightNodes[0]);
 
       // const renderManager = new RenderManager(gltfState, glRenderer);
       // renderManager.loop()
 
+      baseCube.download();
       // cube.download();
       // jojo.download();
       // leon.download();
