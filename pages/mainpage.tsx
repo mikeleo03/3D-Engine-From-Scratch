@@ -1103,6 +1103,22 @@ export default function Home() {
         material.displacementMap = selectedTexture;
     }
 
+    const handleDisplacementScaleChange = (material: PhongMaterial, scale: number) => {
+        if (!material.displacementMap) {
+            return;
+        }
+
+        material.displacementMap.scale = scale;
+    }
+
+    const handleDisplacementBiasChange = (material: PhongMaterial, bias: number) => {
+        if (!material.displacementMap) {
+            return;
+        }
+
+        material.displacementMap.bias = bias;
+    }
+
     return (
         <main className="flex flex-col h-screen w-full bg-[#F2FBFA] overflow-hidden">
             {/* Header Section */}
@@ -1554,6 +1570,7 @@ export default function Home() {
                                         <div className='flex flex-row justify-between w-full'>
                                             <Label htmlFor='shininess' className="text-base font-semibold pb-1 w-1/3 ">Shininess</Label>
                                             <input
+                                                id='shininess'
                                                 className="w-2/3"
                                                 type="range"
                                                 min="0"
@@ -1624,6 +1641,36 @@ export default function Home() {
                                         ))}
                                     </SelectContent>
                                 </Select>
+                                
+                                
+                                {material.displacementMap &&(
+                                    <>
+                                            <Label htmlFor='displacement-scale' className="text-base font-semibold pb-1 w-1/3 ">Displacement Scale</Label>
+                                            <input
+                                            id='displacement-scale'
+                                            className="w-2/3"
+                                            type="range"
+                                            step="0.1"
+                                            min="-200"
+                                            max="200"
+                                            defaultValue={material.displacementMap.scale}
+                                            onChange={(e) => handleDisplacementScaleChange(material, parseFloat(e.target.value))}
+                                        />
+
+                                        <Label htmlFor='displacement-bias' className="text-base font-semibold pb-1 w-1/3 ">Displacement Bias</Label>
+                                        
+                                        <input
+                                            id='displacement-bias'
+                                            className="w-2/3"
+                                            type="range"
+                                            step="0.1"
+                                            min="-200"
+                                            max="200"
+                                            defaultValue={material.displacementMap.bias}
+                                            onChange={(e) => handleDisplacementBiasChange(material, parseFloat(e.target.value))}
+                                        />
+                                    </>
+                                )}
                             </div>
                         )} 
                         </div>
