@@ -20,7 +20,6 @@ export class LightUtil {
             return new PointLight(
                 new Color(...raw.point.color),
                 raw.point.intensity,
-                Vector3.fromRaw(raw.point.target),
                 new Color(...raw.point.ambientColor),
                 new Color(...raw.point.diffuseColor),
                 new Color(...raw.point.specularColor),
