@@ -34,7 +34,7 @@ export default function TestPage() {
         canvas.width / 2,
         0.01,
         1000,
-        1
+        4
       );
 
       const perspectiveCamera = new PerspectiveCamera(
@@ -66,7 +66,16 @@ export default function TestPage() {
         new Color(255, 255, 255)
       );
 
-      const lightPosition = new Vector3(0, 0, 0);
+      const pointLight = new PointLight(
+        new Color(255, 255, 255),
+        1,
+        new Color(255, 255, 255),
+        new Color(255, 255, 255),
+        new Color(255, 255, 255),
+        0.01,
+        0.01,
+        0.001
+      );
 
       const cameraNodes = [
         new SceneNode({ camera: orthographicCamera, position: new Vector3(0, 0, 200) }),
@@ -75,7 +84,8 @@ export default function TestPage() {
       ]
 
       const lightNodes = [
-        new SceneNode({ light: directionalLight, position: lightPosition })
+        new SceneNode({ light: directionalLight, position: new Vector3(0, 0, 0) }),
+        new SceneNode({ light: pointLight, position: new Vector3(10, 40, 30) })
       ]
 
       const cube = new CubeModel();
@@ -105,12 +115,12 @@ export default function TestPage() {
       gltfState.addScene(scene);
 
       glRenderer.enablePhongShading = true;
-      glRenderer.render(scene, cameraNodes[0], lightNodes[0]);
+      glRenderer.render(scene, cameraNodes[0], lightNodes[1]);
 
       // const renderManager = new RenderManager(gltfState, glRenderer);
       // renderManager.loop()
 
-      baseCube.download();
+      // baseCube.download();
       // cube.download();
       // jojo.download();
       // leon.download();

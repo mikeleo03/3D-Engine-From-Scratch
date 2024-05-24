@@ -8,12 +8,16 @@ uniform vec4 u_diffuseColor;
 uniform vec4 u_specularColor;
 
 // Light uniform
+uniform float u_lightType;
+uniform vec3 u_lightPosition;
 uniform vec4 u_lightColor; 
 uniform vec4 u_lightAmbient; 
 uniform vec4 u_lightDiffuse; 
 uniform vec4 u_lightSpecular; 
-uniform vec3 u_lightPosition;
 uniform vec3 u_lightTarget;
+uniform float u_lightConstant;
+uniform float u_lightLinear;
+uniform float u_lightQuadratic;
 
 varying vec3 normalSurface;
 varying vec3 vertexPosition;
@@ -42,8 +46,24 @@ void main() {
         specular = pow(specAngle, u_shininess);
     }
 
-    gl_FragColor = vec4(lightAmbient * ambientColor +
+    // Point light effect calculation
+    float distance = length(u_lightPosition - vertexPosition);
+    float attenuation = 1.0 / (u_lightConstant + u_lightLinear * distance + u_lightQuadratic * distance * distance);
+
+    // Directional Light
+    if (u_lightType == 0.0) gl_FragColor = vec4(
+        lightAmbient * ambientColor +
         lightDiffuse * lambertian * diffuseColor +
-        lightSpecular * specular * specularColor, 1.0);
+        lightSpecular * specular * specularColor, 
+        1.0
+    );
+
+    // Point Light
+    if (u_lightType == 1.0) gl_FragColor = vec4(
+        attenuation * lightAmbient * ambientColor +
+        attenuation * lightDiffuse * lambertian * diffuseColor +
+        attenuation * lightSpecular * specular * specularColor, 
+        1.0
+    );
 }
 `;
