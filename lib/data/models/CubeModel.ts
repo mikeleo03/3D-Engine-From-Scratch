@@ -86,7 +86,11 @@ export class CubeModel extends Model {
             diffuseColor: new Color(204, 102, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
-            displacementMap: displacementData
+            displacementMap: displacementData,
+            diffuseMaps: [],
+            normalMaps: [],
+            displacementMaps: [],
+            specularMaps: []
         });
 
         const cubeMesh = meshFactory.cuboid(
