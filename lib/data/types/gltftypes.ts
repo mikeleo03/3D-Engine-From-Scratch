@@ -212,7 +212,8 @@ export type CameraType = {
 };
 
 export enum LightTypeString {
-    DIRECTIONAL = "directional"
+    DIRECTIONAL = "directional",
+    POINT = "point",
 }
 
 export type LightType = {
@@ -220,12 +221,25 @@ export type LightType = {
     "directional": {
         "color": number[],
         "intensity": number,
-        "target": Float32Array,
+        "target": number[],
         "ambientColor": number[],
         "diffuseColor": number[],
         "specularColor": number[]
     }
-}
+} | {
+    "type": LightTypeString.POINT,
+    "point": {
+        "color": number[],
+        "intensity": number,
+        "target": number[],
+        "ambientColor": number[],
+        "diffuseColor": number[],
+        "specularColor": number[]
+        "constant": number,
+        "linear": number,
+        "quadratic": number
+    }
+};
 
 export type SceneNodeType = {
     id: string,
