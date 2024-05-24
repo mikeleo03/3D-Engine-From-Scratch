@@ -1592,6 +1592,10 @@ export default function Home() {
                                             }
                                             const index = material.displacementMaps.indexOf(material.displacementMap);
 
+                                            if (index === -1) {
+                                                return '';
+                                            }
+
                                             return index.toString();
                                         })()
                                     }
@@ -1602,7 +1606,7 @@ export default function Home() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         {material.displacementMaps.map((_, idx) => (
-                                            <SelectItem key={idx} value={idx.toString()}>{idx}</SelectItem>
+                                            <SelectItem key={idx} value={idx.toString()}>Texture {idx}</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
