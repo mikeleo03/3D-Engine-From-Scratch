@@ -383,7 +383,7 @@ export class MeshBufferGeometry {
 
             this.calculateFaceNormals(faceNormalAccessor);
 
-            normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL)!!;
+            normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL)!;
         }
 
         let vertexNormal = this.getAttribute(MeshPrimitiveAttribute.VERTEX_NORMAL);
@@ -424,9 +424,9 @@ export class MeshBufferGeometry {
             const i2 = indicesData[i + 1];
             const i3 = indicesData[i + 2];
 
-            const nIndex = i * 3;
+            const normalIndex = i * 3;
 
-            const faceNormal = [n[nIndex], n[nIndex + 1], n[nIndex + 2]];
+            const faceNormal = [n[normalIndex], n[normalIndex + 1], n[normalIndex + 2]];
 
             // Accumulate the face normals for each vertex of the face
             for (const vertexIndex of [i1, i2, i3]) {
@@ -441,15 +441,21 @@ export class MeshBufferGeometry {
         for (let i = 0; i < vertexCount; i++) {
             const count = counts[i];
             if (count > 0) {
-                const x = accumulatedNormals[i * 3] / count;
-                const y = accumulatedNormals[i * 3 + 1] / count;
-                const z = accumulatedNormals[i * 3 + 2] / count;
+                const vertexNormalIndex = i * 3;
+                const x = accumulatedNormals[vertexNormalIndex] / count;
+                const y = accumulatedNormals[vertexNormalIndex + 1] / count;
+                const z = accumulatedNormals[vertexNormalIndex + 2] / count;
 
                 const length = Math.sqrt(x * x + y * y + z * z);
+
+                const normalizedX = x / length;
+                const normalizedY = y / length;
+                const normalizedZ = z / length;
+
                 if (length > 0) {
-                    accumulatedNormals[i * 3] = x / length;
-                    accumulatedNormals[i * 3 + 1] = y / length;
-                    accumulatedNormals[i * 3 + 2] = z / length;
+                    accumulatedNormals[vertexNormalIndex] = normalizedX;
+                    accumulatedNormals[vertexNormalIndex + 1] = normalizedY;
+                    accumulatedNormals[vertexNormalIndex + 2] = normalizedZ;
                 }
             }
         }
@@ -458,10 +464,11 @@ export class MeshBufferGeometry {
         const finalVertexNormals = new Float32Array(indicesData.length * 3);
 
         for (let i = 0; i < indicesData.length; i++) {
-            const index = indicesData[i];
-            finalVertexNormals[i * 3] = accumulatedNormals[index * 3];
-            finalVertexNormals[i * 3 + 1] = accumulatedNormals[index * 3 + 1];
-            finalVertexNormals[i * 3 + 2] = accumulatedNormals[index * 3 + 2];
+            const index = indicesData[i] * 3;
+            const vertexNormalIndex = i * 3;
+            finalVertexNormals[vertexNormalIndex] = accumulatedNormals[index];
+            finalVertexNormals[vertexNormalIndex + 1] = accumulatedNormals[index + 1];
+            finalVertexNormals[vertexNormalIndex + 2] = accumulatedNormals[index + 2];
         }
 
         // Assign the calculated vertex normals to the vertex normal attribute
