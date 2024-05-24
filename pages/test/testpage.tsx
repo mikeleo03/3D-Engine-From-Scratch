@@ -5,7 +5,7 @@ import { DirectionalLight } from "@/lib/data/components/lights";
 import { Quaternion, Vector3 } from "@/lib/data/math";
 import { Color } from "@/lib/cores/Color";
 import { JojoModel } from "@/lib/data/models/articulated/JojoModel";
-import { LeonModel } from "@/lib/data/models/articulated/LeonModel";
+import { LeonModel } from "@/lib/data/models/hollow/LeonModel";
 import { MaggieModel } from "@/lib/data/models/articulated/MaggieModel";
 import { CubeModel } from "@/lib/data/models/CubeModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
@@ -83,7 +83,7 @@ export default function TestPage() {
       const maggie = new MaggieModel();
 
       // change model here
-      const model = cube;
+      const model = leon;
 
       const glRenderer = new GLRenderer(glContainer);
 
