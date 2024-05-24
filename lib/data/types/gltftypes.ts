@@ -104,6 +104,11 @@ export type TextureDataType = {
     "texCoordsExpanded": boolean,
 }
 
+export type SpecularDataType = {
+    "textureData": TextureDataType,
+    "shininess": number
+}
+
 export type DisplacementDataType = {
     "textureData": TextureDataType,
     "scale": number,
