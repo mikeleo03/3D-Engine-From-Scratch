@@ -1630,32 +1630,34 @@ export default function Home() {
                                 
                                 
                                 {material.displacementMap &&(
-                                    <>
-                                            <Label htmlFor='displacement-scale' className="text-base font-semibold pb-1 w-1/3 ">Displacement Scale</Label>
+                                    <div className='flex flex-col w-full mt-3'>
+                                        <div className='flex flex-row'>
+                                        <Label htmlFor='displacement-scale' className="text-base font-semibold pb-1 w-1/3 ">Displacement Scale</Label>
                                             <input
-                                            id='displacement-scale'
-                                            className="w-2/3"
-                                            type="range"
-                                            step="0.1"
-                                            min="-200"
-                                            max="200"
-                                            defaultValue={material.displacementMap.scale}
-                                            onChange={(e) => handleDisplacementScaleChange(material, parseFloat(e.target.value))}
-                                        />
-
-                                        <Label htmlFor='displacement-bias' className="text-base font-semibold pb-1 w-1/3 ">Displacement Bias</Label>
-                                        
-                                        <input
-                                            id='displacement-bias'
-                                            className="w-2/3"
-                                            type="range"
-                                            step="0.1"
-                                            min="-200"
-                                            max="200"
-                                            defaultValue={material.displacementMap.bias}
-                                            onChange={(e) => handleDisplacementBiasChange(material, parseFloat(e.target.value))}
-                                        />
-                                    </>
+                                                id='displacement-scale'
+                                                className="w-2/3"
+                                                type="range"
+                                                step="0.1"
+                                                min="-200"
+                                                max="200"
+                                                defaultValue={material.displacementMap.scale}
+                                                onChange={(e) => handleDisplacementScaleChange(material, parseFloat(e.target.value))}
+                                            />
+                                        </div>
+                                        <div className='flex flex-row'>
+                                            <Label htmlFor='displacement-bias' className="text-base font-semibold pb-1 w-1/3 ">Displacement Bias</Label>       
+                                            <input
+                                                id='displacement-bias'
+                                                className="w-2/3"
+                                                type="range"
+                                                step="0.1"
+                                                min="-200"
+                                                max="200"
+                                                defaultValue={material.displacementMap.bias}
+                                                onChange={(e) => handleDisplacementBiasChange(material, parseFloat(e.target.value))}
+                                            />
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         )} 
