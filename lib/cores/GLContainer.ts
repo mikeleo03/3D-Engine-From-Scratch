@@ -9,8 +9,6 @@ export class GLContainer {
     private _canvas: HTMLCanvasElement;
     private _gl: WebGLRenderingContext;
 
-    private _textureUnit: number = 0;
-
     constructor(
         canvas: HTMLCanvasElement
     ) {
@@ -130,7 +128,87 @@ export class GLContainer {
         this._gl.useProgram(programInfo.program);
     }
 
-    private createUniformSetter(info: WebGLActiveInfo, program: WebGLProgram): UniformSetters {
+    private setupTexture(v: Texture) {
+        const gl = this._gl;
+        let webglTexture = v.texture;
+
+        if (!webglTexture) {
+            webglTexture = gl.createTexture();
+            v.texture = webglTexture;
+        }
+
+        gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
+        const isPOT = (
+            MathUtil.isPowerOf2(v.width)
+            && MathUtil.isPowerOf2(v.height)
+        );
+
+        if (v.needUpload) {
+            // Jika butuh upload data, lakukan upload
+            v.needUpload = false;
+            if (v.isLoaded) {
+                // Sudah load, gaskan upload
+                const param = [
+                    gl.TEXTURE_2D,
+                    0,
+                    v.source.format,
+                    v.source.format,
+                    v.source.type,
+                    v.source.image ?? v.source.arrayData!.bytes
+                ];
+                
+                if (v.source.arrayData) {
+                    param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
+                }
+
+                // @ts-ignore: agak curang but hey less code it is :)
+                gl.texImage2D(...param);
+                if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
+
+            } else {
+                // Belum load / gak ada data
+                gl.texImage2D(
+                    gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
+                    gl.RGBA, gl.UNSIGNED_BYTE,
+                    new Uint8Array(v.defaultColor)
+                );
+            }
+        }
+        if (v.parameterChanged) {
+            // Jika parameter berubah, lakukan set parameter
+            v.parameterChanged = false;
+            if (!isPOT) {
+                v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
+                v.sampler.minFilter = gl.LINEAR;
+                console.log("image is not POT, fallback params", v);
+            }
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.sampler.wrapS);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.sampler.wrapT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.sampler.minFilter);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, v.sampler.magFilter);
+        }
+        gl.bindTexture(gl.TEXTURE_2D, null); // balikkan bind ke null
+    }
+
+    private renderTexture(v: Texture) {
+        // Pilih tekstur unit, bind tekstur ke unit, set uniform sampler ke unit.
+        const gl = this._gl;
+        gl.activeTexture(gl.TEXTURE0 + v.textureUnit);
+        gl.bindTexture(gl.TEXTURE_2D, v.texture);
+    }
+
+    private render(v: Texture) {
+        this.setupTexture(v); 
+        this.renderTexture(v);
+    }
+
+    private createUniformSetter(
+        info: WebGLActiveInfo, 
+        program: WebGLProgram, 
+        options: {
+            textureUnit?: number
+        } = {}
+    ): UniformSetters {
         const loc = this._gl.getUniformLocation(program, info.name);
 
         if (!loc) {
@@ -139,119 +217,58 @@ export class GLContainer {
 
         const type = info.type;
 
-        return (value: UniformSingleDataType) => {
-            if (type == WebGLType.SAMPLER_2D) {
-                if (info.size > 1) {
-                    throw new Error("Array of texture is not supported");
-                }
-
+        if (type == WebGLType.SAMPLER_2D) {
+            if (info.size > 1) {
+                throw new Error("Array of texture is not supported");
+            }
+            
+            return (value: UniformSingleDataType) => {
                 if (!(value instanceof Texture)) {
                     throw new Error("Uniform type mismatch");
                 }
 
-                const unit = this._textureUnit;
-                const gl = this._gl;
+                value = value as Texture;
 
-                const setupTexture = (v: Texture) => {
-                    let webglTexture = v.texture;
-
-                    if (!webglTexture) {
-                        webglTexture = gl.createTexture();
-                        v.texture = webglTexture;
+                if (value.textureUnit == -1) {
+                    if (options.textureUnit == undefined) {
+                        throw new Error("Texture unit is not defined");
                     }
 
-                    gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
-                    const isPOT = (
-                        MathUtil.isPowerOf2(v.width)
-                        && MathUtil.isPowerOf2(v.height)
-                    );
-
-                    if (v.needUpload) {
-                        // Jika butuh upload data, lakukan upload
-                        v.needUpload = false;
-                        if (v.isLoaded) {
-                            // Sudah load, gaskan upload
-                            const param = [
-                                gl.TEXTURE_2D,
-                                0,
-                                v.source.format,
-                                v.source.format,
-                                v.source.type,
-                                v.source.image ?? v.source.arrayData!.bytes
-                            ];
-                            
-                            if (v.source.arrayData) {
-                                param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
-                            }
-
-                            // @ts-ignore: agak curang but hey less code it is :)
-                            gl.texImage2D(...param);
-                            if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
-
-                        } else {
-                            // Belum load / gak ada data
-                            gl.texImage2D(
-                                gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
-                                gl.RGBA, gl.UNSIGNED_BYTE,
-                                new Uint8Array(v.defaultColor)
-                            );
-                        }
-                    }
-                    if (v.parameterChanged) {
-                        // Jika parameter berubah, lakukan set parameter
-                        v.parameterChanged = false;
-                        if (!isPOT) {
-                            v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
-                            v.sampler.minFilter = gl.LINEAR;
-                            console.log("image is not POT, fallback params", v);
-                        }
-                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.sampler.wrapS);
-                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.sampler.wrapT);
-                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.sampler.minFilter);
-                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, v.sampler.magFilter);
-                    }
-                    gl.bindTexture(gl.TEXTURE_2D, null); // balikkan bind ke null
-                }
-
-                const renderTexture = (v: Texture) => {
-                    // Pilih tekstur unit, bind tekstur ke unit, set uniform sampler ke unit.
-                    gl.activeTexture(gl.TEXTURE0 + unit);
-                    gl.bindTexture(gl.TEXTURE_2D, v.texture);
-                }
-
-                const render = (v: Texture) => {
-                    setupTexture(v); renderTexture(v);
+                    value.textureUnit = options.textureUnit;
                 }
 
                 // == Render Time
-                render(value);
-                gl.uniform1i(loc, unit);
+                this.render(value);
+                console.log(value.textureUnit);
+                this._gl.uniform1i(loc, value.textureUnit);
+                
+            }
+        }
+
+        return (value: UniformSingleDataType) => {
+            const typeString = UniformSetterWebGLType[type];
+            const setter = `uniform${typeString}`;
+
+            if (typeString.startsWith("Matrix")) {
+                // @ts-ignore
+                this._gl[setter](loc, false, value);
+            }
+
+            else if (typeString == '1f') {
+                // @ts-ignore
+                this._gl[setter](loc, value);
             }
 
             else {
-                const typeString = UniformSetterWebGLType[type];
-                const setter = `uniform${typeString}`;
-
-                if (typeString.startsWith("Matrix")) {
-                    // @ts-ignore
-                    this._gl[setter](loc, false, value);
-                }
-
-                else if (typeString == '1f') {
-                    // @ts-ignore
-                    this._gl[setter](loc, value);
-                }
-
-                else {
-                    // @ts-ignore
-                    this._gl[setter](loc, ...value);
-                }
+                // @ts-ignore
+                this._gl[setter](loc, ...value);
             }
         }
+        
     }
 
     private createUniformSetters(program: WebGLProgram): UniformMapSetters {
-        this._textureUnit = 0;
+        let textureUnit = 0;
 
         const uniformSetters: UniformMapSetters = {};
         const numUniforms = this._gl.getProgramParameter(program, this._gl.ACTIVE_UNIFORMS);
@@ -259,10 +276,10 @@ export class GLContainer {
         for (let i = 0; i < numUniforms; i++) {
             const info = this._gl.getActiveUniform(program, i);
             if (!info) continue;
-            uniformSetters[info.name] = this.createUniformSetter(info, program);
+            uniformSetters[info.name] = this.createUniformSetter(info, program, { textureUnit });
 
             if (info.type == WebGLType.SAMPLER_2D) {
-                this._textureUnit += info.size;
+                textureUnit += info.size;
             }
         }
 

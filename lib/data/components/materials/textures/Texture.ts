@@ -9,6 +9,7 @@ export class Texture {
     private _defaultColor: Color;
 
     private _texture: WebGLTexture | null = null; // JANGAN DIUBAH! Hanya untuk renderer.
+    private _textureUnit: number = -1;  // JANGAN DIUBAH! Hanya untuk renderer.
     private _needUpload: boolean = true;  // Upload ulang gambar ke tekstur.
     private _parameterChanged: boolean = true;  // Ubah parameter tekstur di awal minimal sekali.
 
@@ -46,6 +47,10 @@ export class Texture {
         return this._texture;
     }
 
+    get textureUnit() {
+        return this._textureUnit;
+    }
+
     get parameterChanged() {
         return this._parameterChanged;
     }
@@ -76,6 +81,10 @@ export class Texture {
 
     set defaultColor(value: Color) {
         this._defaultColor = value;
+    }
+
+    set textureUnit(value: number) {
+        this._textureUnit = value;
     }
 
     toRaw(samplerMap: Map<Sampler, number>, sourceMap: Map<TextureImage, number>): TextureType {
