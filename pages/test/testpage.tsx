@@ -1,7 +1,7 @@
 import { GLContainer } from "@/lib/cores";
 import { SceneNode } from "@/lib/data/SceneNode";
 import { ObliqueCamera, OrthographicCamera, PerspectiveCamera } from "@/lib/data/components/cameras";
-import { DirectionalLight } from "@/lib/data/components/lights";
+import { DirectionalLight, PointLight } from "@/lib/data/components/lights";
 import { Quaternion, Vector3 } from "@/lib/data/math";
 import { Color } from "@/lib/cores/Color";
 import { JojoModel } from "@/lib/data/models/articulated/JojoModel";
@@ -65,7 +65,7 @@ export default function TestPage() {
         new Color(255, 255, 255)
       );
 
-      const lightPosition = new Vector3(2.6, -1.8, 0);
+      const lightPosition = new Vector3(0, 0, 0);
 
       const cameraNodes = [
         new SceneNode({ camera: orthographicCamera, position: new Vector3(0, 0, 200) }),

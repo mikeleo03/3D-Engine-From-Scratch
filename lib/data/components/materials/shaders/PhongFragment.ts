@@ -13,13 +13,14 @@ uniform vec4 u_lightAmbient;
 uniform vec4 u_lightDiffuse; 
 uniform vec4 u_lightSpecular; 
 uniform vec3 u_lightPosition;
+uniform vec3 u_lightTarget;
 
 varying vec3 normalSurface;
 varying vec3 vertexPosition;
 
 void main() {
     vec3 N = normalize(normalSurface);
-    vec3 L = normalize(u_lightPosition - vertexPosition);
+    vec3 L = normalize(u_lightTarget - vertexPosition);
 
     // Convert colors from 0-255 to 0-1
     vec3 ambientColor = u_ambientColor.rgb / 255.0;
