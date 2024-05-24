@@ -72,8 +72,6 @@ export class GLRenderer {
                     textureUniforms["specularMap"] = material.specularMap?.texture;
                 }
 
-                console.log(textureUniforms)
-                
                 this._glContainer.setUniforms(programInfo, {
                     ...material.getBufferUniforms(),
                     ...textureUniforms,

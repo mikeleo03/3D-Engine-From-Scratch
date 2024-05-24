@@ -1,6 +1,6 @@
 import { Accessor } from "../../buffers/Accessor";
 import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
-import { MeshBufferGeometry, MeshBufferGeometryAttributes } from "./MeshBufferGeometry";
+import { MeshBufferGeometry, GeometryAttributes } from "./MeshBufferGeometry";
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
 import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
 import { MeshPrimitiveType, MeshType } from "../../types/gltftypes";
@@ -45,7 +45,7 @@ export class Mesh extends NodeComponent {
             const basicMaterial = primitive.basicMaterial !== undefined ? materials[primitive.basicMaterial] as BasicMaterial : undefined;
             const phongMaterial = primitive.phongMaterial !== undefined ? materials[primitive.phongMaterial] as PhongMaterial : undefined;
 
-            const attribute: MeshBufferGeometryAttributes = {
+            const attribute: GeometryAttributes = {
                 position: position ? new GLBufferAttribute(
                     position,
                     MeshBufferGeometry.POSITION_SIZE,
@@ -77,7 +77,7 @@ export class Mesh extends NodeComponent {
                     ) : undefined
                 }
             );
-                
+
         });
 
         return new Mesh(geometries);

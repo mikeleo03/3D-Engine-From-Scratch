@@ -24,14 +24,17 @@ export class CubeModel extends Model {
     }
 
     private getDisplacementCoordinates(): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 4);
+        const buffer = GLTFBuffer.empty(2 * 2 * 36);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 4, AccessorComponentType.VEC2, [], []);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
         const converter = new Uint16ArrayConverter();
+
         accessor.setData(converter.tobytes(Uint16Array.from([
             0, 0,
             1, 0,
             0, 1,
+            0, 1,
+            1, 0,
             1, 1
         ])));
 
@@ -48,7 +51,7 @@ export class CubeModel extends Model {
 
         const data = new Uint8Array([
             255, 255, 255, 255,
-            255, 255, 255, 255,
+            0, 255, 255, 255,
             255, 255, 255, 255,
             255, 255, 255, 255,
         ])
@@ -69,8 +72,9 @@ export class CubeModel extends Model {
         const coord = this.getDisplacementCoordinates();
 
         const textureData = new TextureData(texture, coord);
+        textureData.expandTexCoords(MeshFactory.CUBOID_INDICES)
 
-        return new DisplacementData(textureData, 20, 50);
+        return new DisplacementData(textureData, 50, 20);
     }
 
     private getCube(): SceneNode {

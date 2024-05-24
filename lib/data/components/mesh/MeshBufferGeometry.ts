@@ -1,8 +1,8 @@
 import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
 import { Vector3 } from "../../math/index";
-import { AccessorComponentType, MeshPrimitiveAttribute } from "../../types/gltftypes";
+import { AccessorComponentType, MeshMaterialAttribute, MeshPrimitiveAttribute } from "../../types/gltftypes";
 import { Accessor } from "../../buffers/Accessor";
-import { Float32ArrayConverter } from "../../buffers/typedarrayconverters";
+import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
 import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
 import { WebGLType } from "@/lib/cores";
 
@@ -11,21 +11,26 @@ export type MaterialOptions = {
     phongMaterial?: PhongMaterial,
 }
 
-export type MeshBufferGeometryAttributes = {
+export type GeometryDefaultAttributes = {
     [name in MeshPrimitiveAttribute]?: GLBufferAttribute;
+}
+
+export type GeometryAttributes = {
+    [name in (MeshPrimitiveAttribute | MeshMaterialAttribute)]?: GLBufferAttribute;
 };
+
 export class MeshBufferGeometry {
     public static readonly POSITION_SIZE: number = 3;
     public static readonly NORMAL_SIZE: number = 3;
     public static readonly INDEX_SIZE: number = 1;
 
-    private _attributes: MeshBufferGeometryAttributes;
+    private _attributes: GeometryAttributes;
     private _basicMaterial?: BasicMaterial;
     private _phongMaterial?: PhongMaterial;
     private _indices?: GLBufferAttribute;
 
     constructor(
-        attributes: MeshBufferGeometryAttributes = {},
+        attributes: GeometryDefaultAttributes = {},
         materials: MaterialOptions = {},
         options: {
             indices?: GLBufferAttribute,
@@ -85,7 +90,25 @@ export class MeshBufferGeometry {
             throw new Error("Indices or indices accessor is required");
         }
 
-        this._attributes = attributes;
+        const completeAttributes: GeometryAttributes = {...attributes}
+
+        if (materials.phongMaterial) {
+            const phongMaterial = materials.phongMaterial;
+
+            if (phongMaterial.displacementMap) {
+                const displacementUVAttribute = new GLBufferAttribute(
+                    phongMaterial.displacementMap.textureData.textCoords,
+                    2,
+                    new Uint16ArrayConverter()
+                );
+
+                completeAttributes.displacementUV = displacementUVAttribute;
+            }
+
+            // TODO: Add more material attributes if needed
+        }
+
+        this._attributes = completeAttributes;
         this._basicMaterial = materials.basicMaterial;
         this._phongMaterial = materials.phongMaterial;
         this._indices = indices;
@@ -392,11 +415,11 @@ export class MeshBufferGeometry {
             if (!accessor) {
                 throw new Error("Accessor is required to calculate vertex normals");
             }
-    
+
             if (accessor.componentType !== WebGLType.FLOAT) {
                 throw new Error("Accessor component type must be FLOAT");
             }
-    
+
             if (accessor.type !== AccessorComponentType.VEC3) {
                 throw new Error("Accessor type must be VEC3");
             }

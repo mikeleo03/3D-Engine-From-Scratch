@@ -281,6 +281,7 @@ export class GLContainer {
             const v = values[0];
 
             if (v instanceof GLBufferAttribute) {
+                console.log(info.name)
                 if (v.accessor.bufferView.target !== this._gl.ARRAY_BUFFER) {
                     throw new Error("BufferView target must be ARRAY_BUFFER");
                 }

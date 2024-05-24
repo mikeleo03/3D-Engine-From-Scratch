@@ -18,7 +18,7 @@ varying vec3 vertexPosition;
 
 
 void main() {
-    vec4 displacement = texture2D(u_displacementMap, vec2(0, 0));
+    vec4 displacement = texture2D(u_displacementMap, a_displacementUV);
 
     vec4 displacementVector = normalize(vec4(a_vertexNormal.xyz, 0.0)) * (displacement.r * u_displacementScale + u_displacementBias);
 

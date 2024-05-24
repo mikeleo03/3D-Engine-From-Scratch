@@ -148,6 +148,11 @@ export enum MeshPrimitiveAttribute {
     FACE_NORMAL = "faceNormal",
     VERTEX_NORMAL = "vertexNormal"
 }
+
+export enum MeshMaterialAttribute {
+    DISPLACEMENT_UV = "displacementUV"
+}
+
 export type MeshPrimitiveType = {
     attributes: {
         [key in keyof typeof MeshPrimitiveAttribute]?: number;

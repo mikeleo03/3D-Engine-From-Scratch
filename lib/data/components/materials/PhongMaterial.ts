@@ -8,15 +8,34 @@ import { Texture } from "./textures/Texture";
 import { Accessor } from "../../buffers/Accessor";
 import { GLTFBuffer } from "../../buffers/GLTFBuffer";
 import { BufferView } from "../../buffers/BufferView";
-import { Float32ArrayConverter } from "../../buffers/typedarrayconverters";
+import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
 
 export class TextureData {
     private _texture: Texture;
     private _textCoords: Accessor;
 
-    constructor(texture: Texture, textCoords: Accessor) {
+    // _texCoordsExpanded: whether the texCoords are specified for each vertex (false) or each index (true)
+    // Note: texCoords must be expanded when this texture is passed as attribute to the shader
+    private _texCoordsExpanded: boolean = false;
+    constructor(
+        texture: Texture, 
+        texCoords: Accessor, 
+        options: {texCoordsExpanded: boolean} = {texCoordsExpanded: false}
+    ) {
+        const { texCoordsExpanded } = options;
+
+        if (texCoords.componentType !== WebGLType.UNSIGNED_SHORT) {
+            throw new Error('Accessor component type must be UNSIGNED_SHORT.');
+        }
+
+        if (texCoords.type !== AccessorComponentType.VEC2) {
+            throw new Error('Accessor type must be VEC2.');
+        }
+
         this._texture = texture;
-        this._textCoords = textCoords;
+        this._textCoords = texCoords;
+
+        this._texCoordsExpanded = texCoordsExpanded;
     }
 
     static new(texture: Texture, textCoords: [number, number][]): TextureData {
@@ -37,12 +56,71 @@ export class TextureData {
         return this._textCoords;
     }
 
+    get texCoordsExpanded() {
+        return this._texCoordsExpanded;
+    }
+
     set texture(value: Texture) {
         this._texture = value;
     }
 
-    set textCoords(value: Accessor) {
+    setTexCoord(value: Accessor, expanded: boolean = false) {
+        if (value.componentType !== WebGLType.UNSIGNED_SHORT) {
+            throw new Error('Accessor component type must be UNSIGNED_SHORT.');
+        }
+
+        if (value.type !== AccessorComponentType.VEC2) {
+            throw new Error('Accessor type must be VEC2.');
+        }
+
         this._textCoords = value;
+        this._texCoordsExpanded = expanded;
+    }
+
+    expandTexCoords(indices: number[], accessor?: Accessor) {
+        if (this._texCoordsExpanded) {
+            throw new Error('Texture coordinates are already expanded.');
+        }
+
+        for (const index of indices) {
+            if (index < 0 || index >= this._textCoords.count) {
+                throw new Error('Index out of bounds.');
+            }
+        }
+
+        if (accessor) {
+            if (accessor.count !== indices.length) {
+                throw new Error('Accessor count does not match indices length.');
+            }
+
+            if (accessor.componentType !== WebGLType.UNSIGNED_SHORT) {
+                throw new Error('Accessor component type must be UNSIGNED_SHORT.');
+            }
+
+            if (accessor.type !== AccessorComponentType.VEC2) {
+                throw new Error('Accessor type must be VEC2.');
+            }
+        }
+        
+        else {
+            const buffer = GLTFBuffer.empty(indices.length * 2 * 2);
+            const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
+            accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, indices.length, AccessorComponentType.VEC2, [], []);
+        }
+
+        const converter = new Uint16ArrayConverter();
+        const originaTexCoords = this._textCoords.getData(converter);
+
+        const data = new Uint16Array(indices.length * 2);
+
+        for (let i = 0; i < indices.length; i++) {
+            data[i * 2] = originaTexCoords[indices[i] * 2];
+            data[i * 2 + 1] = originaTexCoords[indices[i] * 2 + 1];
+        }
+
+        accessor.setData(converter.tobytes(data));
+
+        this._textCoords = accessor;
     }
 
     toRaw(textureMap: Map<Texture, number>, accessorMap: Map<Accessor, number>): TextureDataType {

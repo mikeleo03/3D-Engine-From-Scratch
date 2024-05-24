@@ -6,10 +6,25 @@ import { GLTFBuffer } from "../../buffers/GLTFBuffer";
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
 import { AccessorComponentType, BufferViewTarget } from "../../types/gltftypes";
 import { BasicMaterial, PhongMaterial, ShaderMaterial } from "../materials";
-import { MaterialOptions, MeshBufferGeometry, MeshBufferGeometryAttributes } from "./MeshBufferGeometry";
+import { MaterialOptions, MeshBufferGeometry, GeometryAttributes } from "./MeshBufferGeometry";
 import { Mesh } from "./Mesh";
 
 export class MeshFactory {
+    static readonly CUBOID_INDICES = [
+        0, 1, 2,
+        0, 2, 3,
+        1, 5, 6,
+        1, 6, 2,
+        5, 4, 7,
+        5, 7, 6,
+        4, 0, 3,
+        4, 3, 7,
+        3, 2, 6,
+        3, 6, 7,
+        4, 5, 1,
+        4, 1, 0,
+    ];
+
     private _geometries: MeshBufferGeometry[] = [];
 
     addGeometry(
@@ -43,64 +58,64 @@ export class MeshFactory {
         const buffer = GLTFBuffer.empty(totalBytesCount);
 
         const positionBufferView = new BufferView(
-            buffer, 
-            0, 
-            vertexBytesCount, 
+            buffer,
+            0,
+            vertexBytesCount,
             BufferViewTarget.ARRAY_BUFFER
         );
         const indicesBufferView = new BufferView(
-            buffer, 
-            vertexBytesCount, 
-            indicesBytesCount, 
+            buffer,
+            vertexBytesCount,
+            indicesBytesCount,
             BufferViewTarget.ELEMENT_ARRAY_BUFFER
         );
         const faceNormalBufferView = new BufferView(
-            buffer, 
-            vertexBytesCount + indicesBytesCount, 
-            faceNormalBytesCount, 
+            buffer,
+            vertexBytesCount + indicesBytesCount,
+            faceNormalBytesCount,
             BufferViewTarget.ARRAY_BUFFER
         )
         const vertexNormalBufferView = new BufferView(
-            buffer, 
-            vertexBytesCount + indicesBytesCount + faceNormalBytesCount, 
-            vertexNormalBytesCount, 
+            buffer,
+            vertexBytesCount + indicesBytesCount + faceNormalBytesCount,
+            vertexNormalBytesCount,
             BufferViewTarget.ARRAY_BUFFER
         );
 
         const positionAccessor = new Accessor(
-            positionBufferView, 
-            0, 
-            WebGLType.FLOAT, 
-            vertexCount, 
-            AccessorComponentType.VEC3, 
-            [], 
+            positionBufferView,
+            0,
+            WebGLType.FLOAT,
+            vertexCount,
+            AccessorComponentType.VEC3,
+            [],
             []
         );
         const indicesAccessor = new Accessor(
-            indicesBufferView, 
-            0, 
-            WebGLType.UNSIGNED_SHORT, 
-            indicesCount, 
-            AccessorComponentType.SCALAR, 
-            [], 
+            indicesBufferView,
+            0,
+            WebGLType.UNSIGNED_SHORT,
+            indicesCount,
+            AccessorComponentType.SCALAR,
+            [],
             []
         );
         const faceNormalAccessor = new Accessor(
-            faceNormalBufferView, 
-            0, 
-            WebGLType.FLOAT, 
-            faceNormalCount, 
-            AccessorComponentType.VEC3, 
-            [], 
+            faceNormalBufferView,
+            0,
+            WebGLType.FLOAT,
+            faceNormalCount,
+            AccessorComponentType.VEC3,
+            [],
             []
         );
         const vertexNormalAccessor = new Accessor(
-            vertexNormalBufferView, 
-            0, 
-            WebGLType.FLOAT, 
-            vertexNormalCount, 
-            AccessorComponentType.VEC3, 
-            [], 
+            vertexNormalBufferView,
+            0,
+            WebGLType.FLOAT,
+            vertexNormalCount,
+            AccessorComponentType.VEC3,
+            [],
             []
         );
         const floatConverter = new Float32ArrayConverter();
@@ -110,7 +125,7 @@ export class MeshFactory {
         const faceNormalAttribute = new GLBufferAttribute(faceNormalAccessor, 3, floatConverter);
         const vertexNormalAttribute = new GLBufferAttribute(vertexNormalAccessor, 3, floatConverter);
 
-        const attributes: MeshBufferGeometryAttributes = {
+        const attributes: GeometryAttributes = {
             position: positionAttribute,
             faceNormal: faceNormalAttribute,
             vertexNormal: vertexNormalAttribute,
@@ -118,13 +133,13 @@ export class MeshFactory {
 
         const vertices = Float32Array.from(positions.flat());
         positionAccessor.setData(floatConverter.tobytes(vertices));
-        
+
         if (indices) {
             const indexData = Uint16Array.from(indices);
             indicesAccessor.setData(ushortConverter.tobytes(indexData));
         }
 
-        const meshBufferOptions: {indices?: GLBufferAttribute, indicesAccessor?: Accessor} = {}
+        const meshBufferOptions: { indices?: GLBufferAttribute, indicesAccessor?: Accessor } = {}
 
         if (indices) {
             meshBufferOptions.indices = indicesAttribute;
@@ -135,13 +150,13 @@ export class MeshFactory {
         }
 
         const geometry = new MeshBufferGeometry(
-            attributes, 
+            attributes,
             materials,
             meshBufferOptions
         );
 
         geometry.calculateFaceNormals(faceNormalAccessor);
-        geometry.calculateVertexNormals({forceNewAttribute: false, accessor: vertexNormalAccessor});
+        geometry.calculateVertexNormals({ forceNewAttribute: false, accessor: vertexNormalAccessor });
 
         this._geometries.push(geometry);
     }
@@ -183,7 +198,7 @@ export class MeshFactory {
             [halfWidth, halfHeight, -halfDepth],
             [-halfWidth, halfHeight, -halfDepth],
         ];
-        
+
         // apply offset
         for (let i = 0; i < vertices.length; i++) {
             vertices[i][0] += offset[0];
@@ -192,25 +207,12 @@ export class MeshFactory {
         }
 
         // define the indices of the cuboid
-        const indices = [
-            0, 1, 2,
-            0, 2, 3,
-            1, 5, 6,
-            1, 6, 2,
-            5, 4, 7,
-            5, 7, 6,
-            4, 0, 3,
-            4, 3, 7,
-            3, 2, 6,
-            3, 6, 7,
-            4, 5, 1,
-            4, 1, 0,
-        ];
+        
 
         this.addGeometry(
             vertices,
             materialOption,
-            { indices }
+            { indices: MeshFactory.CUBOID_INDICES }
         );
 
         return this.createMesh();
