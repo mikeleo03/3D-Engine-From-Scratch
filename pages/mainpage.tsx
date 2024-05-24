@@ -938,7 +938,7 @@ export default function Home() {
                 new Color(255, 255, 255)
             );
 
-            const lightPosition = new Vector3(0, -50, 50);
+            const lightPosition = new Vector3(0, 0, 100);
 
             const lightNodes = [
                 new SceneNode({

@@ -28,7 +28,7 @@ export class JojoModel extends Model {
             ambientColor: new Color(251, 231, 239), 
             diffuseColor: new Color(251, 231, 239), 
             specularColor: Color.white(),
-            shininess: 4
+            shininess: 5
         });
 
         const bodyMesh = meshFactory.cuboid(50, 70, 30, 

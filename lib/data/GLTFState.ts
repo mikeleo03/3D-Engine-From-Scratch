@@ -5,7 +5,7 @@ import { Camera } from "./components/cameras/Camera";
 import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { BufferView } from "./buffers/BufferView";
 import { Accessor } from "./buffers/Accessor";
-import { ShaderMaterial } from "./components/materials";
+import { PhongMaterial, ShaderMaterial } from "./components/materials";
 import { AnimationClip } from "./components/animations";
 import { Light } from "./components/lights/Light";
 import { Sampler } from "./components/materials/textures/Sampler";
@@ -206,7 +206,25 @@ export class GLTFState {
             return;
         }
 
-        // TODO: Add textures
+        if (material instanceof PhongMaterial) {
+            if (material.normalMap) {
+                this.addTexture(material.normalMap.texture);
+            }
+
+            if (material.diffuseMap) {
+                this.addTexture(material.diffuseMap.texture);
+            }
+
+            if (material.specularMap) {
+                this.addTexture(material.specularMap.texture);
+            }
+
+            if (material.displacementMap) {
+                this.addTexture(material.displacementMap.textureData.texture);
+                this.addAccessor(material.displacementMap.textureData.textCoords);
+            }
+        }
+
         this._materials.push(material);
     }
 
@@ -441,6 +459,21 @@ export class GLTFState {
             return;
         }
 
+        for (let i = 0; i < this._materials.length; i++) {
+            if (this._materials[i] instanceof PhongMaterial) {
+                const material = this._materials[i] as PhongMaterial;
+
+                if (material.displacementMap?.textureData.textCoords == accessor) {
+                    remove = false;
+                    break;
+                }
+            }
+        }
+
+        if (!remove) {
+            return;
+        }
+
         this._accessors.splice(index, 1);
         this.removeBufferView(accessor.bufferView);
     }
@@ -491,32 +524,37 @@ export class GLTFState {
         this._images.splice(index, 1);
     }
 
-    // removeTexture(texture: Texture) {
-    //     const index = this._textures.indexOf(texture);
+    removeTexture(texture: Texture) {
+        const index = this._textures.indexOf(texture);
 
-    //     if (index == -1) {
-    //         return;
-    //     }
+        if (index == -1) {
+            return;
+        }
 
-    //     let remove = true;
+        let remove = true;
 
-    //     for (let i = 0; i < this._materials.length; i++) {
-    //         if (this._materials[i].diffuseTexture == texture ||
-    //             this._materials[i].specularTexture == texture ||
-    //             this._materials[i].normalTexture == texture) {
-    //             remove = false;
-    //             break;
-    //         }
-    //     }
+        for (let i = 0; i < this._materials.length; i++) {
+            if (this._materials[i] instanceof PhongMaterial) {
+                const material = this._materials[i] as PhongMaterial;
 
-    //     if (!remove) {
-    //         return;
-    //     }
+                if (material.normalMap?.texture == texture ||
+                    material.diffuseMap?.texture == texture ||
+                    material.specularMap?.texture == texture ||
+                    material.displacementMap?.textureData.texture == texture) {
+                    remove = false;
+                    break;
+                }
+            }
+        }
 
-    //     this._textures.splice(index, 1);
-    //     this.removeSampler(texture.sampler);
-    //     this.removeImage(texture.source);
-    // }
+        if (!remove) {
+            return;
+        }
+
+        this._textures.splice(index, 1);
+        this.removeSampler(texture.sampler);
+        this.removeImage(texture.source);
+    }
 
     removeMaterial(material: ShaderMaterial) {
         const index = this._materials.indexOf(material);

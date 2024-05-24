@@ -78,15 +78,15 @@ export type SamplerType = {
     "wrapT": ValueOf<typeof WrapMode>
 }
 
-export type TextureArrayData = {
-    "bytes": Uint8Array,
+export type TextureArrayDataType = {
+    "bytes": number[],
     "width": number,
     "height": number
 }
 export type TextureImageType = {
     "data": {
         "image"?: HTMLImageElement,
-        "arrayData"?: TextureArrayData
+        "arrayData"?: TextureArrayDataType
     },
     "type": number,
     "format": number,
@@ -94,12 +94,14 @@ export type TextureImageType = {
 
 export type TextureType = {
     "sampler": number,
-    "source": number
+    "source": number,
+    "defaultColor": number[]
 }
 
 export type TextureDataType = {
     "texture": number,
-    "textCoords": number
+    "texCoords": number,
+    "texCoordsExpanded": boolean,
 }
 
 export type DisplacementDataType = {

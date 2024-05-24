@@ -12,15 +12,16 @@ import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typed
 
 export class TextureData {
     private _texture: Texture;
-    private _textCoords: Accessor;
+    private _texCoords: Accessor;
 
     // _texCoordsExpanded: whether the texCoords are specified for each vertex (false) or each index (true)
     // Note: texCoords must be expanded when this texture is passed as attribute to the shader
     private _texCoordsExpanded: boolean = false;
+
     constructor(
-        texture: Texture, 
-        texCoords: Accessor, 
-        options: {texCoordsExpanded: boolean} = {texCoordsExpanded: false}
+        texture: Texture,
+        texCoords: Accessor,
+        options: { texCoordsExpanded: boolean } = { texCoordsExpanded: false }
     ) {
         const { texCoordsExpanded } = options;
 
@@ -33,7 +34,7 @@ export class TextureData {
         }
 
         this._texture = texture;
-        this._textCoords = texCoords;
+        this._texCoords = texCoords;
 
         this._texCoordsExpanded = texCoordsExpanded;
     }
@@ -53,7 +54,7 @@ export class TextureData {
     }
 
     get textCoords() {
-        return this._textCoords;
+        return this._texCoords;
     }
 
     get texCoordsExpanded() {
@@ -73,7 +74,7 @@ export class TextureData {
             throw new Error('Accessor type must be VEC2.');
         }
 
-        this._textCoords = value;
+        this._texCoords = value;
         this._texCoordsExpanded = expanded;
     }
 
@@ -83,7 +84,7 @@ export class TextureData {
         }
 
         for (const index of indices) {
-            if (index < 0 || index >= this._textCoords.count) {
+            if (index < 0 || index >= this._texCoords.count) {
                 throw new Error('Index out of bounds.');
             }
         }
@@ -101,7 +102,7 @@ export class TextureData {
                 throw new Error('Accessor type must be VEC2.');
             }
         }
-        
+
         else {
             const buffer = GLTFBuffer.empty(indices.length * 2 * 2);
             const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
@@ -109,7 +110,7 @@ export class TextureData {
         }
 
         const converter = new Uint16ArrayConverter();
-        const originaTexCoords = this._textCoords.getData(converter);
+        const originaTexCoords = this._texCoords.getData(converter);
 
         const data = new Uint16Array(indices.length * 2);
 
@@ -120,7 +121,7 @@ export class TextureData {
 
         accessor.setData(converter.tobytes(data));
 
-        this._textCoords = accessor;
+        this._texCoords = accessor;
     }
 
     toRaw(textureMap: Map<Texture, number>, accessorMap: Map<Accessor, number>): TextureDataType {
@@ -128,18 +129,19 @@ export class TextureData {
             throw new Error('Texture not found in map.');
         }
 
-        if (!accessorMap.has(this._textCoords)) {
+        if (!accessorMap.has(this._texCoords)) {
             throw new Error('Accessor not found in map.');
         }
 
         return {
             texture: textureMap.get(this._texture)!!,
-            textCoords: accessorMap.get(this._textCoords)!!
+            texCoords: accessorMap.get(this._texCoords)!!,
+            texCoordsExpanded: this._texCoordsExpanded
         };
     }
 
     static fromRaw(raw: TextureDataType, textures: Texture[], accessors: Accessor[]): TextureData {
-        return new TextureData(textures[raw.texture], accessors[raw.textCoords]);
+        return new TextureData(textures[raw.texture], accessors[raw.texCoords], { texCoordsExpanded: raw.texCoordsExpanded });
     }
 }
 
@@ -235,7 +237,7 @@ export class PhongMaterial extends ShaderMaterial {
             phongVertex,
             phongFragment
         );
-        
+
         this._ambientColor = ambientColor || Color.white();
         this._diffuseColor = diffuseColor || Color.white();
         this._specularColor = specularColor || Color.white();
@@ -243,7 +245,7 @@ export class PhongMaterial extends ShaderMaterial {
         this._diffuseMap = diffuseMap;
         this._normalMap = normalMap;
         this._displacementMap = displacementMap;
-        this._specularMap = specularMap;    
+        this._specularMap = specularMap;
     }
 
     get ambientColor(): Color {

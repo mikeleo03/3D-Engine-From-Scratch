@@ -1,6 +1,12 @@
 import { ImageFormat, ImageType } from "@/lib/cores";
-import { TextureArrayData, TextureImageType } from "@/lib/data/types/gltftypes";
+import { TextureArrayDataType, TextureImageType } from "@/lib/data/types/gltftypes";
 import { ValueOf } from "next/dist/shared/lib/constants";
+
+export type TextureArrayData = {
+    width: number;
+    height: number;
+    bytes: Uint8Array;
+};
 
 export class TextureImage {
     private _image?: HTMLImageElement;
@@ -68,7 +74,11 @@ export class TextureImage {
         return {
             data: {
                 image: this._image,
-                arrayData: this._arrayData
+                arrayData: this._arrayData ? {
+                    bytes: Array.from(this._arrayData.bytes),
+                    width: this._arrayData.width,
+                    height: this._arrayData.height
+                } : undefined
             },
             format: this._format,
             type: this._type
@@ -100,7 +110,11 @@ export class TextureImage {
         return new TextureImage(
             {
                 image,
-                arrayData
+                arrayData: raw.data.arrayData ? {
+                    bytes: Uint8Array.from(raw.data.arrayData!.bytes),
+                    width: raw.data.arrayData!.width,
+                    height: raw.data.arrayData!.height
+                } : undefined
             },
             raw.format as ValueOf<typeof ImageFormat>,
             raw.type as ValueOf<typeof ImageType>

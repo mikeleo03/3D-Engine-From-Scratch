@@ -90,11 +90,12 @@ export class Texture {
 
         return {
             sampler: samplerMap.get(this._sampler)!!,
-            source: sourceMap.get(this._source)!!
+            source: sourceMap.get(this._source)!!,
+            defaultColor: this._defaultColor.toRaw()
         };
     }
 
     static fromRaw(raw: TextureType, samplers: Sampler[], sources: TextureImage[]): Texture {
-        return new Texture(samplers[raw.sampler], sources[raw.source]);
+        return new Texture(samplers[raw.sampler], sources[raw.source], Color.fromRaw(raw.defaultColor));
     }
 }

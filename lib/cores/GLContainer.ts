@@ -144,7 +144,7 @@ export class GLContainer {
                 if (info.size > 1) {
                     throw new Error("Array of texture is not supported");
                 }
-                
+
                 if (!(value instanceof Texture)) {
                     throw new Error("Uniform type mismatch");
                 }
@@ -162,10 +162,10 @@ export class GLContainer {
 
                     gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
                     const isPOT = (
-                        MathUtil.isPowerOf2(v.width) 
+                        MathUtil.isPowerOf2(v.width)
                         && MathUtil.isPowerOf2(v.height)
                     );
-                   
+
                     if (v.needUpload) {
                         // Jika butuh upload data, lakukan upload
                         v.needUpload = false;
@@ -179,11 +179,11 @@ export class GLContainer {
                                 v.source.type,
                                 v.source.image ?? v.source.arrayData!.bytes
                             ];
-
+                            
                             if (v.source.arrayData) {
                                 param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
                             }
-                           
+
                             // @ts-ignore: agak curang but hey less code it is :)
                             gl.texImage2D(...param);
                             if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
@@ -281,7 +281,6 @@ export class GLContainer {
             const v = values[0];
 
             if (v instanceof GLBufferAttribute) {
-                console.log(info.name)
                 if (v.accessor.bufferView.target !== this._gl.ARRAY_BUFFER) {
                     throw new Error("BufferView target must be ARRAY_BUFFER");
                 }

@@ -64,6 +64,14 @@ export class GLRenderer {
                 } = {};
 
                 if (material instanceof PhongMaterial) {
+                    if (material.diffuseMap && !material.diffuseMap.texCoordsExpanded) {
+                        if (!geometry.indices) {
+                            throw new Error("Indices is required for texture coordinates expansion");
+                        }
+
+                        material.diffuseMap.expandTexCoords(Array.from(geometry.indices!.data))
+                    }
+
                     textureUniforms["displacementMap"] = material.displacementMap?.textureData.texture;
                     textureUniforms["displacementScale"] = material.displacementMap?.scale;
                     textureUniforms["displacementBias"] = material.displacementMap?.bias;
