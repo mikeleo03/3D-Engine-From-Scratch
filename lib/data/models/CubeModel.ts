@@ -41,17 +41,13 @@ export class CubeModel extends Model {
         return accessor;
     }
 
-    private getDisplacementTextureData(): DisplacementData {
+    private getDisplacementTextureData(data: Uint8Array): DisplacementData {
         const sampler = new Sampler(
             MagFilter.Linear,
             MinFilter.Linear,
             WrapMode.ClampToEdge,
             WrapMode.ClampToEdge
         )
-
-        const data = new Uint8Array([
-            255, 25, 0, 255
-        ])
 
         const source = new TextureImage(
             {
@@ -74,11 +70,32 @@ export class CubeModel extends Model {
         return new DisplacementData(textureData, 40, 20);
     }
 
+    private getDisplacementTextureDatas(): DisplacementData[] {
+        const data1 = new Uint8Array([
+            255, 255, 255, 255,
+        ]);
+
+        const data2 = new Uint8Array([
+            25, 50, 0, 0,
+        ]);
+
+        const data3 = new Uint8Array([
+            150, 23, 43, 77,
+        ]);
+
+        return [
+            this.getDisplacementTextureData(data1),
+            this.getDisplacementTextureData(data2),
+            this.getDisplacementTextureData(data3)
+        ]
+    }
+
     private getCube(): SceneNode {
         const meshFactory = new MeshFactory();
         const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "cube" });
         
-        const displacementData = this.getDisplacementTextureData();
+        const displacementDatas = this.getDisplacementTextureDatas();
+        const displacementData = displacementDatas[0];
 
         const phongCubeMaterial = new PhongMaterial({ 
             name: "cube-phong", 
@@ -89,7 +106,7 @@ export class CubeModel extends Model {
             displacementMap: displacementData,
             diffuseMaps: [],
             normalMaps: [],
-            displacementMaps: [],
+            displacementMaps: displacementDatas,
             specularMaps: []
         });
 
@@ -102,23 +119,14 @@ export class CubeModel extends Model {
     }
 
     protected override getScene() {
-        const nodes: SceneNode[] = [];
-
         const cube = this.getCube();
 
         cube.translate(new Vector3(10, 10, 10));
-
-        const parent = new SceneNode({name: 'Cube Model'});
-        parent.add(cube);
-
-        parent.translate(new Vector3(0, 0, 0));
-        parent.rotateByDegrees(new Vector3(30, 30, 0));
-
-        nodes.push(parent);
+        cube.rotateByDegrees(new Vector3(30, 30, 0));
 
         this._box = cube;
 
-        return new Scene(nodes);
+        return new Scene([cube]);
     }
 
     private getBoxMovements(): AnimationTRS[] {
