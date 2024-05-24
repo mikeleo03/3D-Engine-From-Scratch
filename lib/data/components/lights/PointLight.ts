@@ -4,7 +4,6 @@ import { LightType, LightTypeString } from "../../types/gltftypes";
 import { Light } from "./Light";
 
 export class PointLight extends Light {
-    private _target: Vector3;
     private _ambientColor: Color;
     private _diffuseColor: Color;
     private _specularColor: Color;
@@ -15,7 +14,6 @@ export class PointLight extends Light {
     constructor(
         color: Color, 
         intensity: number = 1, 
-        target: Vector3, 
         ambientColor: Color, 
         diffuseColor: Color, 
         specularColor: Color,
@@ -25,17 +23,12 @@ export class PointLight extends Light {
     ) {
         super(LightTypeString.POINT, color, intensity);
 
-        this._target = target || new Vector3(0, -1, 0);
         this._ambientColor = ambientColor;
         this._diffuseColor = diffuseColor;
         this._specularColor = specularColor;
         this._constant = constant;
         this._linear = linear;
         this._quadratic = quadratic;
-    }
-
-    get target(): Vector3 {
-        return this._target;
     }
 
     get ambientColor(): Color {
@@ -62,10 +55,6 @@ export class PointLight extends Light {
         return this._quadratic;
     }
 
-    set target(target: Vector3) {
-        this._target = target;
-    }
-
     set ambientColor(ambientColor: Color) {
         this._ambientColor = ambientColor;
     }
@@ -84,7 +73,6 @@ export class PointLight extends Light {
             point: {
                 color: this.color.buffer,
                 intensity: this.intensity,
-                target: this.target.toRaw(),
                 ambientColor: this.ambientColor.buffer,
                 diffuseColor: this.diffuseColor.buffer,
                 specularColor: this.specularColor.buffer,

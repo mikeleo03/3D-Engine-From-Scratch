@@ -14,6 +14,7 @@ export class RenderManager {
     private _lastTime: number = 0;
     private _loopId: number = 0;
     private _customCamera: SceneNode | null = null;
+    private _customLight: SceneNode | null = null;
 
     constructor(gltfState: GLTFState, glRenderer: GLRenderer) {
         this._gltfState = gltfState
@@ -22,6 +23,10 @@ export class RenderManager {
 
     set customCamera(cameraNode: SceneNode) {
         this._customCamera = cameraNode;
+    }
+
+    set customLight(cameraNode: SceneNode) {
+        this._customLight = cameraNode;
     }
 
     set enablePhongShading(enable: boolean) {
@@ -36,15 +41,24 @@ export class RenderManager {
         this._customCamera = null;
     }
 
+    getCustomeLight(): SceneNode | null{
+        return this._customLight;
+    }
+
+    removeCustomLight() {
+        this._customLight = null;
+    }
+
     render() {
         const scene = this._gltfState.CurrentScene;
         const cameraNode = this._customCamera || scene?.getActiveCameraNode();
+        const lightNode = this._customLight || scene?.getActiveLightNode();
 
-        if (!scene || !cameraNode) {
+        if (!scene || !cameraNode || !lightNode) {
             return;
         }
 
-        this._glRenderer.render(scene, cameraNode);
+        this._glRenderer.render(scene, cameraNode, lightNode);
     }
 
     loop(fps: number = RenderManager.DEFAULT_FPS) {

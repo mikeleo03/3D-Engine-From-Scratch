@@ -925,14 +925,14 @@ export default function Home() {
 
             const directionalLight = new DirectionalLight(
                 new Color(255, 255, 255),
-                40,
+                1,
                 new Vector3(0, 0, 0),
-                new Color(0.2 * 255, 0.2 * 255, 0.2 * 255),
-                new Color(0.5 * 255, 0.5 * 255, 0.5 * 255),
+                new Color(255, 255, 255),
+                new Color(255, 255, 255),
                 new Color(255, 255, 255)
             );
 
-            const lightPosition = new Vector3(0, 0, 100);
+            const lightPosition = new Vector3(0, 0, 0);
 
             const lightNodes = [
                 new SceneNode({
