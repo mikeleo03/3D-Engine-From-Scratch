@@ -231,7 +231,6 @@ export type LightType = {
     "point": {
         "color": number[],
         "intensity": number,
-        "target": number[],
         "ambientColor": number[],
         "diffuseColor": number[],
         "specularColor": number[]
