@@ -63,7 +63,7 @@ export class DirectionalLight extends Light {
             directional: {
                 color: this.color.buffer,
                 intensity: this.intensity,
-                target: this.target.buffer,
+                target: this.target.toRaw(),
                 ambientColor: this.ambientColor.buffer,
                 diffuseColor: this.diffuseColor.buffer,
                 specularColor: this.specularColor.buffer,
