@@ -1585,15 +1585,14 @@ export default function Home() {
                                 <Label className="text-base font-semibold pb-1 text-center mb-3">Displacement Texture</Label>
                                 {/* TODO: add texture selection */}
                                 <Select
-                                    value={
+                                    defaultValue={
                                         (() => {
                                             if (!material.displacementMap) {
                                                 return '';
                                             }
-
                                             const index = material.displacementMaps.indexOf(material.displacementMap);
 
-                                            return index === -1 ? '' : index.toString();
+                                            return index.toString();
                                         })()
                                     }
                                     onValueChange={(value) => handleDisplacementTextureChange(material, parseInt(value))}
