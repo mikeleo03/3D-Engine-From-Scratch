@@ -51,6 +51,11 @@ interface ShaderState {
     phongEnabled: boolean;
 }
 
+interface LightState {
+    directionalLight: boolean;
+    pointLight: boolean;
+}
+
 type MaterialListState = {
     basics: BasicMaterial[];
     phongs: PhongMaterial[];
@@ -105,6 +110,7 @@ export default function Home() {
     const [disableTRS, setDisableTRS] = useState(true);
     const [shader, setShader] = useState<ShaderState>({ phongEnabled: false });
     const [materialList, setMaterialList] = useState<MaterialListState>({basics: [], phongs: []});
+    const [lightState, setLightState] = useState<LightState>({ directionalLight: true, pointLight: false });
 
     const glContainerRef = useRef<GLContainer>();
     const secondGlContainerRef = useRef<GLContainer>();
@@ -430,6 +436,18 @@ export default function Home() {
         }
 
         setShader(prevState => ({...prevState, phongEnabled: isChecked }));
+    };
+
+    const toggleDirectionalLight = (isChecked: boolean) => {
+        // TODO (Leon): ini mau ngapain
+
+        setLightState(prevState => ({...prevState, directionalLight: isChecked }));
+    };
+
+    const togglePointLight = (isChecked: boolean) => {
+        // TODO (Leon): ini mau ngapain
+
+        setLightState(prevState => ({...prevState, pointLight: isChecked }));
     };
 
     const togglePlay = () => {
@@ -1508,6 +1526,34 @@ export default function Home() {
                             />
                         </div>
                     </div>
+
+                    {/* Separator */}
+                    <Separator className="w-full" />
+
+                    {/* Light */}
+                    {shader.phongEnabled && 
+                        <div className="w-full p-6 py-4 pb-6 space-y-1">
+                            <div className="text-lg font-semibold pb-2">💡 Light</div>
+                            <div className="flex flex-row justify-between pb-3">   
+                                <Label htmlFor="directional-switch" className='text-base'>Directional Light</Label>
+                                <Switch
+                                    id="directional-switch"
+                                    checked={lightState.directionalLight}
+                                    className='data-[state=checked]:bg-gray-200 data-[state=unchecked]:bg-gray-800'
+                                    onCheckedChange={toggleDirectionalLight}
+                                />
+                            </div>
+                            <div className="flex flex-row justify-between">   
+                                <Label htmlFor="point-switch" className='text-base'>Point Light</Label>
+                                <Switch
+                                    id="point-switch"
+                                    checked={lightState.pointLight}
+                                    className='data-[state=checked]:bg-gray-200 data-[state=unchecked]:bg-gray-800'
+                                    onCheckedChange={togglePointLight}
+                                />
+                            </div>
+                        </div>
+                    }
 
                     {/* Separator */}
                     <Separator className="w-full" />
