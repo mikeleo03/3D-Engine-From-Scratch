@@ -43,14 +43,16 @@ export class GLRenderer {
     private renderRoot(root: SceneNode, uniforms: {
         viewMatrix: Float32Array;
         cameraPosition: Float32Array;
-    } & LightUniforms) {
+        lightUniformsArray: LightUniforms[];
+    }) {
         const mesh = root.mesh;
         const gl = this._glContainer.glContext;
-
+        const MAX_LIGHTS = 2;
+    
         if (mesh) {
             for (const geometry of mesh.geometries) {
                 const material = this._enablePhongShading ? geometry.phongMaterial : geometry.basicMaterial;
-
+    
                 if (!material) {
                     continue;
                 }
@@ -92,21 +94,39 @@ export class GLRenderer {
                     textureUniforms["diffuseMap"] = material.diffuseMap?.texture;
                     textureUniforms["specularMap"] = material.specularMap?.texture;
                 }
-
+    
+                const lightUniforms: { [key: string]: UniformSingleDataType | undefined } = {};
+    
+                uniforms.lightUniformsArray.slice(0, MAX_LIGHTS).forEach((light, index) => {
+                    lightUniforms[`lightType_${index}`] = light.lightType;
+                    lightUniforms[`lightPosition_${index}`] = light.lightPosition;
+                    lightUniforms[`lightColor_${index}`] = light.lightColor;
+                    lightUniforms[`lightAmbient_${index}`] = light.lightAmbient;
+                    lightUniforms[`lightDiffuse_${index}`] = light.lightDiffuse;
+                    lightUniforms[`lightSpecular_${index}`] = light.lightSpecular;
+                    lightUniforms[`lightTarget_${index}`] = light.lightTarget;
+                    lightUniforms[`lightConstant_${index}`] = light.lightConstant;
+                    lightUniforms[`lightLinear_${index}`] = light.lightLinear;
+                    lightUniforms[`lightQuadratic_${index}`] = light.lightQuadratic;
+                });
+    
                 this._glContainer.setUniforms(
                     programInfo, {
                         ...material.getBufferUniforms(),
                         ...textureUniforms,
-                        ...uniforms,
+                        ...lightUniforms,
+                        viewMatrix: uniforms.viewMatrix,
+                        cameraPosition: uniforms.cameraPosition,
                         worldMatrix: root.worldMatrix.transpose().buffer,
+                        numLights: uniforms.lightUniformsArray.length
                     }
                 );
-
+    
                 geometry.calculateFaceNormals();
                 geometry.calculateVertexNormals();
-
+    
                 const geometryAttributes = { ...geometry.attributes };
-
+    
                 if (
                     geometryAttributes.position
                     && geometry.indices
@@ -125,60 +145,60 @@ export class GLRenderer {
                     );
                     geometryAttributes.position = geometry.getExpandedPosition(accessor);
                 }
-
-
-                this._glContainer.setAttributes(programInfo, geometryAttributes)
-
+    
+                this._glContainer.setAttributes(programInfo, geometryAttributes);
+    
                 gl.drawArrays(gl.TRIANGLES, 0, geometryAttributes.position?.count ?? 0);
             }
         }
+    }    
 
-        for (const child of root.children) {
-            this.renderRoot(child, uniforms);
-        }
-    }
-
-    render(scene: Scene, cameraNode: SceneNode, lightNode: SceneNode) {
+    render(scene: Scene, cameraNode: SceneNode, lightNodes: SceneNode[]) {
         this.clearCanvas();
     
-        if (!cameraNode || !lightNode || !lightNode.light) {
+        if (!cameraNode || !lightNodes || lightNodes.length === 0) {
             return;
         }
     
         const camera = cameraNode.camera;
-        const light = lightNode.light;
-    
         if (!camera) {
             return;
         }
     
-        let lightUniforms: LightUniforms = {
-            lightType: light.type === LightTypeString.DIRECTIONAL ? 0 : 1,
-            lightPosition: lightNode.position.buffer,
-            lightColor: light.color,
-        };
+        let lightUniformsArray: LightUniforms[] = lightNodes.map((lightNode, index) => {
+            const light = lightNode.light;
+            if (!light) return null;
     
-        if (light.type === LightTypeString.DIRECTIONAL) {
-            const directionalLight = light as DirectionalLight;
-            lightUniforms = {
-                ...lightUniforms,
-                lightAmbient: directionalLight.ambientColor,
-                lightDiffuse: directionalLight.diffuseColor,
-                lightSpecular: directionalLight.specularColor,
-                lightTarget: directionalLight.target.buffer,
+            let lightUniforms: LightUniforms = {
+                lightType: light.type === LightTypeString.DIRECTIONAL ? 0 : 1,
+                lightPosition: lightNode.position.buffer,
+                lightColor: light.color,
             };
-        } else if (light.type === LightTypeString.POINT) {
-            const pointLight = light as PointLight;
-            lightUniforms = {
-                ...lightUniforms,
-                lightAmbient: pointLight.ambientColor,
-                lightDiffuse: pointLight.diffuseColor,
-                lightSpecular: pointLight.specularColor,
-                lightConstant: pointLight.constant,
-                lightLinear: pointLight.linear,
-                lightQuadratic: pointLight.quadratic
-            };
-        }
+    
+            if (light.type === LightTypeString.DIRECTIONAL) {
+                const directionalLight = light as DirectionalLight;
+                lightUniforms = {
+                    ...lightUniforms,
+                    lightAmbient: directionalLight.ambientColor,
+                    lightDiffuse: directionalLight.diffuseColor,
+                    lightSpecular: directionalLight.specularColor,
+                    lightTarget: directionalLight.target.buffer,
+                };
+            } else if (light.type === LightTypeString.POINT) {
+                const pointLight = light as PointLight;
+                lightUniforms = {
+                    ...lightUniforms,
+                    lightAmbient: pointLight.ambientColor,
+                    lightDiffuse: pointLight.diffuseColor,
+                    lightSpecular: pointLight.specularColor,
+                    lightConstant: pointLight.constant,
+                    lightLinear: pointLight.linear,
+                    lightQuadratic: pointLight.quadratic,
+                };
+            }
+    
+            return lightUniforms;
+        }).filter((lightUniform): lightUniform is LightUniforms => lightUniform !== null);  // Correctly filter out null values
     
         const viewMatrix = camera.getFinalProjectionMatrix(cameraNode).buffer;
         const cameraPosition = cameraNode.position.buffer;
@@ -186,16 +206,13 @@ export class GLRenderer {
         const roots = scene.roots;
     
         for (const root of roots) {
-            const defaultUniform: {
-                viewMatrix: Float32Array;
-                cameraPosition: Float32Array;
-            } & LightUniforms = {
+            const defaultUniform = {
                 viewMatrix,
                 cameraPosition,
-                ...lightUniforms,
+                lightUniformsArray,
             };
     
             this.renderRoot(root, defaultUniform);
         }
-    }     
+    }
 }
