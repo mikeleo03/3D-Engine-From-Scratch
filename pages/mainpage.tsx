@@ -1080,6 +1080,15 @@ export default function Home() {
         material.shininess = shininess;
     }
 
+    const handleDisplacementTextureChange = (material: PhongMaterial, idx: number) => {
+        if (!(material instanceof PhongMaterial)) {
+            return;
+        }
+
+        const selectedTexture = material.displacementMaps[idx];
+        material.displacementMap = selectedTexture;
+    }
+
     return (
         <main className="flex flex-col h-screen w-full bg-[#F2FBFA] overflow-hidden">
             {/* Header Section */}
@@ -1498,30 +1507,30 @@ export default function Home() {
                                     <div key={idx} className='w-full flex flex-col items-center'>
                                         <div className="text-base font-semibold pb-1 text-center mb-2">[{material.name}]</div>
 
-                                        <Label htmlFor='diffuse-color-picker' className="text-base font-semibold pb-1 text-center">Diffuse Color</Label>
+                                        <Label htmlFor='diffuse-color-picker' className="text-base font-semibold pb-1 text-center mb-3">Diffuse Color</Label>
                                         <RgbaColorPicker
                                             id='diffuse-color-picker'
-                                            className='mt-3' 
+                                            className='' 
                                             color={colorToRgba(material.diffuseColor)} 
                                             onChange={(color) => handleDiffuseColorChange(material, color as RgbaColor)} />
 
                                         {/* Separator */}
                                         <Separator className="w-full my-5" />
 
-                                        <Label htmlFor='ambient-color-picker' className="text-base font-semibold pb-1 text-center">Ambient Color</Label>
+                                        <Label htmlFor='ambient-color-picker' className="text-base font-semibold pb-1 text-center mb-3">Ambient Color</Label>
                                         <RgbaColorPicker
                                             id='ambient-color-picker'
-                                            className='mt-3' 
+                                            className='' 
                                             color={colorToRgba(material.ambientColor)} 
                                             onChange={(color) => handleAmbientColorChange(material, color as RgbaColor)} />
 
                                         {/* Separator */}
                                         <Separator className="w-full my-5" />
 
-                                        <Label htmlFor='specular-color-picker' className="text-base font-semibold pb-1 text-center">Specular Color</Label>
+                                        <Label htmlFor='specular-color-picker' className="text-base font-semibold pb-1 text-center mb-3">Specular Color</Label>
                                         <RgbaColorPicker
                                             id='specular-color-picker'
-                                            className='mt-3' 
+                                            className='' 
                                             color={colorToRgba(material.specularColor)} 
                                             onChange={(color) => handleSpecularColorChange(material, color as RgbaColor)} />
 
@@ -1529,7 +1538,7 @@ export default function Home() {
                                         <Separator className="w-full my-5" />
 
                                         <div className='flex flex-row justify-between w-full'>
-                                            <Label htmlFor='shininess' className="text-base font-semibold pb-1 w-1/3">Shininess</Label>
+                                            <Label htmlFor='shininess' className="text-base font-semibold pb-1 w-1/3 ">Shininess</Label>
                                             <input
                                                 className="w-2/3"
                                                 type="range"
@@ -1545,6 +1554,64 @@ export default function Home() {
                         )}
                 
                     </div>}
+                    {/* Separator */}
+                    <Separator className="w-full" />
+
+                    {/* Texture */}
+                    {shader.phongEnabled && currentNodeRef.current && currentNodeRef.current.mesh && (
+                        <div className="w-full p-6 py-4 pb-6 space-y-1">
+                        <div className="text-lg font-semibold pb-2">🖼 Texture</div>
+                        <div className="flex flex-row justify-between">   
+                        {materialList.phongs.map((material, idx) =>
+                            <div key={idx} className='w-full flex flex-col items-center'>
+                                <div className="text-base font-semibold pb-1 text-center mb-2">[{material.name}]</div>
+
+                                <Label className="text-base font-semibold pb-1 text-center mb-3">Diffuse Texture</Label>
+                                {/* TODO: add texture selection */}
+
+                                {/* Separator */}
+                                <Separator className="w-full my-5" />
+
+                                <Label className="text-base font-semibold pb-1 text-center mb-3">Specular Texture</Label>
+                                {/* TODO: add texture selection */}
+                                <Separator className="w-full my-5" />
+
+                                <Label className="text-base font-semibold pb-1 text-center mb-3">Normal Texture</Label>
+                                {/* TODO: add texture selection */}
+
+                                {/* Separator */}
+                                <Separator className="w-full my-5" />
+
+                                <Label className="text-base font-semibold pb-1 text-center mb-3">Displacement Texture</Label>
+                                {/* TODO: add texture selection */}
+                                <Select
+                                    value={
+                                        (() => {
+                                            if (!material.displacementMap) {
+                                                return '';
+                                            }
+
+                                            const index = material.displacementMaps.indexOf(material.displacementMap);
+
+                                            return index === -1 ? '' : index.toString();
+                                        })()
+                                    }
+                                    onValueChange={(value) => handleDisplacementTextureChange(material, parseInt(value))}
+                                >
+                                    <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
+                                        <SelectValue placeholder="Select Displacement Texture" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {material.displacementMaps.map((_, idx) => (
+                                            <SelectItem key={idx} value={idx.toString()}>{idx}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )} 
+                        </div>
+                    </div>
+                    )}
                 </div>
             </div>
         </main>
