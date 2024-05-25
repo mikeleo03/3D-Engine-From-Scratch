@@ -264,7 +264,7 @@ export type SceneNodeType = {
 export type SceneType = {
     nodes: number[];
     activeCamera: number;
-    activeLight: number
+    activeLight: number[]
 }
 
 export type AnimationTRS = {
