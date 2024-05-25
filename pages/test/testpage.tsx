@@ -127,10 +127,10 @@ export default function TestPage() {
 
       glRenderer.enablePhongShading = true;
       // glRenderer.render(scene, cameraNodes[0], [lightNodes[0]]);
-      glRenderer.render(scene, cameraNodes[0], lightNodes);
+      // glRenderer.render(scene, cameraNodes[0], lightNodes);
 
-      // const renderManager = new RenderManager(gltfState, glRenderer);
-      // renderManager.loop()
+      const renderManager = new RenderManager(gltfState, glRenderer);
+      renderManager.loop()
 
       // baseCube.download();
       // cube.download();

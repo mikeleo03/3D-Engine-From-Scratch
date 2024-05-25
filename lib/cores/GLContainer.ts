@@ -4,7 +4,6 @@ import { MathUtil } from "../utils/MathUtil";
 import { AttributeDataType, AttributeMapSetters, AttributeSetters, AttributeSingleDataType, ProgramInfo, ShaderType, UniformDataType, UniformMapSetters, UniformSetterWebGLType, UniformSetters, UniformSingleDataType, WebGLType } from "./gltypes";
 
 type TypedArray = Float32Array | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array;
-import container from "../data/components/materials/textureImages/f-texture.png"
 
 export class GLContainer {
     private _canvas: HTMLCanvasElement;
@@ -141,12 +140,14 @@ export class GLContainer {
         }
 
         gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
-        // Fill the texture with a 1x1 blue pixel.
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+        const isPOT = (
+            MathUtil.isPowerOf2(v.width)
+            && MathUtil.isPowerOf2(v.height)
+        );
 
         if (v.isNeedUpload(rendererId)) {
             // Jika butuh upload data, lakukan upload
-            v.setNeedUpload(rendererId, false);
+            
             if (v.isLoaded) {
                 // Sudah load, gaskan upload
                 const param = [
@@ -160,48 +161,29 @@ export class GLContainer {
                 
                 if (v.source.arrayData) {
                     param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
-                    // fix alignment problem: process per 1 byte
-                    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-                    // @ts-ignore: agak curang but hey less code it is :)
-                    gl.texImage2D(...param);
-                    const isPOT = (
-                        MathUtil.isPowerOf2(v.width)
-                        && MathUtil.isPowerOf2(v.height)
-                    );
-                    if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
                 }
 
-                if (v.source.image) {
-                    v.source.image.onload = () => {
-                        // fix alignment problem: process per 1 byte
-                        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-                        // @ts-ignore: agak curang but hey less code it is :)
-                        gl.texImage2D(...param);
-                        const isPOT = (
-                            MathUtil.isPowerOf2(v.width)
-                            && MathUtil.isPowerOf2(v.height)
-                        );
-                        if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
-                        if (!isPOT) {
-                            v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
-                            v.sampler.minFilter = gl.LINEAR;
-                            console.log("image is not POT, fallback params", v);
-                        }
-                    }
-                }
+                // fix alignment problem: process per 1 byte
+                gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+                // @ts-ignore: agak curang but hey less code it is :)
+                gl.texImage2D(...param);
+                if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
+
+                v.setNeedUpload(rendererId, false);
 
             } else {
-                // Belum load / gak ada data
-                gl.texImage2D(
-                    gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
-                    gl.RGBA, gl.UNSIGNED_BYTE,
-                    new Uint8Array(v.defaultColor)
-                );
+                // Belum load / gak ada data, ignore saja
+                console.log("Texture not loaded yet", v);
             }
         }
-        if (v.isParameterChanged(rendererId)) {
+        if (v.isLoaded && v.isParameterChanged(rendererId)) {
             // Jika parameter berubah, lakukan set parameter
             v.setParameterChanged(rendererId, false);
+            if (!isPOT) {
+                v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
+                v.sampler.minFilter = gl.LINEAR;
+                console.log("image is not POT, fallback params", v);
+            }
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.sampler.wrapS);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.sampler.wrapT);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.sampler.minFilter);
@@ -294,7 +276,6 @@ export class GLContainer {
                 this._gl[setter](loc, ...value);
             }
         }
-        
     }
 
     private createUniformSetters(program: WebGLProgram, options: {rendererId?: string} = {}): UniformMapSetters {
