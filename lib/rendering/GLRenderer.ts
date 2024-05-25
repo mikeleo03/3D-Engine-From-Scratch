@@ -170,38 +170,41 @@ export class GLRenderer {
         }
     
         let lightUniformsArray: LightUniforms[] = lightNodes.map((lightNode, index) => {
-            const light = lightNode.light;
-            if (!light) return null;
-    
-            let lightUniforms: LightUniforms = {
-                lightType: light.type === LightTypeString.DIRECTIONAL ? 0 : 1,
-                lightPosition: lightNode.position.buffer,
-                lightColor: light.color,
-            };
-    
-            if (light.type === LightTypeString.DIRECTIONAL) {
-                const directionalLight = light as DirectionalLight;
-                lightUniforms = {
-                    ...lightUniforms,
-                    lightAmbient: directionalLight.ambientColor,
-                    lightDiffuse: directionalLight.diffuseColor,
-                    lightSpecular: directionalLight.specularColor,
-                    lightTarget: directionalLight.target.buffer,
+            // TODO : FIX THIS!
+            if (lightNode) {
+                const light = lightNode.light;
+                if (!light) return null;
+        
+                let lightUniforms: LightUniforms = {
+                    lightType: light.type === LightTypeString.DIRECTIONAL ? 0 : 1,
+                    lightPosition: lightNode.position.buffer,
+                    lightColor: light.color,
                 };
-            } else if (light.type === LightTypeString.POINT) {
-                const pointLight = light as PointLight;
-                lightUniforms = {
-                    ...lightUniforms,
-                    lightAmbient: pointLight.ambientColor,
-                    lightDiffuse: pointLight.diffuseColor,
-                    lightSpecular: pointLight.specularColor,
-                    lightConstant: pointLight.constant,
-                    lightLinear: pointLight.linear,
-                    lightQuadratic: pointLight.quadratic,
-                };
+        
+                if (light.type === LightTypeString.DIRECTIONAL) {
+                    const directionalLight = light as DirectionalLight;
+                    lightUniforms = {
+                        ...lightUniforms,
+                        lightAmbient: directionalLight.ambientColor,
+                        lightDiffuse: directionalLight.diffuseColor,
+                        lightSpecular: directionalLight.specularColor,
+                        lightTarget: directionalLight.target.buffer,
+                    };
+                } else if (light.type === LightTypeString.POINT) {
+                    const pointLight = light as PointLight;
+                    lightUniforms = {
+                        ...lightUniforms,
+                        lightAmbient: pointLight.ambientColor,
+                        lightDiffuse: pointLight.diffuseColor,
+                        lightSpecular: pointLight.specularColor,
+                        lightConstant: pointLight.constant,
+                        lightLinear: pointLight.linear,
+                        lightQuadratic: pointLight.quadratic,
+                    };
+                }
+        
+                return lightUniforms;
             }
-    
-            return lightUniforms;
         }).filter((lightUniform): lightUniform is LightUniforms => lightUniform !== null);  // Correctly filter out null values
     
         const viewMatrix = camera.getFinalProjectionMatrix(cameraNode).buffer;
