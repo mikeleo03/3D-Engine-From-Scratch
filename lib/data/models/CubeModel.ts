@@ -16,7 +16,7 @@ import { GLTFBuffer } from "../buffers/GLTFBuffer"
 import { BufferView } from "../buffers/BufferView"
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters"
 
-import container from "../components/materials/textureImages/container.png"
+import container from "../components/materials/textureImages/f-texture.png"
 
 export class CubeModel extends Model {
     private _box?: SceneNode;
