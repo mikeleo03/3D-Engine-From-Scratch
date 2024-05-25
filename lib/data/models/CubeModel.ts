@@ -16,11 +16,61 @@ import { GLTFBuffer } from "../buffers/GLTFBuffer"
 import { BufferView } from "../buffers/BufferView"
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters"
 
+import container from "../components/materials/textureImages/container.png"
+
 export class CubeModel extends Model {
     private _box?: SceneNode;
 
     constructor() {
         super();
+    }
+
+    private getDiffuseCoordinates(): Accessor {
+        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const converter = new Uint16ArrayConverter();
+
+        accessor.setData(converter.tobytes(Uint16Array.from([
+            0, 0,
+            1, 0,
+            0, 1,
+            0, 1,
+            1, 0,
+            1, 1
+        ])));
+
+        return accessor;
+    }
+
+    private createTextureImageFromImport(src: string): TextureImage {
+        const image = new Image();
+        image.src = src;
+        return new TextureImage(
+            { image },
+            ImageFormat.RGBA,
+            ImageType.UnsignedByte
+        );
+    }
+
+    private getDiffuseTexturesDatas(): TextureData[] {
+        const urls = [container.src];
+
+        const sampler = new Sampler(
+            MagFilter.Linear,
+            MinFilter.Linear,
+            WrapMode.ClampToEdge,
+            WrapMode.ClampToEdge
+        );
+
+        return urls.map(url => {
+            const textureImage = this.createTextureImageFromImport(url);
+            const texture = new Texture(sampler, textureImage);
+            const coord = this.getDiffuseCoordinates();
+            const textureData = new TextureData(texture, coord);
+            textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
+            return textureData;
+        });
     }
 
     private getDisplacementCoordinates(): Accessor {
@@ -94,6 +144,9 @@ export class CubeModel extends Model {
         const meshFactory = new MeshFactory();
         const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "cube" });
         
+        const diffuseDatas = this.getDiffuseTexturesDatas();
+        const diffuseData = diffuseDatas[0];
+
         const displacementDatas = this.getDisplacementTextureDatas();
         const displacementData = displacementDatas[0];
 
@@ -103,10 +156,11 @@ export class CubeModel extends Model {
             diffuseColor: new Color(204, 102, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
-            displacementMap: displacementData,
-            diffuseMaps: [],
+            diffuseMap: diffuseData,
+            // displacementMap: displacementData,
+            diffuseMaps: diffuseDatas,
             normalMaps: [],
-            displacementMaps: displacementDatas,
+            displacementMaps: [],
             specularMaps: []
         });
 

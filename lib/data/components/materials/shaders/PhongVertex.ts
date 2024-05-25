@@ -5,6 +5,7 @@ attribute vec3 a_position;
 attribute vec3 a_faceNormal;
 attribute vec3 a_vertexNormal;
 attribute vec2 a_displacementUV;
+attribute vec2 a_diffuseUV;
 
 uniform mat4 u_worldMatrix;
 uniform mat4 u_viewMatrix;
@@ -14,6 +15,7 @@ uniform float u_displacementBias;
 
 varying vec3 normalSurface;
 varying vec3 vertexPosition;
+varying vec2 diffuseUV;
 
 void main() {
     vec4 displacement = texture2D(u_displacementMap, a_displacementUV);
@@ -23,6 +25,7 @@ void main() {
     vec4 vertexPosition4 = u_worldMatrix * (vec4(a_position, 1.0) + displacementVector);
     vertexPosition = vec3(vertexPosition4) / vertexPosition4.w;
     normalSurface = (u_viewMatrix * u_worldMatrix * vec4(a_faceNormal, 1.0)).xyz;
+    diffuseUV = a_diffuseUV;
     gl_Position = u_viewMatrix * vertexPosition4;
 }
 `;

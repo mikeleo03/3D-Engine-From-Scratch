@@ -106,6 +106,15 @@ export class MeshBufferGeometry {
             }
 
             // TODO: Add more material attributes if needed
+            if (phongMaterial.diffuseMap) {
+                const diffuseUVAttribute = new GLBufferAttribute(
+                    phongMaterial.diffuseMap.textCoords,
+                    2,
+                    new Uint16ArrayConverter()
+                );
+
+                completeAttributes.diffuseUV = diffuseUVAttribute;
+            }
         }
 
         this._attributes = completeAttributes;
