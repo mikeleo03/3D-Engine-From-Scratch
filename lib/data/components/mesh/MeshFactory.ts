@@ -360,22 +360,24 @@ export class MeshFactory {
 
         // define 12 vertices of the hollow triangle
         const vertices: [number, number, number][] = [
-            // outer front face
+            // outer bottom vertices
             [-halfOuterWidth, -halfOuterHeight, halfDepth],
-            [halfOuterWidth, -halfOuterHeight, halfDepth],
-            [0, halfOuterHeight, halfDepth],
-            // outer back face
             [-halfOuterWidth, -halfOuterHeight, -halfDepth],
+            [halfOuterWidth, -halfOuterHeight, halfDepth],
             [halfOuterWidth, -halfOuterHeight, -halfDepth],
+
+            // outer top vertices
+            [0, halfOuterHeight, halfDepth],
             [0, halfOuterHeight, -halfDepth],
 
-            // inner front face
+            // inner bottom vertices
             [-halfInnerWidth, -halfInnerHeight, halfDepth],
-            [halfInnerWidth, -halfInnerHeight, halfDepth],
-            [0, halfInnerHeight, halfDepth],
-            // inner back face
             [-halfInnerWidth, -halfInnerHeight, -halfDepth],
+            [halfInnerWidth, -halfInnerHeight, halfDepth],
             [halfInnerWidth, -halfInnerHeight, -halfDepth],
+
+            // inner top vertices
+            [0, halfInnerHeight, halfDepth],
             [0, halfInnerHeight, -halfDepth],
         ];
 
@@ -388,39 +390,53 @@ export class MeshFactory {
 
         // define the indices of the hollow triangle
         const indices = [
-            // outer front face
+            // Outer bottom face
             0, 1, 2,
-            // outer back face
-            3, 4, 5,
+            2, 1, 3,
+
             // outer left face
-            0, 2, 5,
-            0, 5, 3,
+            1, 0, 4,
+            1, 4, 5,
+
             // outer right face
-            1, 2, 5,
-            1, 5, 4,
+            2, 3, 4,
+            4, 3, 5,
 
-            // inner front face
-            6, 7, 8,
-            // inner back face
-            9, 10, 11,
+            // inner bottom face
+            7, 6, 8,
+            7, 8, 9,
+
             // inner left face
-            6, 8, 11,
-            6, 11, 9,
+            6, 7, 10,
+            10, 7, 11,
 
-            // connecting faces
-            0, 1, 7,
-            0, 7, 6,
-            1, 2, 8,
-            1, 8, 7,
-            2, 0, 6,
-            2, 6, 8,
-            3, 4, 10,
-            3, 10, 9,
-            4, 5, 11,
-            4, 11, 10,
-            5, 3, 9,
-            5, 9, 11,
+            // inner right face
+            9, 8, 10,
+            10, 11, 9,
             
+            // left connecting front side
+            0, 6, 4,
+            6, 10, 4,
+
+            // right connecting front side
+            8, 2, 4,
+            10, 8, 4,
+
+            // bottom connecting front side
+            0, 8, 6,
+            0, 2, 8,
+
+            // left connecting back side
+            7, 1, 5,
+            7, 5, 11,
+
+            // right connecting back side
+            3, 9, 5,
+            9, 11, 5,
+
+            // top connecting back side
+            3, 1, 7,
+            3, 7, 9,
         ];
 
         this.addGeometry(
