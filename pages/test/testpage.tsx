@@ -133,7 +133,7 @@ export default function TestPage() {
       renderManager.loop()
 
       // baseCube.download();
-      // cube.download();
+      cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();

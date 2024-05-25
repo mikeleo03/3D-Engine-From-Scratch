@@ -14,6 +14,8 @@ export class TextureImage {
     private _format: ValueOf<typeof ImageFormat>;
     private _type: ValueOf<typeof ImageType>;
 
+    private _loadingImage: HTMLImageElement | undefined;  // dont change this, only for save purpose
+
     constructor(
         data: {
             image?: HTMLImageElement,
@@ -48,6 +50,7 @@ export class TextureImage {
         this._type = type;
 
         if (image) {
+            this._loadingImage = image;
             image.onload = () => {
                 this._image = image;
             };
@@ -73,7 +76,7 @@ export class TextureImage {
     toRaw(): TextureImageType {
         return {
             data: {
-                image: this._image,
+                image: this._loadingImage?.src,
                 arrayData: this._arrayData ? {
                     bytes: Array.from(this._arrayData.bytes),
                     width: this._arrayData.width,
@@ -99,7 +102,7 @@ export class TextureImage {
 
         if (raw.data.image) {
             image = new Image();
-            image.src = raw.data.image!.src;
+            image.src = raw.data.image;
         }
 
 

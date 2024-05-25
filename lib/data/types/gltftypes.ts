@@ -85,7 +85,7 @@ export type TextureArrayDataType = {
 }
 export type TextureImageType = {
     "data": {
-        "image"?: HTMLImageElement,
+        "image"?: string,
         "arrayData"?: TextureArrayDataType
     },
     "type": number,
