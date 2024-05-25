@@ -94,7 +94,7 @@ export default function TestPage() {
 
       const lightNodes = [
         new SceneNode({ light: pointLight, position: new Vector3(70, 70, 30) }),
-        new SceneNode({ light: pointLight, position: new Vector3(-70, 30, 30) })
+        new SceneNode({ light: directionalLight, position: new Vector3(-70, 30, 30) })
       ]
 
       const cube = new CubeModel();
@@ -118,6 +118,7 @@ export default function TestPage() {
 
       // change camera here
       scene.addNode(cameraNodes[0]);
+      scene.addNode(lightNodes[1]);
       scene.addNode(lightNodes[0]);
 
       const gltfState = new GLTFState();
@@ -131,7 +132,7 @@ export default function TestPage() {
       // renderManager.loop()
 
       // baseCube.download();
-      // cube.download();
+      cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();
