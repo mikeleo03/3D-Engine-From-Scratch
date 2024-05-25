@@ -261,13 +261,14 @@ export class GLContainer {
         return (value: UniformSingleDataType) => {
             const typeString = UniformSetterWebGLType[type];
             const setter = `uniform${typeString}`;
+            if (typeString == undefined) return;
 
             if (typeString.startsWith("Matrix")) {
                 // @ts-ignore
                 this._gl[setter](loc, false, value);
             }
 
-            else if (typeString == '1f') {
+            else if (typeString == '1f' || typeString == '1i') {
                 // @ts-ignore
                 this._gl[setter](loc, value);
             }
@@ -290,9 +291,18 @@ export class GLContainer {
         for (let i = 0; i < numUniforms; i++) {
             const info = this._gl.getActiveUniform(program, i);
             if (!info) continue;
-            uniformSetters[info.name] = this.createUniformSetter(info, program, { textureUnit, rendererId });
-
-            if (info.type == WebGLType.SAMPLER_2D) {
+    
+            if (info.size > 1) {
+                // This is a uniform array
+                for (let j = 0; j < info.size; j++) {
+                    const name = info.name.replace(/\[0\]$/, `[${j}]`);
+                    uniformSetters[name] = this.createUniformSetter({ ...info, name }, program, { textureUnit, rendererId });
+                }
+            } else {
+                uniformSetters[info.name] = this.createUniformSetter(info, program, { textureUnit, rendererId });
+            }
+    
+            if (info.type === this._gl.SAMPLER_2D) {
                 textureUnit += info.size;
             }
         }

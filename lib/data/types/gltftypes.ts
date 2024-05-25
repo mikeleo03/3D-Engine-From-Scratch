@@ -104,6 +104,11 @@ export type TextureDataType = {
     "texCoordsExpanded": boolean,
 }
 
+export type SpecularDataType = {
+    "textureData": TextureDataType,
+    "shininess": number
+}
+
 export type DisplacementDataType = {
     "textureData": TextureDataType,
     "scale": number,
@@ -259,7 +264,7 @@ export type SceneNodeType = {
 export type SceneType = {
     nodes: number[];
     activeCamera: number;
-    activeLight: number
+    activeLight: number[]
 }
 
 export type AnimationTRS = {
