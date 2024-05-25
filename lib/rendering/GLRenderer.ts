@@ -135,8 +135,6 @@ export class GLRenderer {
                         mode = 4.0;
                     }
                 }
-
-                console.log(mode);
     
                 this._glContainer.setUniforms(
                     programInfo, {
