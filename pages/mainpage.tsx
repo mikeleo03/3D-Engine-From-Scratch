@@ -722,6 +722,10 @@ export default function Home() {
             return;
         }
 
+        for (const node of cameraNodesRef.current) {
+            gltfState.CurrentScene?.removeNode(node);
+        }
+        
         for (const node of secondCameraNodesRef.current) {
             gltfState.CurrentScene?.removeNode(node);
         }
