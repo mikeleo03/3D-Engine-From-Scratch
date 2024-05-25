@@ -115,6 +115,16 @@ export class MeshBufferGeometry {
 
                 completeAttributes.diffuseUV = diffuseUVAttribute;
             }
+
+            if (phongMaterial.specularMap) {
+                const specularUVAttribute = new GLBufferAttribute(
+                    phongMaterial.specularMap.textCoords,
+                    2,
+                    new Uint16ArrayConverter()
+                );
+
+                completeAttributes.diffuseUV = specularUVAttribute;
+            }
         }
 
         this._attributes = completeAttributes;
