@@ -68,10 +68,10 @@ export class MarthenModel extends Model {
       ambientColor: new Color(0, 0, 0),
       diffuseColor: new Color(0, 0, 0),
       specularColor: new Color(255, 255, 255),
-      shininess: 80
+      shininess: 100
     })
     const eyeMesh = meshFactory.cuboid(10, 10, 10,
-      {basicMaterial: eyeMaterial});
+      {basicMaterial: eyeMaterial, phongMaterial: phongEyeMaterial});
     return new SceneNode({mesh: eyeMesh});
   }
 
