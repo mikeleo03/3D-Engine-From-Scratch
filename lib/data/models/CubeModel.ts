@@ -53,6 +53,35 @@ export class CubeModel extends Model {
         );
     }
 
+    private getDiffuseTextureData(data: Uint8Array): TextureData {
+        const sampler = new Sampler(
+            MagFilter.Linear,
+            MinFilter.Linear,
+            WrapMode.ClampToEdge,
+            WrapMode.ClampToEdge
+        )
+
+        const source = new TextureImage(
+            {
+                arrayData: {
+                    bytes: data,
+                    width: 2,
+                    height: 2
+                }
+            },
+            ImageFormat.Luminance,
+            ImageType.UnsignedByte
+        )
+
+        const texture = new Texture(sampler, source);
+        const coord = this.getDiffuseCoordinates();
+
+        const textureData = new TextureData(texture, coord);
+        textureData.expandTexCoords(MeshFactory.CUBOID_INDICES)
+
+        return textureData;
+    }
+
     private getDiffuseTexturesDatas(): TextureData[] {
         const urls = [container.src];
 
@@ -71,6 +100,24 @@ export class CubeModel extends Model {
             textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
             return textureData;
         });
+
+        /* const data1 = new Uint8Array([
+            10, 100, 100, 40,
+        ]);
+
+        const data2 = new Uint8Array([
+            25, 50, 0, 0,
+        ]);
+
+        const data3 = new Uint8Array([
+            150, 23, 43, 77,
+        ]);
+
+        return [
+            this.getDiffuseTextureData(data1),
+            this.getDiffuseTextureData(data2),
+            this.getDiffuseTextureData(data3)
+        ] */
     }
 
     private getDisplacementCoordinates(): Accessor {
