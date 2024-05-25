@@ -48,9 +48,7 @@ export class TextureImage {
         this._type = type;
 
         if (image) {
-            image.onload = () => {
-                this._image = image;
-            };
+            this._image = image;
         }
     }
 
