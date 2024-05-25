@@ -92,6 +92,7 @@ export class Scene {
         if (node.light !== undefined) {
             this._lights.push(node);
             if (node.light.type === LightTypeString.DIRECTIONAL) {
+                this._activeLightNode.pop();
                 this._activeLightNode.push(node);
             }
         }

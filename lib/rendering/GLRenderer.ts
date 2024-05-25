@@ -199,7 +199,6 @@ export class GLRenderer {
         }
     
         let lightUniformsArray: LightUniforms[] = lightNodes.map((lightNode, index) => {
-            // TODO : FIX THIS!
             if (lightNode) {
                 const light = lightNode.light;
                 if (!light) return null;
