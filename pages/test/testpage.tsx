@@ -14,6 +14,7 @@ import { useEffect, useRef } from "react";
 import { RenderManager } from "@/lib/rendering/RenderManager";
 import { GLTFState } from "@/lib/data/GLTFState";
 import { BaseCubeModel } from "@/lib/data/models/BaseCubeModel";
+import { HollowJojoModel } from "@/lib/data/models/hollow/HollowJojoModel";
 
 export default function TestPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -103,9 +104,10 @@ export default function TestPage() {
       const jojo = new JojoModel();
       const leon = new LeonModel();
       const maggie = new MaggieModel();
+      const hollowJojo = new HollowJojoModel();
 
       // change model here
-      const model = cube;
+      const model = hollowJojo;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -132,11 +134,12 @@ export default function TestPage() {
       // const renderManager = new RenderManager(gltfState, glRenderer);
       // renderManager.loop()
 
-      baseCube.download();
+      // baseCube.download();
       // cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();
+      hollowJojo.download();
     };
 
     initializeGL();
