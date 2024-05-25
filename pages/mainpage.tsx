@@ -221,18 +221,6 @@ export default function Home() {
         return lightNode;
     }
 
-    const getCurrentLight = () => {
-        const lightNode = getCurrentLightNode();
-
-        if (!lightNode) {
-            return;
-        }
-
-        const light = lightNode.light;
-
-        return light;
-    }
-
     const changeCurrentCamera = (type: CameraTypeString) => {
         const currentScene = gltfStateRef.current?.CurrentScene;
 
@@ -428,6 +416,9 @@ export default function Home() {
             secondRenderManagerRef.current.enablePhongShading = isChecked;
         }
 
+        const currentLightNode = getCurrentLightNode();
+        console.log("current", currentLightNode);
+
         setShader(prevState => ({...prevState, phongEnabled: isChecked }));
     };
 
@@ -435,28 +426,50 @@ export default function Home() {
         handleLightChanges(LightTypeString.DIRECTIONAL, isChecked);
         setLightState(prevState => ({...prevState, directionalLight: isChecked }));
     };
-
+    
     const togglePointLight = (isChecked: boolean) => {
         handleLightChanges(LightTypeString.POINT, isChecked);
         setLightState(prevState => ({...prevState, pointLight: isChecked }));
     };
-
+    
     const handleLightChanges = (type: LightTypeString, isChecked: boolean) => {
         const currentScene = gltfStateRef.current?.CurrentScene;
-
+    
         if (!currentScene) {
             return;
         }
-
+    
+        const currentLightNode = getCurrentLightNode();
+    
         const lights = currentScene.lights;
-
+        let activeLightNodes: SceneNode[] = currentLightNode!;
+    
         for (const lightNode of lights) {
-            if (lightNode.light && lightNode.light.type === type && isChecked) {
-                currentScene.setActiveLightNode(lightNode);
-                break;
+            if (lightNode.light && lightNode.light.type === type) {
+                if (isChecked === true) {
+                    // Check if the lightNode is already in activeLightNodes and if it's directional
+                    const isAlreadyActive = activeLightNodes.some(node => node === lightNode && node.light?.type === LightTypeString.DIRECTIONAL);
+    
+                    if (!isAlreadyActive) {
+                        console.log("MASUK 1", type);
+                        activeLightNodes.push(lightNode);
+                    } else {
+                        console.log("MASUK 3");
+                    }
+                } else {
+                    console.log("MASUK 2", type);
+                    const index = activeLightNodes.indexOf(lightNode);
+                    if (index !== -1) {
+                        activeLightNodes.splice(index, 1);
+                    }
+                }
             }
         }
-    }
+    
+        currentScene.setActiveLightNode(activeLightNodes);
+        console.log("current", currentLightNode);
+        console.log("active", currentScene.getActiveLightNode());
+    };                   
 
     const togglePlay = () => {
         setIsPlaying(prevState => !prevState);
@@ -952,7 +965,7 @@ export default function Home() {
             const directionalLight = new DirectionalLight(
                 new Color(255, 255, 255),
                 1,
-                new Vector3(0, 0, 0),
+                new Vector3(-80, -120, -100),
                 new Color(255, 255, 255),
                 new Color(255, 255, 255),
                 new Color(255, 255, 255)
@@ -973,12 +986,12 @@ export default function Home() {
                 new SceneNode({
                     name: 'Directional Light',
                     light: directionalLight,
-                    position: new Vector3(0, 0, 0)
+                    position: new Vector3(70, 70, 30)
                 }),
                 new SceneNode({
                     name: 'Point Light',
                     light: pointLight,
-                    position: new Vector3(10, 40, 30)
+                    position: new Vector3(80, 70, 80)
                 })
             ]
 
