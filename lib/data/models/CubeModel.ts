@@ -16,7 +16,9 @@ import { GLTFBuffer } from "../buffers/GLTFBuffer"
 import { BufferView } from "../buffers/BufferView"
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters"
 
-import container from "../components/materials/textureImages/f-texture.png"
+import container from "../components/materials/textureImages/container.png"
+import f_texture from "../components/materials/textureImages/f-texture.png"
+import metal from "../components/materials/textureImages/metal.jpg"
 
 export class CubeModel extends Model {
     private _box?: SceneNode;
@@ -34,10 +36,10 @@ export class CubeModel extends Model {
         accessor.setData(converter.tobytes(Uint16Array.from([
             0, 0,
             1, 0,
-            0, 1,
+            1, 1,
             0, 1,
             1, 0,
-            1, 1
+            1, 1,
         ])));
 
         return accessor;
@@ -53,37 +55,8 @@ export class CubeModel extends Model {
         );
     }
 
-    private getDiffuseTextureData(data: Uint8Array): TextureData {
-        const sampler = new Sampler(
-            MagFilter.Linear,
-            MinFilter.Linear,
-            WrapMode.ClampToEdge,
-            WrapMode.ClampToEdge
-        )
-
-        const source = new TextureImage(
-            {
-                arrayData: {
-                    bytes: data,
-                    width: 2,
-                    height: 2
-                }
-            },
-            ImageFormat.Luminance,
-            ImageType.UnsignedByte
-        )
-
-        const texture = new Texture(sampler, source);
-        const coord = this.getDiffuseCoordinates();
-
-        const textureData = new TextureData(texture, coord);
-        textureData.expandTexCoords(MeshFactory.CUBOID_INDICES)
-
-        return textureData;
-    }
-
     private getDiffuseTexturesDatas(): TextureData[] {
-        const urls = [container.src];
+        const urls = [container.src, f_texture.src, metal.src];
 
         const sampler = new Sampler(
             MagFilter.Linear,
@@ -100,24 +73,6 @@ export class CubeModel extends Model {
             textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
             return textureData;
         });
-
-        /* const data1 = new Uint8Array([
-            10, 100, 100, 40,
-        ]);
-
-        const data2 = new Uint8Array([
-            25, 50, 0, 0,
-        ]);
-
-        const data3 = new Uint8Array([
-            150, 23, 43, 77,
-        ]);
-
-        return [
-            this.getDiffuseTextureData(data1),
-            this.getDiffuseTextureData(data2),
-            this.getDiffuseTextureData(data3)
-        ] */
     }
 
     private getDisplacementCoordinates(): Accessor {
