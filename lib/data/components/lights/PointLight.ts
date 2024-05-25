@@ -67,6 +67,18 @@ export class PointLight extends Light {
         this._specularColor = specularColor;
     }
 
+    set constant(constant: number) {
+        this._constant = constant;
+    }
+
+    set linear(linear: number) {
+        this._linear = linear;
+    }
+
+    set quadratic(quadratic: number) {
+        this._quadratic = quadratic;
+    }
+
     override toRaw(): LightType {
         return {
             type: LightTypeString.POINT,

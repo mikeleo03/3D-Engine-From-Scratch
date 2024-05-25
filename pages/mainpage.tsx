@@ -56,6 +56,12 @@ interface LightState {
     pointLight: boolean;
 }
 
+interface PointLightState {
+    constant: number;
+    linear: number;
+    quadratic: number;
+}
+
 type MaterialListState = {
     basics: BasicMaterial[];
     phongs: PhongMaterial[];
@@ -111,6 +117,7 @@ export default function Home() {
     const [shader, setShader] = useState<ShaderState>({ phongEnabled: false });
     const [materialList, setMaterialList] = useState<MaterialListState>({basics: [], phongs: []});
     const [lightState, setLightState] = useState<LightState>({ directionalLight: true, pointLight: false });
+    const [pointLight, setPointLight] = useState<PointLightState>({ constant: 0.01, linear: 0.01, quadratic: 0.001 });
 
     const glContainerRef = useRef<GLContainer>();
     const secondGlContainerRef = useRef<GLContainer>();
@@ -449,13 +456,9 @@ export default function Home() {
                     const isAlreadyActive = activeLightNodes.some(node => node === lightNode && node.light?.type === LightTypeString.DIRECTIONAL);
     
                     if (!isAlreadyActive) {
-                        console.log("MASUK 1", type);
                         activeLightNodes.push(lightNode);
-                    } else {
-                        console.log("MASUK 3");
                     }
                 } else {
-                    console.log("MASUK 2", type);
                     const index = activeLightNodes.indexOf(lightNode);
                     if (index !== -1) {
                         activeLightNodes.splice(index, 1);
@@ -467,7 +470,61 @@ export default function Home() {
         currentScene.setActiveLightNode(activeLightNodes);
         console.log("current", currentLightNode);
         console.log("active", currentScene.getActiveLightNode());
-    };                   
+    };
+    
+    const handlePointLightChange = (e: ChangeEvent<HTMLInputElement>, type: string) => {
+        if (e.target.value !== null && e.target.value !== undefined) {
+            let value = parseFloat(e.target.value);
+            let newValue = { constant: 0, linear: 0, quadratic: 0 };
+
+            if (type === 'constant') {
+                setPointLight(prevState => {
+                    newValue = { ...prevState, ['constant']: value };
+                    return newValue;
+                });
+            }
+
+            else if (type === 'linear') {
+                setPointLight(prevState => {
+                    newValue = { ...prevState, ['linear']: value };
+                    return newValue;
+                });
+            }
+
+            else if (type === 'quadratic') {
+                setPointLight(prevState => {
+                    newValue = { ...prevState, ['quadratic']: value };
+                    return newValue;
+                });
+            }
+
+            else {
+                throw new Error("Invalid PointLight value type");
+            }
+
+            if (isNaN(value)) {
+                return;
+            }
+
+            // Process the value
+            const currentLightNode = getCurrentLightNode();
+            let activeLightNodes: SceneNode[] = currentLightNode!;
+            for (const lightNode of activeLightNodes) {
+                if (lightNode.light && lightNode.light.type === LightTypeString.POINT) {
+                    const pointLight = lightNode.light as PointLight;
+                    if (type === 'constant') {
+                        pointLight.constant = value;
+                    } else if (type === 'linear') {
+                        pointLight.linear = value;
+                    } else if (type === 'quadratic') {
+                        pointLight.quadratic = value;
+                    }
+
+                    break;
+                }
+            }
+        }
+    };
 
     const togglePlay = () => {
         setIsPlaying(prevState => !prevState);
@@ -1569,6 +1626,55 @@ export default function Home() {
                                     className='data-[state=checked]:bg-gray-200 data-[state=unchecked]:bg-gray-800'
                                     onCheckedChange={togglePointLight}
                                 />
+                            </div>
+                        </div>
+                    }
+
+                    {/* Adjustbale Point Light */}
+                    {shader.phongEnabled && lightState.pointLight && 
+                        <div className="w-full p-6 pt-0 pb-6 space-y-1">
+                            <div className="text-base font-semibold pb-1">Point Light Parameters</div>
+                            <div className="text-base pb-1">Distance attenuation model: a + bd + cd²</div>
+                            <div className="flex flex-row w-full pb-1 space-x-2">
+                                <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                                    <div className="w-1/4">a</div>
+                                    <div className="w-3/4">
+                                        <Input
+                                            disabled={disableTRS}
+                                            className="h-10 bg-gray-800 border-none"
+                                            type="number"
+                                            placeholder="0"
+                                            value={isNaN(pointLight.constant) ? '' : pointLight.constant}
+                                            onChange={(e) => handlePointLightChange(e, 'constant')}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                                    <div className="w-1/4">b</div>
+                                    <div className="w-3/4">
+                                        <Input
+                                            disabled={disableTRS}
+                                            className="h-10 bg-gray-800 border-none"
+                                            type="number"
+                                            placeholder="0"
+                                            value={isNaN(pointLight.linear) ? '' : pointLight.linear}
+                                            onChange={(e) => handlePointLightChange(e, 'linear')}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-1/3 flex flex-row justify-center items-center text-center">
+                                    <div className="w-1/4">c</div>
+                                    <div className="w-3/4">
+                                        <Input
+                                            disabled={disableTRS}
+                                            className="h-10 bg-gray-800 border-none"
+                                            type="number"
+                                            placeholder="0"
+                                            value={isNaN(pointLight.quadratic) ? '' : pointLight.quadratic}
+                                            onChange={(e) => handlePointLightChange(e, 'quadratic')}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     }

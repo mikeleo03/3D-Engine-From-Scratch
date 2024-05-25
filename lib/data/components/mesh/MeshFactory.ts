@@ -447,4 +447,56 @@ export class MeshFactory {
 
         return this.createMesh();
     }
+
+    hollowCylinder(
+      outerRadius: number,
+      innerRadius: number,
+      height: number,
+      segments: number,
+      materialOption: MaterialOptions,
+      options: {
+          offset?: [number, number, number],
+      } = {}
+    ): Mesh {
+        const halfHeight = height / 2;
+        const offset = options.offset || [0, 0, 0];
+
+        const vertices: [number, number, number][] = [];
+        const indices: number[] = [];
+
+        for (let i = 0; i <= segments; i++) {
+            const theta = (i / segments) * Math.PI * 2;
+
+            const outerX = outerRadius * Math.cos(theta);
+            const outerZ = outerRadius * Math.sin(theta);
+
+            const innerX = innerRadius * Math.cos(theta);
+            const innerZ = innerRadius * Math.sin(theta);
+
+            // Outer top
+            vertices.push([outerX + offset[0], halfHeight + offset[1], outerZ + offset[2]]);
+            // Outer bottom
+            vertices.push([outerX + offset[0], -halfHeight + offset[1], outerZ + offset[2]]);
+            // Inner top
+            vertices.push([innerX + offset[0], halfHeight + offset[1], innerZ + offset[2]]);
+            // Inner bottom
+            vertices.push([innerX + offset[0], -halfHeight + offset[1], innerZ + offset[2]]);
+
+            if (i < segments) {
+                const j = i * 4;
+                // Outer rectangle
+                indices.push(j, j + 4, j + 1, j + 1, j + 4, j + 5);
+                // Inner rectangle
+                indices.push(j + 2, j + 3, j + 6, j + 3, j + 7, j + 6);
+                // Top rectangle
+                indices.push(j, j + 2, j + 4, j + 2, j + 6, j + 4);
+                // Bottom rectangle
+                indices.push(j + 1, j + 5, j + 3, j + 3, j + 5, j + 7);
+            }
+        }
+
+        this.addGeometry(vertices, materialOption, { indices });
+
+        return this.createMesh();
+    }
 } 
