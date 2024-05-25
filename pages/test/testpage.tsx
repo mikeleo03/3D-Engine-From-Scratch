@@ -132,8 +132,8 @@ export default function TestPage() {
       // const renderManager = new RenderManager(gltfState, glRenderer);
       // renderManager.loop()
 
-      baseCube.download();
-      // cube.download();
+      // baseCube.download();
+      cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();

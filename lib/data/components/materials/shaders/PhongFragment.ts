@@ -33,6 +33,8 @@ uniform float u_lightConstant_1;
 uniform float u_lightLinear_1;
 uniform float u_lightQuadratic_1;
 
+uniform float u_mode;
+
 varying vec3 normalSurface;
 varying vec3 vertexPosition;
 
@@ -55,14 +57,17 @@ void main() {
         } else if (i == 1 && u_lightType_1 == 0.0) {
             // Directional Light
             L = normalize(u_lightTarget_1 - vertexPosition);
+        } else if (i == 0 && u_lightType_0 == 1.0) {
+            // Point Light
+            L = normalize(u_lightPosition_0 - vertexPosition);
         } else {
             // Point Light
-            L = normalize(u_lightPosition_0 - vertexPosition); // Example for the first light
+            L = normalize(u_lightPosition_1 - vertexPosition);
         }
 
-        vec3 lightAmbient = (i == 0) ? (u_lightAmbient_0.rgb / 255.0) : (u_lightAmbient_1.rgb / 255.0); // Example for the first light
-        vec3 lightDiffuse = (i == 0) ? (u_lightDiffuse_0.rgb / 255.0) : (u_lightDiffuse_1.rgb / 255.0); // Example for the first light
-        vec3 lightSpecular = (i == 0) ? (u_lightSpecular_0.rgb / 255.0) : (u_lightSpecular_1.rgb / 255.0); // Example for the first light
+        vec3 lightAmbient = (i == 0) ? (u_lightAmbient_0.rgb / 255.0) : (u_lightAmbient_1.rgb / 255.0);
+        vec3 lightDiffuse = (i == 0) ? (u_lightDiffuse_0.rgb / 255.0) : (u_lightDiffuse_1.rgb / 255.0);
+        vec3 lightSpecular = (i == 0) ? (u_lightSpecular_0.rgb / 255.0) : (u_lightSpecular_1.rgb / 255.0);
 
         // Lambert's cosine law
         float lambertian = max(dot(N, L), 0.0);
@@ -76,27 +81,63 @@ void main() {
             specular = pow(specAngle, u_shininess);
         }
 
-        if (i == 0 && u_lightType_0 == 1.0) {
-            // Point light effect calculation for the first light
-            float distance = length(u_lightPosition_0 - vertexPosition);
-            float attenuation = 1.0 / (u_lightConstant_0 + u_lightLinear_0 * distance + u_lightQuadratic_0 * distance * distance);
+        // Directional light calculation
+        vec3 directionalAmbient = lightAmbient * ambientColor;
+        vec3 directionalDiffuse = lightDiffuse * lambertian * diffuseColor;
+        vec3 directionalSpecular = lightSpecular * specular * specularColor;
 
-            finalAmbient += attenuation * lightAmbient * ambientColor;
-            finalDiffuse += attenuation * lightDiffuse * lambertian * diffuseColor;
-            finalSpecular += attenuation * lightSpecular * specular * specularColor;
-        } else if (i == 1 && u_lightType_1 == 1.0) {
-            // Point light effect calculation for the second light
-            float distance = length(u_lightPosition_1 - vertexPosition);
-            float attenuation = 1.0 / (u_lightConstant_1 + u_lightLinear_1 * distance + u_lightQuadratic_1 * distance * distance);
+        // Point light calculation 1
+        float distance1 = length(u_lightPosition_0 - vertexPosition);
+        float attenuation1 = 1.0 / (u_lightConstant_0 + u_lightLinear_0 * distance1 + u_lightQuadratic_0 * distance1 * distance1);
 
-            finalAmbient += attenuation * lightAmbient * ambientColor;
-            finalDiffuse += attenuation * lightDiffuse * lambertian * diffuseColor;
-            finalSpecular += attenuation * lightSpecular * specular * specularColor;
-        } else {
-            // Directional Light
-            finalAmbient += lightAmbient * ambientColor;
-            finalDiffuse += lightDiffuse * lambertian * diffuseColor;
-            finalSpecular += lightSpecular * specular * specularColor;
+        vec3 pointAmbient1 = attenuation1 * lightAmbient * ambientColor;
+        vec3 pointDiffuse1 = attenuation1 * lightDiffuse * lambertian * diffuseColor;
+        vec3 pointSpecular1 = attenuation1 * lightSpecular * specular * specularColor;
+
+        // Point light calculation 2
+        float distance2 = length(u_lightPosition_1 - vertexPosition);
+        float attenuation2 = 1.0 / (u_lightConstant_1 + u_lightLinear_1 * distance2 + u_lightQuadratic_1 * distance2 * distance2);
+
+        vec3 pointAmbient2 = attenuation2 * lightAmbient * ambientColor;
+        vec3 pointDiffuse2 = attenuation2 * lightDiffuse * lambertian * diffuseColor;
+        vec3 pointSpecular2 = attenuation2 * lightSpecular * specular * specularColor;
+
+        // Processing by u_mode
+        // Mode 1 : 1st Directional, 2nd Point
+        if (u_mode == 1.0) {
+            if (i == 0) {
+                finalAmbient += directionalAmbient;
+                finalDiffuse += directionalDiffuse;
+                finalSpecular += directionalSpecular;
+            } else if (i == 1) {
+                finalAmbient += pointAmbient2;
+                finalDiffuse += pointDiffuse2;
+                finalSpecular += pointSpecular2;
+            }
+        }
+        // Mode 2 : 1st Point, 2nd Directional
+        else if (u_mode == 2.0) {
+            if (i == 0) {
+                finalAmbient += pointAmbient1;
+                finalDiffuse += pointDiffuse1;
+                finalSpecular += pointSpecular1;
+            } else if (i == 1) {
+                finalAmbient += directionalAmbient;
+                finalDiffuse += directionalDiffuse;
+                finalSpecular += directionalSpecular;
+            }
+        }
+        // Mode 3 : 1st Directional, 2nd None
+        else if (u_mode == 3.0 && i == 0) {
+            finalAmbient += directionalAmbient;
+            finalDiffuse += directionalDiffuse;
+            finalSpecular += directionalSpecular;
+        }
+        // Mode 4 : 1st Point, 2nd None
+        else if (u_mode == 4.0) {
+            finalAmbient += pointAmbient1;
+            finalDiffuse += pointAmbient1;
+            finalSpecular += pointAmbient1;
         }
     }
 

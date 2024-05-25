@@ -109,6 +109,34 @@ export class GLRenderer {
                     lightUniforms[`lightLinear_${index}`] = light.lightLinear;
                     lightUniforms[`lightQuadratic_${index}`] = light.lightQuadratic;
                 });
+
+                // Render mode
+                let mode = 0.0;
+                if (uniforms.lightUniformsArray.length == 2) {
+                    if (
+                        uniforms.lightUniformsArray[0].lightType == 0.0 &&
+                        uniforms.lightUniformsArray[1].lightType == 1.0
+                    ) {
+                        // Mode 1 : 1st Directional, 2nd Point
+                        mode = 1.0;
+                    } else if (
+                        uniforms.lightUniformsArray[0].lightType == 1.0 &&
+                        uniforms.lightUniformsArray[1].lightType == 0.0
+                    ) {
+                        // Mode 2 : 1st Point, 2nd Directional
+                        mode = 2.0;
+                    }
+                } else if (uniforms.lightUniformsArray.length == 1) {
+                    if (uniforms.lightUniformsArray[0].lightType == 0.0) {
+                        // Mode 3 : 1st Directional, 2nd None
+                        mode = 3.0;
+                    } else if (uniforms.lightUniformsArray[0].lightType == 1.0) {
+                        // Mode 4 : 1st Point, 2nd None
+                        mode = 4.0;
+                    }
+                }
+
+                console.log(mode);
     
                 this._glContainer.setUniforms(
                     programInfo, {
@@ -118,7 +146,8 @@ export class GLRenderer {
                         viewMatrix: uniforms.viewMatrix,
                         cameraPosition: uniforms.cameraPosition,
                         worldMatrix: root.worldMatrix.transpose().buffer,
-                        numLights: uniforms.lightUniformsArray.length
+                        numLights: uniforms.lightUniformsArray.length,
+                        mode: mode
                     }
                 );
     
