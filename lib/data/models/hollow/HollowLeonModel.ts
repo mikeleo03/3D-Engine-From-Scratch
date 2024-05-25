@@ -36,23 +36,13 @@ export class HollowLeonModel extends Model {
     }
 
     protected override getScene() {
-        const nodes: SceneNode[] = [];
-
         const cube = this.getCube();
 
         cube.translate(new Vector3(10, 10, 10));
-
-        const parent = new SceneNode({ name: 'Cube Model' });
-        parent.add(cube);
-
-        parent.translate(new Vector3(0, 0, 0));
-        parent.rotateByDegrees(new Vector3(30, 30, 0));
-
-        nodes.push(parent);
-
+        cube.rotateByDegrees(new Vector3(30, 30, 0));
         this._box = cube;
 
-        return new Scene(nodes);
+        return new Scene([cube]);
     }
 
     private getBoxMovements(): AnimationTRS[] {
