@@ -151,6 +151,10 @@ export class GLRenderer {
                 gl.drawArrays(gl.TRIANGLES, 0, geometryAttributes.position?.count ?? 0);
             }
         }
+
+        for (const child of root.children) {
+            this.renderRoot(child, uniforms);
+        }
     }    
 
     render(scene: Scene, cameraNode: SceneNode, lightNodes: SceneNode[]) {
