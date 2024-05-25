@@ -143,10 +143,6 @@ export class GLContainer {
         gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
         // Fill the texture with a 1x1 blue pixel.
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-        const isPOT = (
-            MathUtil.isPowerOf2(v.width)
-            && MathUtil.isPowerOf2(v.height)
-        );
 
         if (v.isNeedUpload(rendererId)) {
             // Jika butuh upload data, lakukan upload
@@ -168,6 +164,10 @@ export class GLContainer {
                     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
                     // @ts-ignore: agak curang but hey less code it is :)
                     gl.texImage2D(...param);
+                    const isPOT = (
+                        MathUtil.isPowerOf2(v.width)
+                        && MathUtil.isPowerOf2(v.height)
+                    );
                     if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
                 }
 
@@ -177,7 +177,16 @@ export class GLContainer {
                         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
                         // @ts-ignore: agak curang but hey less code it is :)
                         gl.texImage2D(...param);
+                        const isPOT = (
+                            MathUtil.isPowerOf2(v.width)
+                            && MathUtil.isPowerOf2(v.height)
+                        );
                         if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
+                        if (!isPOT) {
+                            v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
+                            v.sampler.minFilter = gl.LINEAR;
+                            console.log("image is not POT, fallback params", v);
+                        }
                     }
                 }
 
@@ -193,11 +202,6 @@ export class GLContainer {
         if (v.isParameterChanged(rendererId)) {
             // Jika parameter berubah, lakukan set parameter
             v.setParameterChanged(rendererId, false);
-            if (!isPOT) {
-                v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
-                v.sampler.minFilter = gl.LINEAR;
-                console.log("image is not POT, fallback params", v);
-            }
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.sampler.wrapS);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.sampler.wrapT);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.sampler.minFilter);
