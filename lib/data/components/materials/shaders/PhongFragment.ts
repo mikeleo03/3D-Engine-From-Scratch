@@ -3,6 +3,7 @@ precision mediump float;
 
 // Tecture sampler
 uniform sampler2D u_diffuseMap;
+uniform sampler2D u_specularMap;
 
 // Material uniform
 uniform float u_shininess;
@@ -16,6 +17,7 @@ uniform int u_numLights;
 // Light properties
 uniform float u_lightType_0;
 uniform vec3 u_lightPosition_0;
+uniform float u_lightIntencity_0;
 uniform vec4 u_lightColor_0;
 uniform vec4 u_lightAmbient_0;
 uniform vec4 u_lightDiffuse_0;
@@ -27,6 +29,7 @@ uniform float u_lightQuadratic_0;
 
 uniform float u_lightType_1;
 uniform vec3 u_lightPosition_1;
+uniform float u_lightIntencity_1;
 uniform vec4 u_lightColor_1;
 uniform vec4 u_lightAmbient_1;
 uniform vec4 u_lightDiffuse_1;
@@ -69,7 +72,7 @@ void main() {
             L = normalize(u_lightPosition_1 - vertexPosition);
         }
 
-        vec3 lightAmbient = (i == 0) ? (u_lightAmbient_0.rgb / 255.0) : (u_lightAmbient_1.rgb / 255.0);
+        vec3 lightAmbient = (i == 0) ? (u_lightAmbient_0.rgb / 255.0) * u_lightIntencity_0 : (u_lightAmbient_1.rgb / 255.0) * u_lightIntencity_1;
         vec3 lightDiffuse = (i == 0) ? (u_lightDiffuse_0.rgb / 255.0) : (u_lightDiffuse_1.rgb / 255.0);
         vec3 lightSpecular = (i == 0) ? (u_lightSpecular_0.rgb / 255.0) : (u_lightSpecular_1.rgb / 255.0);
 
@@ -147,8 +150,9 @@ void main() {
 
     // Using texture sampler
     vec3 fixedDiffuse = finalDiffuse * texture2D(u_diffuseMap, diffuseUV).rgb;
+    vec3 fixedSpecular = finalSpecular * texture2D(u_specularMap, diffuseUV).rgb;
 
-    vec3 finalColor = finalAmbient + fixedDiffuse.rgb + finalSpecular;
+    vec3 finalColor = finalAmbient + fixedDiffuse.rgb + fixedSpecular.rgb;
     gl_FragColor = vec4(finalColor, 1.0);
 }
 `;

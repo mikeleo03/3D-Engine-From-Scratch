@@ -16,31 +16,15 @@ import { GLTFBuffer } from "../buffers/GLTFBuffer"
 import { BufferView } from "../buffers/BufferView"
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters"
 
-import container from "../components/materials/textureImages/f-texture.png"
+import container from "../components/materials/textureImages/container.png"
+import f_texture from "../components/materials/textureImages/f-texture.png"
+import metal from "../components/materials/textureImages/metal.jpg"
 
 export class CubeModel extends Model {
     private _box?: SceneNode;
 
     constructor() {
         super();
-    }
-
-    private getDiffuseCoordinates(): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 36);
-        const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
-        const converter = new Uint16ArrayConverter();
-
-        accessor.setData(converter.tobytes(Uint16Array.from([
-            0, 0,
-            1, 0,
-            0, 1,
-            0, 1,
-            1, 0,
-            1, 1
-        ])));
-
-        return accessor;
     }
 
     private createTextureImageFromImport(src: string): TextureImage {
@@ -53,37 +37,26 @@ export class CubeModel extends Model {
         );
     }
 
-    private getDiffuseTextureData(data: Uint8Array): TextureData {
-        const sampler = new Sampler(
-            MagFilter.Linear,
-            MinFilter.Linear,
-            WrapMode.ClampToEdge,
-            WrapMode.ClampToEdge
-        )
+    private getDiffuseCoordinates(): Accessor {
+        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const converter = new Uint16ArrayConverter();
 
-        const source = new TextureImage(
-            {
-                arrayData: {
-                    bytes: data,
-                    width: 2,
-                    height: 2
-                }
-            },
-            ImageFormat.Luminance,
-            ImageType.UnsignedByte
-        )
+        accessor.setData(converter.tobytes(Uint16Array.from([
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+            1, 0,
+            1, 1,
+        ])));
 
-        const texture = new Texture(sampler, source);
-        const coord = this.getDiffuseCoordinates();
-
-        const textureData = new TextureData(texture, coord);
-        textureData.expandTexCoords(MeshFactory.CUBOID_INDICES)
-
-        return textureData;
+        return accessor;
     }
 
     private getDiffuseTexturesDatas(): TextureData[] {
-        const urls = [container.src];
+        const urls = [container.src, f_texture.src, metal.src];
 
         const sampler = new Sampler(
             MagFilter.Linear,
@@ -100,24 +73,44 @@ export class CubeModel extends Model {
             textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
             return textureData;
         });
+    }
 
-        /* const data1 = new Uint8Array([
-            10, 100, 100, 40,
-        ]);
+    private getSpecularCoordinates(): Accessor {
+        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const converter = new Uint16ArrayConverter();
 
-        const data2 = new Uint8Array([
-            25, 50, 0, 0,
-        ]);
+        accessor.setData(converter.tobytes(Uint16Array.from([
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+            1, 0,
+            1, 1,
+        ])));
 
-        const data3 = new Uint8Array([
-            150, 23, 43, 77,
-        ]);
+        return accessor;
+    }
 
-        return [
-            this.getDiffuseTextureData(data1),
-            this.getDiffuseTextureData(data2),
-            this.getDiffuseTextureData(data3)
-        ] */
+    private getSpecularTexturesDatas(): TextureData[] {
+        const urls = [container.src, f_texture.src, metal.src];
+
+        const sampler = new Sampler(
+            MagFilter.Linear,
+            MinFilter.Linear,
+            WrapMode.ClampToEdge,
+            WrapMode.ClampToEdge
+        );
+
+        return urls.map(url => {
+            const textureImage = this.createTextureImageFromImport(url);
+            const texture = new Texture(sampler, textureImage);
+            const coord = this.getSpecularCoordinates();
+            const textureData = new TextureData(texture, coord);
+            textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
+            return textureData;
+        });
     }
 
     private getDisplacementCoordinates(): Accessor {
@@ -194,21 +187,25 @@ export class CubeModel extends Model {
         const diffuseDatas = this.getDiffuseTexturesDatas();
         const diffuseData = diffuseDatas[0];
 
+        const specularDatas = this.getSpecularTexturesDatas();
+        const specularData = specularDatas[0];
+
         const displacementDatas = this.getDisplacementTextureDatas();
         const displacementData = displacementDatas[0];
 
         const phongCubeMaterial = new PhongMaterial({ 
             name: "cube-phong", 
-            ambientColor: new Color(52, 25, 0), 
-            diffuseColor: new Color(204, 102, 0), 
+            ambientColor: new Color(0, 0, 0), 
+            diffuseColor: new Color(0, 0, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
             diffuseMap: diffuseData,
-            // displacementMap: displacementData,
+            specularMap: specularData,
+            displacementMap: displacementData,
             diffuseMaps: diffuseDatas,
             normalMaps: [],
-            displacementMaps: [],
-            specularMaps: []
+            displacementMaps: displacementDatas,
+            specularMaps: specularDatas
         });
 
         const cubeMesh = meshFactory.cuboid(

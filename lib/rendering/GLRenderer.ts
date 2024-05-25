@@ -14,6 +14,7 @@ import { Texture } from "../data/components/materials/textures/Texture";
 interface LightUniforms {
     lightType: number;
     lightPosition: Float32Array;
+    lightIntencity: number;
     lightColor: Color;
     lightTarget?: Float32Array;
     lightAmbient?: Color;
@@ -100,6 +101,7 @@ export class GLRenderer {
                 uniforms.lightUniformsArray.slice(0, MAX_LIGHTS).forEach((light, index) => {
                     lightUniforms[`lightType_${index}`] = light.lightType;
                     lightUniforms[`lightPosition_${index}`] = light.lightPosition;
+                    lightUniforms[`lightIntencity_${index}`] = light.lightIntencity;
                     lightUniforms[`lightColor_${index}`] = light.lightColor;
                     lightUniforms[`lightAmbient_${index}`] = light.lightAmbient;
                     lightUniforms[`lightDiffuse_${index}`] = light.lightDiffuse;
@@ -204,6 +206,7 @@ export class GLRenderer {
                 let lightUniforms: LightUniforms = {
                     lightType: light.type === LightTypeString.DIRECTIONAL ? 0 : 1,
                     lightPosition: lightNode.position.buffer,
+                    lightIntencity: light.intensity,
                     lightColor: light.color,
                 };
         

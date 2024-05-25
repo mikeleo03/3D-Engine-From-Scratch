@@ -35,7 +35,7 @@ export default function TestPage() {
         canvas.width / 2,
         0.01,
         1000,
-        2
+        4
       );
 
       const perspectiveCamera = new PerspectiveCamera(
