@@ -94,8 +94,8 @@ export class TextureImage {
             throw new Error('Must have either image or array.');
         }
 
-        let image = undefined;
-        let arrayData = undefined;
+        let image: HTMLImageElement | undefined = undefined;
+        let arrayData: TextureArrayData | undefined = undefined;
 
         if (raw.data.image) {
             image = new Image();
@@ -104,17 +104,17 @@ export class TextureImage {
 
 
         else if (raw.data.arrayData) {
-            arrayData = raw.data.arrayData;
+            arrayData = {
+                bytes: Uint8Array.from(raw.data.arrayData.bytes),
+                width: raw.data.arrayData.width,
+                height: raw.data.arrayData.height
+            };
         }
 
         return new TextureImage(
             {
                 image,
-                arrayData: raw.data.arrayData ? {
-                    bytes: Uint8Array.from(raw.data.arrayData!.bytes),
-                    width: raw.data.arrayData!.width,
-                    height: raw.data.arrayData!.height
-                } : undefined
+                arrayData,
             },
             raw.format as ValueOf<typeof ImageFormat>,
             raw.type as ValueOf<typeof ImageType>
