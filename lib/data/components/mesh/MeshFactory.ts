@@ -338,4 +338,97 @@ export class MeshFactory {
 
         return this.createMesh();
     }
-}
+
+    hollowTriangle(
+        outerWidth: number,
+        outerHeight: number,
+        innerWidth: number,
+        innerHeight: number,
+        depth: number,
+        materialOption: MaterialOptions,
+        options: {
+            offset?: [number, number, number],
+        } = {}
+    ): Mesh {
+        const halfOuterWidth = outerWidth / 2;
+        const halfOuterHeight = outerHeight / 2;
+        const halfInnerWidth = innerWidth / 2;
+        const halfInnerHeight = innerHeight / 2;
+        const halfDepth = depth / 2;
+
+        const offset = options.offset || [0, 0, 0];
+
+        // define 12 vertices of the hollow triangle
+        const vertices: [number, number, number][] = [
+            // outer front face
+            [-halfOuterWidth, -halfOuterHeight, halfDepth],
+            [halfOuterWidth, -halfOuterHeight, halfDepth],
+            [0, halfOuterHeight, halfDepth],
+            // outer back face
+            [-halfOuterWidth, -halfOuterHeight, -halfDepth],
+            [halfOuterWidth, -halfOuterHeight, -halfDepth],
+            [0, halfOuterHeight, -halfDepth],
+
+            // inner front face
+            [-halfInnerWidth, -halfInnerHeight, halfDepth],
+            [halfInnerWidth, -halfInnerHeight, halfDepth],
+            [0, halfInnerHeight, halfDepth],
+            // inner back face
+            [-halfInnerWidth, -halfInnerHeight, -halfDepth],
+            [halfInnerWidth, -halfInnerHeight, -halfDepth],
+            [0, halfInnerHeight, -halfDepth],
+        ];
+
+        // apply offset
+        for (let i = 0; i < vertices.length; i++) {
+            vertices[i][0] += offset[0];
+            vertices[i][1] += offset[1];
+            vertices[i][2] += offset[2];
+        }
+
+        // define the indices of the hollow triangle
+        const indices = [
+            // outer front face
+            0, 1, 2,
+            // outer back face
+            3, 4, 5,
+            // outer left face
+            0, 2, 5,
+            0, 5, 3,
+            // outer right face
+            1, 2, 5,
+            1, 5, 4,
+
+            // inner front face
+            6, 7, 8,
+            // inner back face
+            9, 10, 11,
+            // inner left face
+            6, 8, 11,
+            6, 11, 9,
+
+            // connecting faces
+            0, 1, 7,
+            0, 7, 6,
+            1, 2, 8,
+            1, 8, 7,
+            2, 0, 6,
+            2, 6, 8,
+            3, 4, 10,
+            3, 10, 9,
+            4, 5, 11,
+            4, 11, 10,
+            5, 3, 9,
+            5, 9, 11,
+            
+        ];
+
+        this.addGeometry(
+            vertices,
+            materialOption,
+            { indices }
+        );
+
+        return this.createMesh();
+    }
+} 
