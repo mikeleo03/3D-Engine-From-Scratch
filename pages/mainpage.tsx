@@ -1631,7 +1631,7 @@ export default function Home() {
                     }
 
                     {/* Adjustbale Point Light */}
-                    {lightState.pointLight && 
+                    {shader.phongEnabled && lightState.pointLight && 
                         <div className="w-full p-6 pt-0 pb-6 space-y-1">
                             <div className="text-base font-semibold pb-1">Point Light Parameters</div>
                             <div className="text-base pb-1">Distance attenuation model: a + bd + cd²</div>
