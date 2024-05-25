@@ -1,6 +1,9 @@
 export default `
 precision mediump float;
 
+// Tecture sampler
+uniform sampler2D u_diffuseMap;
+
 // Material uniform
 uniform float u_shininess;
 uniform vec4 u_ambientColor;
@@ -37,6 +40,7 @@ uniform float u_mode;
 
 varying vec3 normalSurface;
 varying vec3 vertexPosition;
+varying vec2 diffuseUV;
 
 void main() {
     vec3 N = normalize(normalSurface);
@@ -141,7 +145,10 @@ void main() {
         }
     }
 
-    vec3 finalColor = finalAmbient + finalDiffuse + finalSpecular;
+    // Using texture sampler
+    vec3 fixedDiffuse = finalDiffuse * texture2D(u_diffuseMap, diffuseUV).rgb;
+
+    vec3 finalColor = finalAmbient + fixedDiffuse.rgb + finalSpecular;
     gl_FragColor = vec4(finalColor, 1.0);
 }
 `;
