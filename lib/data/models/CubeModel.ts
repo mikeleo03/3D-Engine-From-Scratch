@@ -27,6 +27,16 @@ export class CubeModel extends Model {
         super();
     }
 
+    private createTextureImageFromImport(src: string): TextureImage {
+        const image = new Image();
+        image.src = src;
+        return new TextureImage(
+            { image },
+            ImageFormat.RGBA,
+            ImageType.UnsignedByte
+        );
+    }
+
     private getDiffuseCoordinates(): Accessor {
         const buffer = GLTFBuffer.empty(2 * 2 * 36);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
@@ -45,16 +55,6 @@ export class CubeModel extends Model {
         return accessor;
     }
 
-    private createTextureImageFromImport(src: string): TextureImage {
-        const image = new Image();
-        image.src = src;
-        return new TextureImage(
-            { image },
-            ImageFormat.RGBA,
-            ImageType.UnsignedByte
-        );
-    }
-
     private getDiffuseTexturesDatas(): TextureData[] {
         const urls = [container.src, f_texture.src, metal.src];
 
@@ -69,6 +69,44 @@ export class CubeModel extends Model {
             const textureImage = this.createTextureImageFromImport(url);
             const texture = new Texture(sampler, textureImage);
             const coord = this.getDiffuseCoordinates();
+            const textureData = new TextureData(texture, coord);
+            textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
+            return textureData;
+        });
+    }
+
+    private getSpecularCoordinates(): Accessor {
+        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const converter = new Uint16ArrayConverter();
+
+        accessor.setData(converter.tobytes(Uint16Array.from([
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+            1, 0,
+            1, 1,
+        ])));
+
+        return accessor;
+    }
+
+    private getSpecularTexturesDatas(): TextureData[] {
+        const urls = [container.src, f_texture.src, metal.src];
+
+        const sampler = new Sampler(
+            MagFilter.Linear,
+            MinFilter.Linear,
+            WrapMode.ClampToEdge,
+            WrapMode.ClampToEdge
+        );
+
+        return urls.map(url => {
+            const textureImage = this.createTextureImageFromImport(url);
+            const texture = new Texture(sampler, textureImage);
+            const coord = this.getSpecularCoordinates();
             const textureData = new TextureData(texture, coord);
             textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
             return textureData;
@@ -149,21 +187,25 @@ export class CubeModel extends Model {
         const diffuseDatas = this.getDiffuseTexturesDatas();
         const diffuseData = diffuseDatas[0];
 
+        const specularDatas = this.getSpecularTexturesDatas();
+        const specularData = specularDatas[0];
+
         const displacementDatas = this.getDisplacementTextureDatas();
         const displacementData = displacementDatas[0];
 
         const phongCubeMaterial = new PhongMaterial({ 
             name: "cube-phong", 
-            ambientColor: new Color(52, 25, 0), 
-            diffuseColor: new Color(204, 102, 0), 
+            ambientColor: new Color(0, 0, 0), 
+            diffuseColor: new Color(0, 0, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
             diffuseMap: diffuseData,
-            // displacementMap: displacementData,
+            specularMap: specularData,
+            displacementMap: displacementData,
             diffuseMaps: diffuseDatas,
             normalMaps: [],
-            displacementMaps: [],
-            specularMaps: []
+            displacementMaps: displacementDatas,
+            specularMaps: specularDatas
         });
 
         const cubeMesh = meshFactory.cuboid(
