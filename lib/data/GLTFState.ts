@@ -209,14 +209,17 @@ export class GLTFState {
         if (material instanceof PhongMaterial) {
             for (const map of material.diffuseMaps) {
                 this.addTexture(map.texture);
+                this.addAccessor(map.textCoords);
             }
 
             for (const map of material.normalMaps) {
                 this.addTexture(map.texture);
+                this.addAccessor(map.textCoords);
             }
 
             for (const map of material.specularMaps) {
                 this.addTexture(map.texture);
+                this.addAccessor(map.textCoords);
             }
 
             for (const map of material.displacementMaps) {
