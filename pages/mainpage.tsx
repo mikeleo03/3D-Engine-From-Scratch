@@ -417,8 +417,6 @@ export default function Home() {
         }
 
         const currentLightNode = getCurrentLightNode();
-        console.log("current", currentLightNode);
-
         setShader(prevState => ({...prevState, phongEnabled: isChecked }));
     };
 
@@ -622,6 +620,13 @@ export default function Home() {
             }
         }
 
+        for (const node of secondCameraNodesRef.current) {
+            const currentScene = newState.CurrentScene;
+            if (!currentScene.hasCamera(node.camera!!.type)) {
+                newState.addNodeToScene(node, currentScene);
+            }
+        }
+
         for (const node of lightNodesRef.current) {
             const currentScene = newState.CurrentScene;
             if (!currentScene.hasLight(node.light!!.type)) {
@@ -683,30 +688,12 @@ export default function Home() {
                 const gltfState = await gltfParser.parse(file)
                 gltfStateRef.current = gltfState;
 
+                console.log(gltfState)
+
                 const currentScene = gltfState.CurrentScene;
 
                 if (!currentScene) {
                     return;
-                }
-                
-                for (const node of cameraNodesRef.current) {
-                    const currentScene = gltfState.CurrentScene;
-                    if (!currentScene.hasCamera(node.camera!!.type)) {
-                        gltfState.addNodeToScene(node, currentScene);
-                    }
-                }
-
-                for (const node of secondCameraNodesRef.current) {
-                    const currentScene = gltfState.CurrentScene;
-                    gltfState.addNodeToScene(node, currentScene);
-
-                }
-
-                for (const node of lightNodesRef.current) {
-                    const currentScene = gltfState.CurrentScene;
-                    if (!currentScene.hasLight(node.light!!.type)) {
-                        gltfState.addNodeToScene(node, currentScene);
-                    }
                 }
 
                 setNewState(gltfState);
@@ -723,12 +710,18 @@ export default function Home() {
         }
 
         for (const node of cameraNodesRef.current) {
-            gltfState.CurrentScene?.removeNode(node);
+            gltfState.CurrentScene && gltfState.removeNodeFromScene(node, gltfState.CurrentScene);
         }
         
         for (const node of secondCameraNodesRef.current) {
-            gltfState.CurrentScene?.removeNode(node);
+            gltfState.CurrentScene && gltfState.removeNodeFromScene(node, gltfState.CurrentScene);
         }
+
+        for (const lightNode of lightNodesRef.current) {
+            gltfState.CurrentScene && gltfState.removeNodeFromScene(lightNode, gltfState.CurrentScene);
+        }
+
+        console.log(gltfState)
 
         const gltf = gltfParser.write(gltfState);
 
