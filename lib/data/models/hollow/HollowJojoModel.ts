@@ -17,8 +17,8 @@ export class HollowJojoModel extends Model {
 
     private getTriangle(): SceneNode {
         const meshFactory = new MeshFactory();
-        const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "Hollow Triangle" });
-        const phongCubeMaterial = new PhongMaterial({
+        const triangleMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "Hollow Triangle" });
+        const phongTriangleMaterial = new PhongMaterial({
             name: "Hollow Triangle-phong",
             ambientColor: new Color(52, 25, 0),
             diffuseColor: new Color(204, 102, 0),
@@ -26,22 +26,22 @@ export class HollowJojoModel extends Model {
             shininess: 60
         });
 
-        const hollowCubeMesh = meshFactory.hollowTriangle(
+        const hollowTriangleMesh = meshFactory.hollowTriangle(
             80, 80, 50, 50, 30,
-            { basicMaterial: cubeMaterial, phongMaterial: phongCubeMaterial }
+            { basicMaterial: triangleMaterial, phongMaterial: phongTriangleMaterial }
         );
 
-        return new SceneNode({ name: 'Hollow Triangle', mesh: hollowCubeMesh });
+        return new SceneNode({ name: 'Hollow Triangle', mesh: hollowTriangleMesh });
     }
 
     protected override getScene() {
-        const cube = this.getTriangle();
+        const triangle = this.getTriangle();
 
-        cube.rotateByDegrees(new Vector3(30, 30, 0));
+        triangle.rotateByDegrees(new Vector3(0, 180, 0));
 
-        this._box = cube;
+        this._box = triangle;
 
-        return new Scene([cube]);
+        return new Scene([triangle]);
     }
 
     private getBoxMovements(): AnimationTRS[] {
