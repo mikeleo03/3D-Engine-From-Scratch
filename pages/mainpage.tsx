@@ -740,6 +740,15 @@ export default function Home() {
             else {
                 setFps(20);
                 setEasingMode({ type: AnimationEasingTypeString.NONE });
+                setIsPlaying(false);
+                setIsLooping(false);
+                setIsReversing(false);
+
+                const animationRunners = animationRunnersRef.current;
+                for (const animationRunner of animationRunners) {
+                    animationRunner.firstFrame();
+                }
+
                 const file = input.files[0];
                 const gltfState = await gltfParser.parse(file)
                 gltfStateRef.current = gltfState;
