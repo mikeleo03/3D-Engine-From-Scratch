@@ -193,6 +193,12 @@ export class DisplacementData {
     }
 }
 
+class NormalDataType {
+    textureData: TextureDataType;
+    tangent: number[];
+    bitangent: number[];
+}
+
 export class PhongMaterial extends ShaderMaterial {
     public static readonly DEFAULT_NAME = 'Phong Material';
 
