@@ -38,17 +38,19 @@ export class CubeModel extends Model {
     }
 
     private getDiffuseCoordinates(): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const buffer = GLTFBuffer.empty(2 * 2 * 8);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 8, AccessorComponentType.VEC2, [], []);
         const converter = new Uint16ArrayConverter();
 
         accessor.setData(converter.tobytes(Uint16Array.from([
             0, 0,
             1, 0,
-            1, 1,
             0, 1,
+            1, 1,
+            0, 0,
             1, 0,
+            0, 1,
             1, 1,
         ])));
 
@@ -76,17 +78,19 @@ export class CubeModel extends Model {
     }
 
     private getSpecularCoordinates(): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const buffer = GLTFBuffer.empty(2 * 2 * 8);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 8, AccessorComponentType.VEC2, [], []);
         const converter = new Uint16ArrayConverter();
 
         accessor.setData(converter.tobytes(Uint16Array.from([
             0, 0,
             1, 0,
-            1, 1,
             0, 1,
+            1, 1,
+            0, 0,
             1, 0,
+            0, 1,
             1, 1,
         ])));
 
@@ -113,25 +117,18 @@ export class CubeModel extends Model {
         });
     }
 
-    private getDisplacementCoordinates(): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+    private getDisplacementCoordinates(mappings: number[]): Accessor {
+        const buffer = GLTFBuffer.empty(2 * 2 * 8);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 8, AccessorComponentType.VEC2, [], []);
         const converter = new Uint16ArrayConverter();
 
-        accessor.setData(converter.tobytes(Uint16Array.from([
-            0, 0,
-            1, 0,
-            0, 1,
-            0, 1,
-            1, 0,
-            1, 1
-        ])));
+        accessor.setData(converter.tobytes(Uint16Array.from(mappings)));
 
         return accessor;
     }
 
-    private getDisplacementTextureData(data: Uint8Array): DisplacementData {
+    private getDisplacementTextureData(data: Uint8Array, mapping: number[]): DisplacementData {
         const sampler = new Sampler(
             MagFilter.Linear,
             MinFilter.Linear,
@@ -152,31 +149,64 @@ export class CubeModel extends Model {
         )
 
         const texture = new Texture(sampler, source);
-        const coord = this.getDisplacementCoordinates();
+        const coord = this.getDisplacementCoordinates(mapping);
 
         const textureData = new TextureData(texture, coord);
         textureData.expandTexCoords(MeshFactory.CUBOID_INDICES)
 
-        return new DisplacementData(textureData, 40, 20);
+        return new DisplacementData(textureData, 30, 20);
     }
 
     private getDisplacementTextureDatas(): DisplacementData[] {
         const data1 = new Uint8Array([
-            255, 255, 255, 255,
+            255, 255, 0, 0,
         ]);
+
+        const mapping1 = [
+            0, 0,
+            0, 0,
+            0, 0,
+            0, 0,
+            1, 1,
+            1, 1,
+            1, 1,
+            1, 1
+        ]
 
         const data2 = new Uint8Array([
-            25, 50, 0, 0,
+            0, 0, 255, 255,
         ]);
+
+        const mapping2 = [
+            0, 0,
+            0, 1,
+            1, 0,
+            1, 1,
+            0, 0,
+            0, 1,
+            1, 0,
+            1, 1
+        ]
 
         const data3 = new Uint8Array([
-            150, 23, 43, 77,
+            50, 23, 43, 77,
         ]);
 
+        const mapping3 = [
+            0, 0,
+            0, 1,
+            1, 0,
+            1, 1,
+            0, 0,
+            0, 1,
+            1, 0,
+            1, 1
+        ]
+
         return [
-            this.getDisplacementTextureData(data1),
-            this.getDisplacementTextureData(data2),
-            this.getDisplacementTextureData(data3)
+            this.getDisplacementTextureData(data1, mapping1),
+            this.getDisplacementTextureData(data2, mapping2),
+            this.getDisplacementTextureData(data3, mapping3)
         ]
     }
 

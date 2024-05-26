@@ -17,20 +17,20 @@ export class HollowMarthenModel extends Model {
 
   private getCylinder(): SceneNode {
     const meshFactory = new MeshFactory();
-    const crossMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "Cross" });
+    const crossMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "Cylinder" });
     const phongCylinderMaterial = new PhongMaterial({
-      name: "Cross-phong",
+      name: "Cylinder-phong",
       ambientColor: new Color(52, 25, 0),
       diffuseColor: new Color(204, 102, 0),
       specularColor: new Color(255, 255, 255),
       shininess: 60
     });
-    const hollowCrossMesh = meshFactory.hollowCylinder(
-80, 80, 80, 60,
+    const hollowCylinderMesh = meshFactory.hollowCylinder(
+80, 80, 80, 10,
       { basicMaterial: crossMaterial, phongMaterial: phongCylinderMaterial }
     )
 
-    return new SceneNode({ name: 'Cross', mesh: hollowCrossMesh });
+    return new SceneNode({ name: 'Cylinder', mesh: hollowCylinderMesh });
   }
 
   protected override getScene(): Scene {
@@ -60,7 +60,7 @@ export class HollowMarthenModel extends Model {
 
     return [
       {
-        name: "cross-rotation",
+        name: "cylinder-rotation",
         frames: frames
       }
     ]
