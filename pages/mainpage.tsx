@@ -1187,6 +1187,24 @@ export default function Home() {
         material.shininess = shininess;
     }
 
+    const handleDiffuseTextureChange = (material: PhongMaterial, idx: number) => {
+        if (!(material instanceof PhongMaterial)) {
+            return;
+        }
+
+        const selectedTexture = material.diffuseMaps[idx];
+        material.diffuseMap = selectedTexture;
+    }
+
+    const handleSpecularTextureChange = (material: PhongMaterial, idx: number) => {
+        if (!(material instanceof PhongMaterial)) {
+            return;
+        }
+
+        const selectedTexture = material.specularMaps[idx];
+        material.specularMap = selectedTexture;
+    }
+
     const handleDisplacementTextureChange = (material: PhongMaterial, idx: number) => {
         if (!(material instanceof PhongMaterial)) {
             return;
@@ -1769,12 +1787,64 @@ export default function Home() {
 
                                 <Label className="text-base font-semibold pb-1 text-center mb-3">Diffuse Texture</Label>
                                 {/* TODO: add texture selection */}
+                                <Select
+                                    defaultValue={
+                                        (() => {
+                                            if (!material.diffuseMap) {
+                                                return '';
+                                            }
+                                            const index = material.diffuseMaps.indexOf(material.diffuseMap);
+
+                                            if (index === -1) {
+                                                return '';
+                                            }
+
+                                            return index.toString();
+                                        })()
+                                    }
+                                    onValueChange={(value) => handleDiffuseTextureChange(material, parseInt(value))}
+                                >
+                                    <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
+                                        <SelectValue placeholder="Select Diffuse Texture" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {material.diffuseMaps.map((_, idx) => (
+                                            <SelectItem key={idx} value={idx.toString()}>Texture {idx}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
                                 {/* Separator */}
                                 <Separator className="w-full my-5" />
 
                                 <Label className="text-base font-semibold pb-1 text-center mb-3">Specular Texture</Label>
                                 {/* TODO: add texture selection */}
+                                <Select
+                                    defaultValue={
+                                        (() => {
+                                            if (!material.specularMap) {
+                                                return '';
+                                            }
+                                            const index = material.specularMaps.indexOf(material.specularMap);
+
+                                            if (index === -1) {
+                                                return '';
+                                            }
+
+                                            return index.toString();
+                                        })()
+                                    }
+                                    onValueChange={(value) => handleSpecularTextureChange(material, parseInt(value))}
+                                >
+                                    <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
+                                        <SelectValue placeholder="Select Specular Texture" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {material.specularMaps.map((_, idx) => (
+                                            <SelectItem key={idx} value={idx.toString()}>Texture {idx}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <Separator className="w-full my-5" />
 
                                 <Label className="text-base font-semibold pb-1 text-center mb-3">Normal Texture</Label>
