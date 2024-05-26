@@ -21,23 +21,41 @@ Halaman utama aplikasi terdiri atas beberapa *section*:
 
 Pengguna dapat menekan tombol *load* dan memilih salah satu model yang ada di dalam folder `test`. Dalam panduan ini, digunakan CubeModel.gltf. Setelah model berhasil dimuat, model akan muncul pada kedua canvas.
 
+[TODO: gambar model yang diload]
+
 Secara *default*, objek utama yang ditampilkan akan dijadikan objek yang sedang dipilih. Transformasi objek yang sedang dipilih dapat diubah melalui *right-sidebar*. Pengguna dapat memilih objek lain dengan menekan nama objek yang ada di *component tree*. Pengguna juga dapat meng-*expand* struktur objek dengan menekan tombol panah di sebelah kiri nama objek pada *component tree* tersebut.
+
+[TODO: gambar component tree]
 
 Kamera pada kedua canvas secara *default* mengarah ke objek yang sedang dipilih. Namun, ketika dilakukan translasi pada objek yang sedang dipilih, kamera tidak mengikuti objek tersebut. Pengguna dapat membuat kamera untuk kembali focus pada objek yang sedang dipilih dengan menekan kembali objek tersebut pada *component tree*. Untuk mengembalikan kamera ke posisi semula, pengguna dapat menekan tombol reset kamera yang berada di *right-sidebar*.
 
+[TODO: gambar tombol reset kamera]
+
 Pengguna tidak dapat mengubah transformasi objek kamera secara manual. Untuk mengubah orientasi kamera, pengguna dapat menahan klik-kiri dan kemudian menggeser mouse pada salah satu canvas. Kamera akan bergerak dengan orbit tertentu yang mengelilingi objek yang sedang dipilih. Untuk bergerak menjauhi atau mendekati objek yang sedang dipilih, pengguna dapat menggunakan scroll pada mouse.
+
+[TODO: gambar camera digeser]
 
 Mode kamera secara *default* adalah *perspective*. Pengguna dapat mengubah mode kamera menjadi *orthographic* atau *oblique* dengan *dropdown* yang ada di *right-sidebar*. Pengguna juga dapat mengubah zoom kamera di sana. Khusus untuk kamera *oblique*, terdapat parameter tambahan berupa sudut *oblique* yang dapat diubah oleh pengguna.
 
+[TODO: gambar dropdown kamera oblique]
+
 Secara *default*, aplikasi menggunakan *basic shader* untuk menampilkan objek sehingga tidak ada efek cahaya yang terlihat. Pengguna dapat mengubah shader yang digunakan dengan mengubah *toggle* pada segmen *shader* di *right-sidebar*. Ketika *phong shader* dinyalakan, aplikasi akan menampilkan objek dengan efek cahaya yang lebih realistis.
 
-Ketika *phong shader* dinyalakan, aplikasi akan menampilkan beberapa properti tambahan untuk cahaya, material, dan tekstur terhadap objek yang sedang dipilih. Pengguna dapat memilih untuk mengaktifkan atau mematikan *directional light* dan *point light* pada scene yang sedang ditampilkan dengan menggunakan *toggle* pada segmen *light* di *right-sidebar*. *Point light* memiliki properti tambahan berupa parameter untuk *attenuation*. Pengguna juga dapat mengubah transformasi objek yang berperan sebagai cahaya dengan memilih objek tersebut pada *component tree*.
+[TODO: gambar objek stah phong nyala]
 
+Ketika *phong shader* dinyalakan, aplikasi akan menampilkan beberapa properti tambahan untuk cahaya, material, dan tekstur terhadap objek yang sedang dipilih. Pengguna dapat memilih untuk mengaktifkan atau mematikan *directional light* dan *point light* pada scene yang sedang ditampilkan dengan menggunakan *toggle* pada segmen *light* di *right-sidebar*. *Point light* memiliki properti tambahan berupa parameter untuk *attenuation*. Pengguna juga dapat mengubah transformasi objek yang berperan sebagai cahaya dengan memilih objek tersebut pada *component tree*. Namun, aplikasi belum memungkinkan pengguna untuk mengubah arah *directional light* secara manual.
 
+[TODO: gambar toggle light]
 
+Pengguna dapat mengubah properti material objek yang sedang dipilih pada segmen *material* di *right-sidebar*. Pada saat menggunakan *basic shader*, pengguna hanya dapat mengubah warna objek. Namun, ketika menggunakan *phong shader*, pengguna dapat mengubah warna *ambient*, *diffuse*, dan *specular* objek. Selain itu, pengguna juga dapat mengubah atribut *shininess* objek.
 
+[TODO: gambar pilih warna material]
 
+*Phong shader* juga memungkinkan pengguna untuk memilih tekstur yang akan digunakan pada objek yang sedang dipilih. Aplikasi menyediakan *dropdown* untuk pemilihan tesktur *diffuse*, *specular*, *normal*, dan *displacement*. Untuk masing-masing tekstur, disediakan 3 pilihan yang dapat digunakan pada objek utama. Khusus untuk *displacement*, terdapat juga parameter *scale* dan *bias* yang dapat diubah pengguna. Secara *default*, objek tidak menggunakan tekstur apapun.
 
+[TODO: gambar dropdown texture]
+
+[TODO: jelasin animation controller]
 
 ## Pembagian Tugas
 |NIM|Nama|Tugas|Model *Articulated* dan Animasinya|Model *Hollow* dan Animasinya
