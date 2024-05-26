@@ -227,10 +227,11 @@ export class CubeModel extends Model {
             diffuseMaps: diffuseDatas,
             normalMaps: diffuseDatas,
             normalMap: diffuseDatas[0],
-            // displacementMap: displacementDatas[0],
+            displacementMap: displacementDatas[0],
             displacementMaps: displacementDatas,
             specularMap: specularDatas[0],
-            specularMaps: specularDatas
+            specularMaps: specularDatas,
+            diffuseMap: diffuseDatas[0]
         });
 
         const cubeMesh = meshFactory.cuboid(
