@@ -1014,7 +1014,7 @@ export default function Home() {
             const directionalLight = new DirectionalLight(
                 new Color(255, 255, 255),
                 1,
-                new Vector3(-80, -120, -100),
+                new Vector3(0, 0, 0),
                 new Color(255, 255, 255),
                 new Color(255, 255, 255),
                 new Color(255, 255, 255)
@@ -1035,12 +1035,12 @@ export default function Home() {
                 new SceneNode({
                     name: 'Directional Light',
                     light: directionalLight,
-                    position: new Vector3(70, 70, 30)
+                    position: new Vector3(0, 0, 100)
                 }),
                 new SceneNode({
                     name: 'Point Light',
                     light: pointLight,
-                    position: new Vector3(80, 70, 80)
+                    position: new Vector3(20, 30, 50)
                 })
             ]
 
