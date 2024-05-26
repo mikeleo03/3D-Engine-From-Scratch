@@ -194,9 +194,11 @@ export class CubeModel extends Model {
             diffuseColor: new Color(204, 102, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
+            diffuseMap: diffuseDatas[0],
             diffuseMaps: diffuseDatas,
             normalMaps: [],
             displacementMaps: displacementDatas,
+            specularMap: specularDatas[0],
             specularMaps: specularDatas
         });
 
