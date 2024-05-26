@@ -123,7 +123,7 @@ export class MeshBufferGeometry {
                     new Uint16ArrayConverter()
                 );
 
-                completeAttributes.diffuseUV = specularUVAttribute;
+                completeAttributes.specularUV = specularUVAttribute;
             }
         }
 
