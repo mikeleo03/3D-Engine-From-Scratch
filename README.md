@@ -1,7 +1,6 @@
 <h1 align="center">3D Engine from Scratch</h1>
 
 <img src="./screenshots/Main.png" alt=""/>
-<br></br>
 
 3D Engine from scratch merupakan sebuah aplikasi ini dibuat sebagai cara tim pengembang untuk mengenal lebih lanjut terkait penggunaan WebGL dan GLSL dalam pembuatan game 3D. Aplikasi ini dibuat menggunakan Next.js sebagai *frontend framework* dan WebGL murni tanpa menggunakan *library* lain apapun. Aplikasi ini menyimulasikan *3D engine* yang dapat menampilkan objek 3D melalui kamera beserta efek tesktur dan cahaya.
 
@@ -51,7 +50,7 @@ Halaman utama aplikasi terdiri atas beberapa *section*:
 <table style="width:100%; text-align:center;">
     <col width="100%">
     <tr>
-        <td width="1%" align="center"><img src="./screenshots/ss1.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/main-view.png"/></td>
     </tr>
     <tr>
         <td width="1%" align="center">Halaman Utama Aplikasi</td>
@@ -70,36 +69,36 @@ Pengguna dapat menekan tombol *load* dan memilih salah satu model yang ada di da
     <col width="49%">
     <col width="49%">
     <tr>
-        <td width="1%" align="center"><img src="./screenshots/model-marthen.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/model-leon.png"/></td>
         <td width="1%" align="center"><img src="./screenshots/model-jojo.png"/></td>
     </tr>
     <tr>
-        <td width="1%" align="center">Hasil Articulated Model MarthenModel.gltf</td>
-        <td width="1%" align="center">Hasil Articulated Model JojoModel.gltf</td>
+        <td width="1%" align="center">Hasil Articulated Model <a href="./test/LeonModel.gltf" > LeonModel.gltf </a></td>
+        <td width="1%" align="center">Hasil Articulated Model <a href="./test/JojoModel.gltf"> JojoModel.gltf </a></td>
     </tr>
     <tr>
-        <td width="1%" align="center"><img src="./screenshots/model-leon.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/model-marthen.png"/></td>
         <td width="1%" align="center"><img src="./screenshots/model-marthen-hollow.png"/></td>
     </tr>
     <tr>
-        <td width="1%" align="center">Hasil Articulated Model LeonModel.gltf</td>
-        <td width="1%" align="center">Hasil Hollow Object Model HollowMarthenModel.gltf</td>
+        <td width="1%" align="center">Hasil Articulated Model <a href="./test/MarthenModel.gltf"> MarthenModel.gltf </a></td>
+        <td width="1%" align="center">Hasil Hollow Object Model <a href="./test/HollowMarthenModel.gltf"> HollowMarthenModel.gltf </a></td>
     </tr>
     <tr>
         <td width="1%" align="center"><img src="./screenshots/model-jojo-hollow.png"/></td>
         <td width="1%" align="center"><img src="./screenshots/model-leon-hollow.png"/></td>
     </tr>
     <tr>
-        <td width="1%" align="center">Hasil Hollow Object Model HollowJojoModel.gltf</td>
-        <td width="1%" align="center">Hasil Hollow Object Model HollowLeonModel.gltf</td>
+        <td width="1%" align="center">Hasil Hollow Object Model <a href="./test/HollowJojoModel.gltf"> HollowJojoModel.gltf </a></td>
+        <td width="1%" align="center">Hasil Hollow Object Model <a href="./test/HollowLeonModel.gltf"> HollowLeonModel.gltf </a></td>
     </tr>
     <tr>
         <td width="1%" align="center"><img src="./screenshots/model-basecube.png"/></td>
         <td width="1%" align="center"><img src="./screenshots/model-cube.png"/></td>
     </tr>
     <tr>
-        <td width="1%" align="center">Hasil Model BaseCubeModel.gltf</td>
-        <td width="1%" align="center">Hasil Model CubeModel.gltf</td>
+        <td width="1%" align="center">Hasil Model <a href="./test/BaseCubeModel.gltf"> BaseCubeModel.gltf </a></td>
+        <td width="1%" align="center">Hasil Model <a href="./test/CubeModel.gltf"> CubeModel.gltf </a></td>
     </tr>
 </table>
 
@@ -113,8 +112,8 @@ Secara *default*, objek utama yang ditampilkan akan dijadikan objek yang sedang 
         <td width="1%" align="center"><img src="./screenshots/tree-model-leon.png"/></td>
     </tr>
     <tr>
-        <td width="1%" align="center">Struktur tree Model MarthenModel.gltf</td>
-        <td width="1%" align="center">Struktur tree Model LeonModel.gltf</td>
+        <td width="1%" align="center">Struktur tree Model <a href="./test/MarthenModel.gltf"> MarthenModel.gltf </a></td>
+        <td width="1%" align="center">Struktur tree Model <a href="./test/LeonModel.gltf"> LeonModel.gltf </a></td>
     </tr>
 </table>
 
@@ -175,24 +174,38 @@ Secara *default*, aplikasi menggunakan *basic shader* untuk menampilkan objek se
 Ketika *phong shader* dinyalakan, aplikasi akan menampilkan beberapa properti tambahan untuk cahaya, material, dan tekstur terhadap objek yang sedang dipilih. Pengguna dapat memilih untuk mengaktifkan atau mematikan *directional light* dan *point light* pada scene yang sedang ditampilkan dengan menggunakan *toggle* pada segmen *light* di *right-sidebar*. *Point light* memiliki properti tambahan berupa parameter untuk *attenuation*. Pengguna juga dapat mengubah transformasi objek yang berperan sebagai cahaya dengan memilih objek tersebut pada *component tree*. Namun, aplikasi belum memungkinkan pengguna untuk mengubah arah *directional light* secara manual.
 
 <table style="width:100%; text-align:center;">
-    <col width="100%">
+    <col width="49%">
+    <col width="49%">
     <tr>
-        <td width="1%" align="center"><img src="./screenshots/light.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/phong-shader.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/point-light.png"/></td>
     </tr>
     <tr>
-        <td width="1%" align="center">Pengaturan cahaya</td>
+        <td width="1%" align="center">Hasil dengan Directional Light</td>
+        <td width="1%" align="center">Hasil dengan Point Light</td>
+    </tr>
+    <tr>
+        <td width="1%" align="center"><img src="./screenshots/multiple-light.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/without-light.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">Hasil dengan Gabungan Directional dan Point Light</td>
+        <td width="1%" align="center">Hasil dengan Tanpa Light</td>
     </tr>
 </table>
 
 Pengguna dapat mengubah properti material objek yang sedang dipilih pada segmen *material* di *right-sidebar*. Pada saat menggunakan *basic shader*, pengguna hanya dapat mengubah warna objek. Namun, ketika menggunakan *phong shader*, pengguna dapat mengubah warna *ambient*, *diffuse*, dan *specular* objek. Selain itu, pengguna juga dapat mengubah atribut *shininess* objek.
 
 <table style="width:100%; text-align:center;">
-    <col width="100%">
+    <col width="49%">
+    <col width="49%">
     <tr>
-        <td width="1%" align="center"><img src="./screenshots/material.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/material1.png"/></td>
+        <td width="1%" align="center"><img src="./screenshots/material2.png"/></td>
     </tr>
     <tr>
-        <td width="1%" align="center">Pengaturan material</td>
+        <td width="1%" align="center">Pengaturan Material (1)</td>
+        <td width="1%" align="center">Pengaturan Material (2)</td>
     </tr>
 </table>
 
@@ -209,6 +222,16 @@ Pengguna dapat mengubah properti material objek yang sedang dipilih pada segmen 
 </table>
 
 *Animation controller* memungkinkan pengguna untuk memiliki kontrol atas animasi yang telah disematkan pada model yang dibuat. Aplikasi menyediakan *controller* sederhana yang terdiri atas *play, reverse,*, dan *loop toggle* sehingga animasi dapat dimainkan, dijalankan mundur, dan diulang. Selain itu, pengguna dapat memilih jenis *easing functions* pada *tweening* animasi (perlu diperhatikan bahwa *tweening* sangat *minor* efeknya karena pemanggilan *method update* yang terlalu sering). Pengguna juga dapat melihat animasi secara mendetail menggunakan tombol *first, prev, next,* dan *last* untuk melihat detail dari setiap *frame* animasi. Terakhir, pengguna dapat mengubah *fps* dari animasi dengan mengubah nilai dari *input* yang disediakan.
+
+<table style="width:100%; text-align:center;">
+    <col width="100%">
+    <tr>
+        <td width="1%" align="center"><img src="./screenshots/animation.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%"" align="center">Pengaturan Animasi</td>
+    </tr>
+</table>
 
 ## 👨‍👨‍👦‍👦 Pembagian Tugas
 |NIM|Nama| Tugas                                                                                                                                                                                                        |Model *Articulated* dan Animasinya|Model *Hollow* dan Animasinya
