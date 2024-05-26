@@ -25,7 +25,7 @@ import NodeView from '@/components/NodeView';
 import { Camera } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { BasicMaterial, PhongMaterial } from '@/lib/data/components/materials';
+import { BasicMaterial, DisplacementData, PhongMaterial } from '@/lib/data/components/materials';
 import { RgbaColorPicker } from 'react-colorful';
 
 type Axis = 'x' | 'y' | 'z';
@@ -118,6 +118,9 @@ export default function Home() {
     const [materialList, setMaterialList] = useState<MaterialListState>({basics: [], phongs: []});
     const [lightState, setLightState] = useState<LightState>({ directionalLight: true, pointLight: false });
     const [pointLight, setPointLight] = useState<PointLightState>({ constant: 0.01, linear: 0.01, quadratic: 0.001 });
+    const [selectedDisplacementMap, setSelectedDisplacementMap] = useState<DisplacementData>();
+    const [selectedDisplacementScale, setSelectedDisplacementScale] = useState<number>();
+    const [selectedDisplacementBias, setSelectedDisplacementBias] = useState<number>();
 
     const glContainerRef = useRef<GLContainer>();
     const secondGlContainerRef = useRef<GLContainer>();
@@ -1204,6 +1207,10 @@ export default function Home() {
 
         const selectedTexture = material.displacementMaps[idx];
         material.displacementMap = selectedTexture;
+
+        setSelectedDisplacementMap(selectedTexture);
+        setSelectedDisplacementScale(material.displacementMap.scale);
+        setSelectedDisplacementBias(material.displacementMap.bias);
     }
 
     const handleDisplacementScaleChange = (material: PhongMaterial, scale: number) => {
@@ -1212,6 +1219,7 @@ export default function Home() {
         }
 
         material.displacementMap.scale = scale;
+        setSelectedDisplacementScale(scale);
     }
 
     const handleDisplacementBiasChange = (material: PhongMaterial, bias: number) => {
@@ -1220,6 +1228,7 @@ export default function Home() {
         }
 
         material.displacementMap.bias = bias;
+        setSelectedDisplacementBias(bias);
     }
 
     return (
@@ -1875,7 +1884,7 @@ export default function Home() {
                                 </Select>
                                 
                                 
-                                {material.displacementMap && (
+                                {selectedDisplacementMap && (
                                     <div className='flex flex-col w-full mt-3'>
                                         <div className='flex flex-row'>
                                         <Label htmlFor='displacement-scale' className="text-base font-semibold pb-1 w-1/3 ">Displacement Scale</Label>
@@ -1886,7 +1895,7 @@ export default function Home() {
                                                 step="0.1"
                                                 min="-200"
                                                 max="200"
-                                                defaultValue={material.displacementMap.scale}
+                                                value={selectedDisplacementScale ?? 0}
                                                 onChange={(e) => handleDisplacementScaleChange(material, parseFloat(e.target.value))}
                                             />
                                         </div>
@@ -1899,7 +1908,7 @@ export default function Home() {
                                                 step="0.1"
                                                 min="-200"
                                                 max="200"
-                                                defaultValue={material.displacementMap.bias}
+                                                value={selectedDisplacementBias ?? 0}
                                                 onChange={(e) => handleDisplacementBiasChange(material, parseFloat(e.target.value))}
                                             />
                                         </div>
