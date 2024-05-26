@@ -91,6 +91,7 @@ export class GLRenderer {
                     textureUniforms["displacementScale"] = material.displacementMap?.scale;
                     textureUniforms["displacementBias"] = material.displacementMap?.bias;
                     textureUniforms["normalMap"] = material.normalMap?.texture;
+                    textureUniforms["hasNormalMap"] = material.normalMap ? 1.0 : 0.0;
                     textureUniforms["diffuseMap"] = material.diffuseMap?.texture;
                     textureUniforms["specularMap"] = material.specularMap?.texture;
                 }
