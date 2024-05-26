@@ -468,8 +468,6 @@ export default function Home() {
         }
     
         currentScene.setActiveLightNode(activeLightNodes);
-        console.log("current", currentLightNode);
-        console.log("active", currentScene.getActiveLightNode());
     };
     
     const handlePointLightChange = (e: ChangeEvent<HTMLInputElement>, type: string) => {
@@ -679,9 +677,7 @@ export default function Home() {
 
         for (const node of secondCameraNodesRef.current) {
             const currentScene = newState.CurrentScene;
-            if (!currentScene.hasCamera(node.camera!!.type)) {
-                newState.addNodeToScene(node, currentScene);
-            }
+            newState.addNodeToScene(node, currentScene);
         }
 
         for (const node of lightNodesRef.current) {
@@ -745,8 +741,6 @@ export default function Home() {
                 const gltfState = await gltfParser.parse(file)
                 gltfStateRef.current = gltfState;
 
-                console.log(gltfState)
-
                 const currentScene = gltfState.CurrentScene;
 
                 if (!currentScene) {
@@ -777,8 +771,6 @@ export default function Home() {
         for (const lightNode of lightNodesRef.current) {
             gltfState.CurrentScene && gltfState.removeNodeFromScene(lightNode, gltfState.CurrentScene);
         }
-
-        console.log(gltfState)
 
         const gltf = gltfParser.write(gltfState);
 
@@ -1883,7 +1875,7 @@ export default function Home() {
                                 </Select>
                                 
                                 
-                                {material.displacementMap &&(
+                                {material.displacementMap && (
                                     <div className='flex flex-col w-full mt-3'>
                                         <div className='flex flex-row'>
                                         <Label htmlFor='displacement-scale' className="text-base font-semibold pb-1 w-1/3 ">Displacement Scale</Label>
