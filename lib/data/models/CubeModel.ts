@@ -196,7 +196,7 @@ export class CubeModel extends Model {
         const phongCubeMaterial = new PhongMaterial({ 
             name: "cube-phong", 
             ambientColor: new Color(0, 0, 0), 
-            diffuseColor: new Color(0, 0, 0), 
+            diffuseColor: new Color(255, 255, 255), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
             diffuseMap: diffuseData,
