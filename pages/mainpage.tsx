@@ -1876,7 +1876,7 @@ export default function Home() {
                                   onValueChange={(value) => handleNormalTextureChange(material, parseInt(value))}
                                 >
                                     <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
-                                        <SelectValue placeholder="Select Specular Texture" />
+                                        <SelectValue placeholder="Select Normal Texture" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {material.specularMaps.map((_, idx) => (
