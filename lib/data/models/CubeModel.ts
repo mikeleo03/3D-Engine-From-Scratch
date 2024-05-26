@@ -38,17 +38,19 @@ export class CubeModel extends Model {
     }
 
     private getDiffuseCoordinates(): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const buffer = GLTFBuffer.empty(2 * 2 * 8);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 8, AccessorComponentType.VEC2, [], []);
         const converter = new Uint16ArrayConverter();
 
         accessor.setData(converter.tobytes(Uint16Array.from([
             0, 0,
             1, 0,
-            1, 1,
             0, 1,
+            1, 1,
+            0, 0,
             1, 0,
+            0, 1,
             1, 1,
         ])));
 
@@ -76,17 +78,19 @@ export class CubeModel extends Model {
     }
 
     private getSpecularCoordinates(): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const buffer = GLTFBuffer.empty(2 * 2 * 8);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 8, AccessorComponentType.VEC2, [], []);
         const converter = new Uint16ArrayConverter();
 
         accessor.setData(converter.tobytes(Uint16Array.from([
             0, 0,
             1, 0,
-            1, 1,
             0, 1,
+            1, 1,
+            0, 0,
             1, 0,
+            0, 1,
             1, 1,
         ])));
 
@@ -114,9 +118,9 @@ export class CubeModel extends Model {
     }
 
     private getDisplacementCoordinates(mappings: number[]): Accessor {
-        const buffer = GLTFBuffer.empty(2 * 2 * 36);
+        const buffer = GLTFBuffer.empty(2 * 2 * 8);
         const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
-        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 36, AccessorComponentType.VEC2, [], []);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 8, AccessorComponentType.VEC2, [], []);
         const converter = new Uint16ArrayConverter();
 
         accessor.setData(converter.tobytes(Uint16Array.from(mappings)));
@@ -220,6 +224,8 @@ export class CubeModel extends Model {
             diffuseColor: new Color(204, 102, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
+            diffuseMap: diffuseDatas[0],
+            // displacementMap: displacementDatas[0],
             diffuseMaps: diffuseDatas,
             normalMaps: [],
             displacementMaps: displacementDatas,
