@@ -1855,7 +1855,6 @@ export default function Home() {
                                 <Separator className="w-full my-5" />
 
                                 <Label className="text-base font-semibold pb-1 text-center mb-3">Displacement Texture</Label>
-                                {/* TODO: add texture selection */}
                                 <Select
                                     defaultValue={
                                         (() => {
