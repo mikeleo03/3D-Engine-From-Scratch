@@ -214,6 +214,50 @@ export class CubeModel extends Model {
         ]
     }
 
+    private getNormalCoordinates(): Accessor {
+        const buffer = GLTFBuffer.empty(2 * 2 * 8);
+        const bufferView = new BufferView(buffer, 0, buffer.byteLength, BufferViewTarget.ARRAY_BUFFER);
+        const accessor = new Accessor(bufferView, 0, WebGLType.UNSIGNED_SHORT, 8, AccessorComponentType.VEC2, [], []);
+        const converter = new Uint16ArrayConverter();
+
+        accessor.setData(converter.tobytes(Uint16Array.from([
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1,
+        ])));
+
+        return accessor;
+    }
+
+    private getNormalTexturesDatas(): TextureData[] {
+        const urls = [
+            "http://localhost:3000/textures/container.png",
+            "http://localhost:3000/textures/f-texture.png",
+            "http://localhost:3000/textures/metal.jpg"
+        ];
+
+        const sampler = new Sampler(
+            MagFilter.Linear,
+            MinFilter.Linear,
+            WrapMode.ClampToEdge,
+            WrapMode.ClampToEdge
+        );
+
+        return urls.map(url => {
+            const textureImage = this.createTextureImageFromImport(url);
+            const texture = new Texture(sampler, textureImage);
+            const coord = this.getNormalCoordinates();
+            const textureData = new TextureData(texture, coord);
+            textureData.expandTexCoords(MeshFactory.CUBOID_INDICES);
+            return textureData;
+        });
+    }
+
     private getCube(): SceneNode {
         const meshFactory = new MeshFactory();
         const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "cube" });
@@ -221,6 +265,7 @@ export class CubeModel extends Model {
         const diffuseDatas = this.getDiffuseTexturesDatas();
         const specularDatas = this.getSpecularTexturesDatas();
         const displacementDatas = this.getDisplacementTextureDatas();
+        const normalDatas = this.getNormalTexturesDatas();
 
         const phongCubeMaterial = new PhongMaterial({ 
             name: "cube-phong", 
@@ -229,8 +274,8 @@ export class CubeModel extends Model {
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
             diffuseMaps: diffuseDatas,
-            normalMaps: diffuseDatas,
-            normalMap: diffuseDatas[0],
+            normalMaps: normalDatas,
+            normalMap: normalDatas[0],
             displacementMap: displacementDatas[0],
             displacementMaps: displacementDatas,
             specularMap: specularDatas[0],
