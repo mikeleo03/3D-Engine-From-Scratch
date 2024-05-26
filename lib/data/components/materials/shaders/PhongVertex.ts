@@ -7,7 +7,7 @@ attribute vec3 a_vertexNormal;
 attribute vec2 a_displacementUV;
 attribute vec2 a_diffuseUV;
 attribute vec2 a_specularUV;
-attribute vec2 a_texcoord;
+attribute vec2 a_normalUV;
 attribute vec3 a_tangent;
 attribute vec3 a_bitangent;
 
@@ -38,10 +38,12 @@ void main() {
     
     vec3 T = normalize(vec3(u_worldMatrix * vec4(a_tangent, 0.0)));
     vec3 B = normalize(vec3(u_worldMatrix * vec4(a_bitangent, 0.0)));
-    vec3 N = normalize(vec3(u_worldMatrix * vec4(a_faceNormal, 0.0)));
+    
+    vec3 normalTemp = cross(a_tangent, a_bitangent);
+    vec3 N = normalize(vec3(u_worldMatrix * vec4(normalTemp, 0.0)));
 
     v_tbn = mat3(T, B, N);
-    v_texcoord = a_texcoord;
+    v_texcoord = a_normalUV;
     v_pos = a_position;
     
     gl_Position = u_viewMatrix * vertexPosition4;

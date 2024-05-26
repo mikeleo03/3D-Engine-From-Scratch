@@ -57,6 +57,10 @@ export class MeshFactory {
 
         const buffer = GLTFBuffer.empty(totalBytesCount);
 
+        const tangentBytesCount = vertexNormalBytesCount;
+        const bitangentBytesCount = vertexNormalBytesCount;
+        const bufferTB  = GLTFBuffer.empty(tangentBytesCount + bitangentBytesCount);
+
         const positionBufferView = new BufferView(
             buffer,
             0,
@@ -81,6 +85,18 @@ export class MeshFactory {
             vertexNormalBytesCount,
             BufferViewTarget.ARRAY_BUFFER
         );
+        const tangentBufferView = new BufferView(
+            bufferTB,
+            0,
+            vertexNormalBytesCount,
+            BufferViewTarget.ARRAY_BUFFER
+        )
+        const bitangentBufferView = new BufferView(
+            bufferTB,
+            vertexNormalBytesCount,
+            vertexNormalBytesCount,
+            BufferViewTarget.ARRAY_BUFFER
+        )
 
         const positionAccessor = new Accessor(
             positionBufferView,
@@ -118,17 +134,39 @@ export class MeshFactory {
             [],
             []
         );
+        const tangentAccessor = new Accessor(
+            tangentBufferView,
+            0,
+            WebGLType.FLOAT,
+            vertexNormalCount,
+            AccessorComponentType.VEC3,
+            [],
+            []
+        );
+        const bitangentAccessor = new Accessor(
+            bitangentBufferView,
+            0,
+            WebGLType.FLOAT,
+            vertexNormalCount,
+            AccessorComponentType.VEC3,
+            [],
+            []
+        );
         const floatConverter = new Float32ArrayConverter();
         const ushortConverter = new Uint16ArrayConverter();
         const positionAttribute = new GLBufferAttribute(positionAccessor, 3, floatConverter);
         const indicesAttribute = new GLBufferAttribute(indicesAccessor, 1, ushortConverter);
         const faceNormalAttribute = new GLBufferAttribute(faceNormalAccessor, 3, floatConverter);
         const vertexNormalAttribute = new GLBufferAttribute(vertexNormalAccessor, 3, floatConverter);
+        const tangentAttribute = new GLBufferAttribute(tangentAccessor, 3, floatConverter);
+        const bitangentAttribute = new GLBufferAttribute(bitangentAccessor, 3, floatConverter);
 
         const attributes: GeometryAttributes = {
             position: positionAttribute,
             faceNormal: faceNormalAttribute,
             vertexNormal: vertexNormalAttribute,
+            tangent: tangentAttribute,
+            bitangent: bitangentAttribute
         };
 
         const vertices = Float32Array.from(positions.flat());
@@ -157,6 +195,7 @@ export class MeshFactory {
 
         geometry.calculateFaceNormals(faceNormalAccessor);
         geometry.calculateVertexNormals({ forceNewAttribute: false, accessor: vertexNormalAccessor });
+        // geometry.calculateTangentBitangent(tangentAccessor, bitangentAccessor);
 
         this._geometries.push(geometry);
     }

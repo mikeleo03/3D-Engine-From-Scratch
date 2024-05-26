@@ -58,9 +58,9 @@ Pengguna dapat mengubah properti material objek yang sedang dipilih pada segmen 
 *Animation controller* memungkinkan pengguna untuk memiliki kontrol atas animasi yang telah disematkan pada model yang dibuat. Aplikasi menyediakan *controller* sederhana yang terdiri atas *play, reverse,*, dan *loop toggle* sehingga animasi dapat dimainkan, dijalankan mundur, dan diulang. Selain itu, pengguna dapat memilih jenis *easing functions* pada *tweening* animasi (perlu diperhatikan bahwa *tweening* sangat *minor* efeknya karena pemanggilan *method update* yang terlalu sering). Pengguna juga dapat melihat animasi secara mendetail menggunakan tombol *first, prev, next,* dan *last* untuk melihat detail dari setiap *frame* animasi. Terakhir, pengguna dapat mengubah *fps* dari animasi dengan mengubah nilai dari *input* yang disediakan.
 
 ## Pembagian Tugas
-|NIM|Nama|Tugas|Model *Articulated* dan Animasinya|Model *Hollow* dan Animasinya
-|-|-|-|-|-|
-|13521108|Michael Leon Putra Widhi|[tambahin sendiri]|LeonModel|HollowLeonModel|
-|13521117|Maggie Zeta Rosida S|*No contribution*|MaggieModel|*No Contribution*|
-|13521144|Bintang Dwi Marthen|[tambahin sendiri]|MarthenModel|HollowMarthenModel|
-|13521148|Johanes Lee|*GLTF data classes; math classes (matrix, vector, quaternion); mesh; model framework; file export and import; GL utilities; rendering; orthographic and oblique camera; displacement texture; UI integration*|JojoModel|HollowJojoModel|
+|NIM|Nama| Tugas                                                                                                                                                                                                        |Model *Articulated* dan Animasinya|Model *Hollow* dan Animasinya
+|-|-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-|-|
+|13521108|Michael Leon Putra Widhi| [tambahin sendiri]                                                                                                                                                                                           |LeonModel|HollowLeonModel|
+|13521117|Maggie Zeta Rosida S| *No contribution*                                                                                                                                                                                            |MaggieModel|*No Contribution*|
+|13521144|Bintang Dwi Marthen| Animation; Tweening; Normal Texture; UI integration                                                                                                                                                          |MarthenModel|HollowMarthenModel|
+|13521148|Johanes Lee| *GLTF data classes; math classes (matrix, vector, quaternion); mesh; model framework; file export and import; GL utilities; rendering; orthographic and oblique camera; displacement texture; UI integration* |JojoModel|HollowJojoModel|

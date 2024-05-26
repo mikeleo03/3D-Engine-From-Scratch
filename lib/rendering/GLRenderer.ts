@@ -10,6 +10,8 @@ import { AccessorComponentType, BufferViewTarget, LightTypeString } from "../dat
 import { Accessor } from "../data/buffers/Accessor";
 import { DisplacementData, PhongMaterial, TextureData } from "../data/components/materials";
 import { Texture } from "../data/components/materials/textures/Texture";
+import {GLBufferAttribute} from "@/lib/data/buffers/GLBufferAttribute";
+import {Float32ArrayConverter} from "@/lib/data/buffers/typedarrayconverters";
 
 interface LightUniforms {
     lightType: number;
@@ -177,6 +179,26 @@ export class GLRenderer {
                 }
     
                 this._glContainer.setAttributes(programInfo, geometryAttributes);
+
+                if (material instanceof PhongMaterial) {
+                    if (material.normalMap){
+                        const indices = geometry.indices?.data;
+                        const vertexCount = geometry.attributes.position?.count ?? 0;
+                        const indicesCount = indices?.length ?? vertexCount;
+                        const tangentBytesCount = indicesCount * 3 * 4;
+                        const bitangentBytesCount = indicesCount * 3 * 4;
+
+                        const bufferTB = GLTFBuffer.empty(tangentBytesCount + bitangentBytesCount);
+
+                        const tangentBufferView = new BufferView(bufferTB, 0, tangentBytesCount, BufferViewTarget.ARRAY_BUFFER);
+                        const bitangentBufferView = new BufferView(bufferTB, tangentBytesCount, bitangentBytesCount, BufferViewTarget.ARRAY_BUFFER);
+
+                        const tangentAccessor = new Accessor(tangentBufferView, 0, WebGLType.FLOAT, indicesCount, AccessorComponentType.VEC3, [], []);
+                        const bitangentAccessor = new Accessor(bitangentBufferView, 0, WebGLType.FLOAT, indicesCount, AccessorComponentType.VEC3, [], []);
+
+                        geometry.calculateTangentBitangent(tangentAccessor, bitangentAccessor);
+                    }
+                }
     
                 gl.drawArrays(gl.TRIANGLES, 0, geometryAttributes.position?.count ?? 0);
             }

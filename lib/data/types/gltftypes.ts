@@ -157,13 +157,16 @@ export type MaterialType = {
 export enum MeshPrimitiveAttribute {
     POSITION = "position",
     FACE_NORMAL = "faceNormal",
-    VERTEX_NORMAL = "vertexNormal"
+    VERTEX_NORMAL = "vertexNormal",
+    TANGENT = "tangent",
+    BITANGENT = "bitangent",
 }
 
 export enum MeshMaterialAttribute {
     DISPLACEMENT_UV = "displacementUV",
     DIFFUSE_UV = "diffuseUV",
-    SPECULAR_UV = "specularUV"
+    SPECULAR_UV = "specularUV",
+    NORMAL_UV = "normalUV",
 }
 
 export type MeshPrimitiveType = {
