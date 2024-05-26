@@ -105,7 +105,7 @@ export default function TestPage() {
       const maggie = new MaggieModel();
 
       // change model here
-      const model = baseCube;
+      const model = cube;
 
       const glRenderer = new GLRenderer(glContainer);
 

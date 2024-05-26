@@ -93,7 +93,9 @@ export class GLRenderer {
                     textureUniforms["normalMap"] = material.normalMap?.texture;
                     textureUniforms["hasNormalMap"] = material.normalMap ? 1.0 : 0.0;
                     textureUniforms["diffuseMap"] = material.diffuseMap?.texture;
+                    textureUniforms["hasDiffuseMap"] = material.diffuseMaps.length > 0 && material.diffuseMap != undefined ? 1.0 : 0.0;
                     textureUniforms["specularMap"] = material.specularMap?.texture;
+                    textureUniforms["hasSpecularMap"] = material.specularMaps.length > 0 && material.specularMap != undefined ? 1.0 : 0.0;
                 }
     
                 const lightUniforms: { [key: string]: UniformSingleDataType | undefined } = {};

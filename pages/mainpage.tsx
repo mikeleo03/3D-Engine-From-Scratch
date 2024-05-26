@@ -25,7 +25,7 @@ import NodeView from '@/components/NodeView';
 import { Camera } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { BasicMaterial, PhongMaterial } from '@/lib/data/components/materials';
+import { BasicMaterial, DisplacementData, PhongMaterial } from '@/lib/data/components/materials';
 import { RgbaColorPicker } from 'react-colorful';
 
 type Axis = 'x' | 'y' | 'z';
@@ -118,6 +118,9 @@ export default function Home() {
     const [materialList, setMaterialList] = useState<MaterialListState>({basics: [], phongs: []});
     const [lightState, setLightState] = useState<LightState>({ directionalLight: true, pointLight: false });
     const [pointLight, setPointLight] = useState<PointLightState>({ constant: 0.01, linear: 0.01, quadratic: 0.001 });
+    const [selectedDisplacementMap, setSelectedDisplacementMap] = useState<DisplacementData>();
+    const [selectedDisplacementScale, setSelectedDisplacementScale] = useState<number>();
+    const [selectedDisplacementBias, setSelectedDisplacementBias] = useState<number>();
 
     const glContainerRef = useRef<GLContainer>();
     const secondGlContainerRef = useRef<GLContainer>();
@@ -468,8 +471,6 @@ export default function Home() {
         }
     
         currentScene.setActiveLightNode(activeLightNodes);
-        console.log("current", currentLightNode);
-        console.log("active", currentScene.getActiveLightNode());
     };
     
     const handlePointLightChange = (e: ChangeEvent<HTMLInputElement>, type: string) => {
@@ -679,9 +680,7 @@ export default function Home() {
 
         for (const node of secondCameraNodesRef.current) {
             const currentScene = newState.CurrentScene;
-            if (!currentScene.hasCamera(node.camera!!.type)) {
-                newState.addNodeToScene(node, currentScene);
-            }
+            newState.addNodeToScene(node, currentScene);
         }
 
         for (const node of lightNodesRef.current) {
@@ -745,8 +744,6 @@ export default function Home() {
                 const gltfState = await gltfParser.parse(file)
                 gltfStateRef.current = gltfState;
 
-                console.log(gltfState)
-
                 const currentScene = gltfState.CurrentScene;
 
                 if (!currentScene) {
@@ -777,8 +774,6 @@ export default function Home() {
         for (const lightNode of lightNodesRef.current) {
             gltfState.CurrentScene && gltfState.removeNodeFromScene(lightNode, gltfState.CurrentScene);
         }
-
-        console.log(gltfState)
 
         const gltf = gltfParser.write(gltfState);
 
@@ -1019,7 +1014,7 @@ export default function Home() {
             const directionalLight = new DirectionalLight(
                 new Color(255, 255, 255),
                 1,
-                new Vector3(-80, -120, -100),
+                new Vector3(0, 0, 0),
                 new Color(255, 255, 255),
                 new Color(255, 255, 255),
                 new Color(255, 255, 255)
@@ -1040,12 +1035,12 @@ export default function Home() {
                 new SceneNode({
                     name: 'Directional Light',
                     light: directionalLight,
-                    position: new Vector3(70, 70, 30)
+                    position: new Vector3(0, 0, 100)
                 }),
                 new SceneNode({
                     name: 'Point Light',
                     light: pointLight,
-                    position: new Vector3(80, 70, 80)
+                    position: new Vector3(20, 30, 50)
                 })
             ]
 
@@ -1212,6 +1207,10 @@ export default function Home() {
 
         const selectedTexture = material.displacementMaps[idx];
         material.displacementMap = selectedTexture;
+
+        setSelectedDisplacementMap(selectedTexture);
+        setSelectedDisplacementScale(material.displacementMap.scale);
+        setSelectedDisplacementBias(material.displacementMap.bias);
     }
 
     const handleDisplacementScaleChange = (material: PhongMaterial, scale: number) => {
@@ -1220,6 +1219,7 @@ export default function Home() {
         }
 
         material.displacementMap.scale = scale;
+        setSelectedDisplacementScale(scale);
     }
 
     const handleDisplacementBiasChange = (material: PhongMaterial, bias: number) => {
@@ -1228,6 +1228,7 @@ export default function Home() {
         }
 
         material.displacementMap.bias = bias;
+        setSelectedDisplacementBias(bias);
     }
 
     return (
@@ -1854,7 +1855,6 @@ export default function Home() {
                                 <Separator className="w-full my-5" />
 
                                 <Label className="text-base font-semibold pb-1 text-center mb-3">Displacement Texture</Label>
-                                {/* TODO: add texture selection */}
                                 <Select
                                     defaultValue={
                                         (() => {
@@ -1883,7 +1883,7 @@ export default function Home() {
                                 </Select>
                                 
                                 
-                                {material.displacementMap &&(
+                                {selectedDisplacementMap && (
                                     <div className='flex flex-col w-full mt-3'>
                                         <div className='flex flex-row'>
                                         <Label htmlFor='displacement-scale' className="text-base font-semibold pb-1 w-1/3 ">Displacement Scale</Label>
@@ -1894,7 +1894,7 @@ export default function Home() {
                                                 step="0.1"
                                                 min="-200"
                                                 max="200"
-                                                defaultValue={material.displacementMap.scale}
+                                                value={selectedDisplacementScale ?? 0}
                                                 onChange={(e) => handleDisplacementScaleChange(material, parseFloat(e.target.value))}
                                             />
                                         </div>
@@ -1907,7 +1907,7 @@ export default function Home() {
                                                 step="0.1"
                                                 min="-200"
                                                 max="200"
-                                                defaultValue={material.displacementMap.bias}
+                                                value={selectedDisplacementBias ?? 0}
                                                 onChange={(e) => handleDisplacementBiasChange(material, parseFloat(e.target.value))}
                                             />
                                         </div>

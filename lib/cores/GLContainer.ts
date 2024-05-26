@@ -131,6 +131,11 @@ export class GLContainer {
     }
 
     private setupTexture(v: Texture, rendererId: string) {
+        if (!v.isLoaded) {
+            console.log("Texture not loaded yet", v.source);
+            return;
+        }
+
         const gl = this._gl;
         let webglTexture = v.getTexture(rendererId);
 
@@ -139,7 +144,10 @@ export class GLContainer {
             v.setTexture(rendererId, webglTexture);
         }
 
-        gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
+        // gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
+        gl.activeTexture(gl.TEXTURE0 + v.getTextureUnit(rendererId));
+        gl.bindTexture(gl.TEXTURE_2D, v.getTexture(rendererId));
+
         const isPOT = (
             MathUtil.isPowerOf2(v.width)
             && MathUtil.isPowerOf2(v.height)
@@ -147,38 +155,30 @@ export class GLContainer {
 
         if (v.isNeedUpload(rendererId)) {
             // Jika butuh upload data, lakukan upload
+            v.setNeedUpload(rendererId, false);
+
+            const param = [
+                gl.TEXTURE_2D,
+                0,
+                v.source.format,
+                v.source.format,
+                v.source.type,
+                v.source.image ?? v.source.arrayData!.bytes
+            ];
             
-            if (v.isLoaded) {
-                // Sudah load, gaskan upload
-                const param = [
-                    gl.TEXTURE_2D,
-                    0,
-                    v.source.format,
-                    v.source.format,
-                    v.source.type,
-                    v.source.image ?? v.source.arrayData!.bytes
-                ];
-                
-                if (v.source.arrayData) {
-                    param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
-                }
-
-                // fix alignment problem: process per 1 byte
-                gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-                // @ts-ignore: agak curang but hey less code it is :)
-                gl.texImage2D(...param);
-                if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
-
-                v.setNeedUpload(rendererId, false);
-
-            } else {
-                // Belum load / gak ada data, ignore saja
-                console.log("Texture not loaded yet", v);
+            if (v.source.arrayData) {
+                param.splice(3, 0, v.source.arrayData.width, v.source.arrayData.height, 0);
             }
+
+            // fix alignment problem: process per 1 byte
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+            // @ts-ignore: agak curang but hey less code it is :)
+            gl.texImage2D(...param);
+            if (isPOT) gl.generateMipmap(gl.TEXTURE_2D);
         }
-        if (v.isLoaded && v.isParameterChanged(rendererId)) {
+
+        if (v.isParameterChanged(rendererId)) {
             // Jika parameter berubah, lakukan set parameter
-            v.setParameterChanged(rendererId, false);
             if (!isPOT) {
                 v.sampler.wrapS = v.sampler.wrapT = gl.CLAMP_TO_EDGE;
                 v.sampler.minFilter = gl.LINEAR;
@@ -188,20 +188,9 @@ export class GLContainer {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.sampler.wrapT);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.sampler.minFilter);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, v.sampler.magFilter);
+
+            v.setParameterChanged(rendererId, false);
         }
-        gl.bindTexture(gl.TEXTURE_2D, null); // balikkan bind ke null
-    }
-
-    private renderTexture(v: Texture, rendererId: string) {
-        // Pilih tekstur unit, bind tekstur ke unit, set uniform sampler ke unit.
-        const gl = this._gl;
-        gl.activeTexture(gl.TEXTURE0 + v.getTextureUnit(rendererId));
-        gl.bindTexture(gl.TEXTURE_2D, v.getTexture(rendererId));
-    }
-
-    private render(v: Texture, rendererId: string) {
-        this.setupTexture(v, rendererId); 
-        this.renderTexture(v, rendererId);
     }
 
     private createUniformSetter(
@@ -212,7 +201,7 @@ export class GLContainer {
             rendererId?: string
         } = {}
     ): UniformSetters {
-        const loc = this._gl.getUniformLocation(program, info.name);
+        const loc = this._gl.getUniformLocation(program, info.name)
 
         if (!loc) {
             throw new Error("Failed to get uniform location");
@@ -250,7 +239,7 @@ export class GLContainer {
                 }
 
                 // == Render Time
-                this.render(value, rendererId);
+                this.setupTexture(value, rendererId);
                 this._gl.uniform1i(loc, textureUnit);
                 
             }

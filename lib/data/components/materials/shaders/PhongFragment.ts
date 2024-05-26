@@ -6,6 +6,8 @@ uniform sampler2D u_diffuseMap;
 uniform sampler2D u_specularMap;
 uniform sampler2D u_normalMap;
 uniform bool u_hasNormalMap;
+uniform float u_hasDiffuseMap;
+uniform float u_hasSpecularMap;
 
 // Material uniform
 uniform float u_shininess;
@@ -162,9 +164,17 @@ void main() {
     }
 
     // Using texture sampler
-    vec3 fixedDiffuse = finalDiffuse * texture2D(u_diffuseMap, diffuseUV).rgb;
+    vec3 fixedDiffuse = finalDiffuse;
+    if (u_hasDiffuseMap == 1.0) {
+        fixedDiffuse = fixedDiffuse * texture2D(u_diffuseMap, diffuseUV).rgb;
+    }
+
     vec3 fixedSpecular = finalSpecular;
-    
+
+    if (u_hasSpecularMap == 1.0) {
+        fixedSpecular = fixedSpecular * texture2D(u_specularMap, specularUV).rgb;
+    }
+
     vec3 finalColor = finalAmbient + fixedDiffuse + fixedSpecular;
     gl_FragColor = vec4(finalColor, 1.0);
     
