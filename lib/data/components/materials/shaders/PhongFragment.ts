@@ -4,6 +4,8 @@ precision mediump float;
 // Tecture sampler
 uniform sampler2D u_diffuseMap;
 uniform sampler2D u_specularMap;
+uniform sampler2D u_normalMap;
+uniform bool u_hasNormalMap;
 
 // Material uniform
 uniform float u_shininess;
@@ -44,8 +46,20 @@ varying vec3 vertexPosition;
 varying vec2 diffuseUV;
 varying vec2 specularUV;
 
+varying mat3 v_tbn;
+varying vec2 v_texcoord;
+
 void main() {
-    vec3 N = normalize(normalSurface);
+    vec3 N;
+    
+    if (u_hasNormalMap) {
+      N = texture2D(u_normalMap, v_texcoord).rgb;
+      N = N * 2.0 - 1.0;
+      N = normalize(v_tbn * N);
+    } else {
+      N = normalize(normalSurface);
+    }
+    
     vec3 finalAmbient = vec3(0.0);
     vec3 finalDiffuse = vec3(0.0);
     vec3 finalSpecular = vec3(0.0);
@@ -150,8 +164,9 @@ void main() {
     // Using texture sampler
     vec3 fixedDiffuse = finalDiffuse * texture2D(u_diffuseMap, diffuseUV).rgb;
     vec3 fixedSpecular = finalSpecular;
-
+    
     vec3 finalColor = finalAmbient + fixedDiffuse + fixedSpecular;
     gl_FragColor = vec4(finalColor, 1.0);
+    
 }
 `;
