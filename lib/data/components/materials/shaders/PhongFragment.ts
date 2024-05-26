@@ -157,7 +157,7 @@ void main() {
 
     vec3 fixedSpecular = finalSpecular;
     if (u_hasSpecularMap == 1.0) {
-        fixedSpecular = fixedSpecular * texture2D(u_specularMap, specularUV).rgb;
+        fixedSpecular = finalSpecular * texture2D(u_specularMap, specularUV).rgb;
     }
 
     vec3 finalColor = finalAmbient + fixedDiffuse + fixedSpecular;
