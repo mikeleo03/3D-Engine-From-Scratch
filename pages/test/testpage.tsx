@@ -102,7 +102,10 @@ export default function TestPage() {
       const baseCube = new BaseCubeModel();
       const jojo = new JojoModel();
       const leon = new LeonModel();
-      const maggie = new MaggieModel();
+      // impor model lain nanti disini
+
+
+      // mostly dipakai untuk generate gltf dan debugging sih :D
 
       // change model here
       const model = cube;
