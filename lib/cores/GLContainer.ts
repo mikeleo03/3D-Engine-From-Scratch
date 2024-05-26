@@ -144,9 +144,8 @@ export class GLContainer {
             v.setTexture(rendererId, webglTexture);
         }
 
-        // gl.bindTexture(gl.TEXTURE_2D, webglTexture); // bind tekstur sementara
         gl.activeTexture(gl.TEXTURE0 + v.getTextureUnit(rendererId));
-        gl.bindTexture(gl.TEXTURE_2D, v.getTexture(rendererId));
+        gl.bindTexture(gl.TEXTURE_2D, webglTexture);
 
         const isPOT = (
             MathUtil.isPowerOf2(v.width)

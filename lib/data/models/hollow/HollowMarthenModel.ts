@@ -43,7 +43,7 @@ export class HollowMarthenModel extends Model {
 
   override getAnimations(): AnimationClip[] {
     const bodyRef = this.scene.nodes[0];
-    const frames = [];
+    const frames: AnimationPath[] = [];
 
     for (let i = 0; i <= 360; i += 10) {
       frames.push({

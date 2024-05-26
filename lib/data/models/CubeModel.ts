@@ -178,14 +178,14 @@ export class CubeModel extends Model {
         ]);
 
         const mapping2 = [
-            0, 0,
-            0, 1,
-            1, 0,
+            1, 1,
+            1, 1,
+            1, 1,
             1, 1,
             0, 0,
-            0, 1,
-            1, 0,
-            1, 1
+            0, 0,
+            0, 0,
+            0, 0
         ]
 
         const data3 = new Uint8Array([
@@ -224,14 +224,14 @@ export class CubeModel extends Model {
             diffuseColor: new Color(204, 102, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
-            diffuseMap: diffuseDatas[0],
             diffuseMaps: diffuseDatas,
             normalMaps: diffuseDatas,
             normalMap: diffuseDatas[0],
-            // displacementMap: displacementDatas[0],
+            displacementMap: displacementDatas[0],
             displacementMaps: displacementDatas,
             specularMap: specularDatas[0],
-            specularMaps: specularDatas
+            specularMaps: specularDatas,
+            diffuseMap: diffuseDatas[0]
         });
 
         const cubeMesh = meshFactory.cuboid(

@@ -1,7 +1,7 @@
 import { Color } from "@/lib/cores"
 import { Scene } from "../../Scene"
 import { SceneNode } from "../../SceneNode"
-import { AnimationClip } from "../../components/animations"
+import {AnimationClip, AnimationPath} from "../../components/animations"
 import {BasicMaterial, PhongMaterial} from "../../components/materials"
 import { MeshFactory } from "../../components/mesh/MeshFactory"
 import { Model } from "../Model"
@@ -149,7 +149,7 @@ export class MarthenModel extends Model {
 
   override getAnimations(): AnimationClip[] {
     const headRef = this.scene.nodes[0].children[0];
-    const frames = [];
+    const frames: AnimationPath[] = [];
 
     for (let i = 0; i <= 360; i += 10) {
       frames.push({
