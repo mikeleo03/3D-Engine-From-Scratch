@@ -17,9 +17,9 @@ export class HollowLeonModel extends Model {
 
     private getCube(): SceneNode {
         const meshFactory = new MeshFactory();
-        const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "cube" });
+        const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "Hollow Cube" });
         const phongCubeMaterial = new PhongMaterial({
-            name: "cube-phong",
+            name: "Hollow Cube-phong",
             ambientColor: new Color(52, 25, 0),
             diffuseColor: new Color(204, 102, 0),
             specularColor: new Color(255, 255, 255),
@@ -27,8 +27,9 @@ export class HollowLeonModel extends Model {
         });
 
         const hollowCubeMesh = meshFactory.hollowCuboid(
-            80, 80, 80,    // outer dimensions
-            60, 60, 60,    // inner dimensions (to create the hollow effect)
+            80, 80,     // outer dimensions
+            50, 50,     // inner dimensions
+            80,         // depth
             { basicMaterial: cubeMaterial, phongMaterial: phongCubeMaterial }
         );
 

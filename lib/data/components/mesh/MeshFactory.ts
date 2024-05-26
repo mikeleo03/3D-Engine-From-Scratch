@@ -221,10 +221,9 @@ export class MeshFactory {
     hollowCuboid(
         outerWidth: number,
         outerHeight: number,
-        outerDepth: number,
         innerWidth: number,
         innerHeight: number,
-        innerDepth: number,
+        depth: number,
         materialOption: MaterialOptions,
         options: {
             offset?: [number, number, number],
@@ -232,36 +231,35 @@ export class MeshFactory {
     ): Mesh {
         const halfOuterWidth = outerWidth / 2;
         const halfOuterHeight = outerHeight / 2;
-        const halfOuterDepth = outerDepth / 2;
         const halfInnerWidth = innerWidth / 2;
         const halfInnerHeight = innerHeight / 2;
-        const halfInnerDepth = innerDepth / 2;
+        const halfDepth = depth / 2;
 
         const offset = options.offset || [0, 0, 0];
 
         // define 16 vertices of the hollow cuboid
         const vertices: [number, number, number][] = [
-            // outer front face
-            [-halfOuterWidth, -halfOuterHeight, halfOuterDepth],
-            [halfOuterWidth, -halfOuterHeight, halfOuterDepth],
-            [halfOuterWidth, halfOuterHeight, halfOuterDepth],
-            [-halfOuterWidth, halfOuterHeight, halfOuterDepth],
+            // outer bottom vertices
+            [-halfOuterWidth, -halfOuterHeight, halfDepth],
+            [halfOuterWidth, -halfOuterHeight, halfDepth],
+            [halfOuterWidth, halfOuterHeight, halfDepth],
+            [-halfOuterWidth, halfOuterHeight, halfDepth],
             // outer back face
-            [-halfOuterWidth, -halfOuterHeight, -halfOuterDepth],
-            [halfOuterWidth, -halfOuterHeight, -halfOuterDepth],
-            [halfOuterWidth, halfOuterHeight, -halfOuterDepth],
-            [-halfOuterWidth, halfOuterHeight, -halfOuterDepth],
+            [-halfOuterWidth, -halfOuterHeight, -halfDepth],
+            [halfOuterWidth, -halfOuterHeight, -halfDepth],
+            [halfOuterWidth, halfOuterHeight, -halfDepth],
+            [-halfOuterWidth, halfOuterHeight, -halfDepth],
 
             // inner front face
-            [-halfInnerWidth, -halfInnerHeight, halfInnerDepth],
-            [halfInnerWidth, -halfInnerHeight, halfInnerDepth],
-            [halfInnerWidth, halfInnerHeight, halfInnerDepth],
-            [-halfInnerWidth, halfInnerHeight, halfInnerDepth],
+            [-halfInnerWidth, -halfInnerHeight, halfDepth],
+            [halfInnerWidth, -halfInnerHeight, halfDepth],
+            [halfInnerWidth, halfInnerHeight, halfDepth],
+            [-halfInnerWidth, halfInnerHeight, halfDepth],
             // inner back face
-            [-halfInnerWidth, -halfInnerHeight, -halfInnerDepth],
-            [halfInnerWidth, -halfInnerHeight, -halfInnerDepth],
-            [halfInnerWidth, halfInnerHeight, -halfInnerDepth],
-            [-halfInnerWidth, halfInnerHeight, -halfInnerDepth],
+            [-halfInnerWidth, -halfInnerHeight, -halfDepth],
+            [halfInnerWidth, -halfInnerHeight, -halfDepth],
+            [halfInnerWidth, halfInnerHeight, -halfDepth],
+            [-halfInnerWidth, halfInnerHeight, -halfDepth]
         ];
 
         // apply offset
@@ -271,7 +269,7 @@ export class MeshFactory {
             vertices[i][2] += offset[2];
         }
 
-        // define the indices of the hollow cuboid
+        // define the indices of the hollow triangle
         const indices = [
             // outer front face
             0, 1, 2,
