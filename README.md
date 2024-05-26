@@ -23,7 +23,20 @@ Pengguna dapat menekan tombol *load* dan memilih salah satu model yang ada di da
 
 Secara *default*, objek utama yang ditampilkan akan dijadikan objek yang sedang dipilih. Transformasi objek yang sedang dipilih dapat diubah melalui *right-sidebar*. Pengguna dapat memilih objek lain dengan menekan nama objek yang ada di *component tree*. Pengguna juga dapat meng-*expand* struktur objek dengan menekan tombol panah di sebelah kiri nama objek pada *component tree* tersebut.
 
-Kamera pada kedua canvas secara *default* mengarah ke objek yang sedang dipilih. Namun, ketika dilakukan translasi pada objek yang sedang dipilih, kamera tidak mengikuti objek tersebut. Pengguna dapat membuat kamera untuk kembali focus pada objek yang sedang dipilih dengan menekan kembali objek tersebut pada *component tree*.
+Kamera pada kedua canvas secara *default* mengarah ke objek yang sedang dipilih. Namun, ketika dilakukan translasi pada objek yang sedang dipilih, kamera tidak mengikuti objek tersebut. Pengguna dapat membuat kamera untuk kembali focus pada objek yang sedang dipilih dengan menekan kembali objek tersebut pada *component tree*. Untuk mengembalikan kamera ke posisi semula, pengguna dapat menekan tombol reset kamera yang berada di *right-sidebar*.
+
+Pengguna tidak dapat mengubah transformasi objek kamera secara manual. Untuk mengubah orientasi kamera, pengguna dapat menahan klik-kiri dan kemudian menggeser mouse pada salah satu canvas. Kamera akan bergerak dengan orbit tertentu yang mengelilingi objek yang sedang dipilih. Untuk bergerak menjauhi atau mendekati objek yang sedang dipilih, pengguna dapat menggunakan scroll pada mouse.
+
+Mode kamera secara *default* adalah *perspective*. Pengguna dapat mengubah mode kamera menjadi *orthographic* atau *oblique* dengan *dropdown* yang ada di *right-sidebar*. Pengguna juga dapat mengubah zoom kamera di sana. Khusus untuk kamera *oblique*, terdapat parameter tambahan berupa sudut *oblique* yang dapat diubah oleh pengguna.
+
+Secara *default*, aplikasi menggunakan *basic shader* untuk menampilkan objek sehingga tidak ada efek cahaya yang terlihat. Pengguna dapat mengubah shader yang digunakan dengan mengubah *toggle* pada segmen *shader* di *right-sidebar*. Ketika *phong shader* dinyalakan, aplikasi akan menampilkan objek dengan efek cahaya yang lebih realistis.
+
+Ketika *phong shader* dinyalakan, aplikasi akan menampilkan beberapa properti tambahan untuk cahaya, material, dan tekstur terhadap objek yang sedang dipilih. Pengguna dapat memilih untuk mengaktifkan atau mematikan *directional light* dan *point light* pada scene yang sedang ditampilkan dengan menggunakan *toggle* pada segmen *light* di *right-sidebar*. *Point light* memiliki properti tambahan berupa parameter untuk *attenuation*. Pengguna juga dapat mengubah transformasi objek yang berperan sebagai cahaya dengan memilih objek tersebut pada *component tree*.
+
+
+
+
+
 
 
 ## Pembagian Tugas
