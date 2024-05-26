@@ -1231,6 +1231,15 @@ export default function Home() {
         setSelectedDisplacementBias(bias);
     }
 
+    const handleNormalTextureChange = (material: PhongMaterial, idx: number) => {
+        if (!(material instanceof PhongMaterial)) {
+            return;
+        }
+
+        const selectedTexture = material.normalMaps[idx];
+        material.normalMap = selectedTexture;
+    }
+
     return (
         <main className="flex flex-col h-screen w-full bg-[#F2FBFA] overflow-hidden">
             {/* Header Section */}
@@ -1849,7 +1858,32 @@ export default function Home() {
                                 <Separator className="w-full my-5" />
 
                                 <Label className="text-base font-semibold pb-1 text-center mb-3">Normal Texture</Label>
-                                {/* TODO: add texture selection */}
+                                <Select
+                                  defaultValue={
+                                      (() => {
+                                          if (!material.normalMap) {
+                                              return '';
+                                          }
+                                          const index = material.normalMaps.indexOf(material.normalMap);
+
+                                          if (index === -1) {
+                                              return '';
+                                          }
+
+                                          return index.toString();
+                                      })()
+                                  }
+                                  onValueChange={(value) => handleNormalTextureChange(material, parseInt(value))}
+                                >
+                                    <SelectTrigger className="w-full h-10 bg-gray-800 border-none">
+                                        <SelectValue placeholder="Select Specular Texture" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {material.specularMaps.map((_, idx) => (
+                                          <SelectItem key={idx} value={idx.toString()}>Texture {idx}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
                                 {/* Separator */}
                                 <Separator className="w-full my-5" />
