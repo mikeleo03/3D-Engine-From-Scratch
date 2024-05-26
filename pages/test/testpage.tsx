@@ -120,9 +120,9 @@ export default function TestPage() {
       lightNodes[0].lookAt(obj.position);
 
       // change camera here
-      scene.addNode(cameraNodes[0]);
-      scene.addNode(lightNodes[1]);
-      scene.addNode(lightNodes[0]);
+      // scene.addNode(cameraNodes[0]);
+      // scene.addNode(lightNodes[1]);
+      // scene.addNode(lightNodes[0]);
 
       const gltfState = new GLTFState();
       gltfState.addScene(scene);
@@ -135,7 +135,7 @@ export default function TestPage() {
       renderManager.loop()
 
       // baseCube.download();
-      // cube.download();
+      cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();

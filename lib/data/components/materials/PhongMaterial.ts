@@ -53,7 +53,7 @@ export class TextureData {
         return this._texture;
     }
 
-    get textCoords() {
+    get texCoords() {
         return this._texCoords;
     }
 
@@ -130,6 +130,7 @@ export class TextureData {
         }
 
         if (!accessorMap.has(this._texCoords)) {
+            console.log(this)
             throw new Error('Accessor not found in map.');
         }
 
@@ -226,11 +227,11 @@ export class PhongMaterial extends ShaderMaterial {
             displacementMaps?: DisplacementData[];
             specularMaps?: TextureData[];
         } = {
-            diffuseMaps: [],
-            normalMaps: [],
-            displacementMaps: [],
-            specularMaps: []
-        }
+                diffuseMaps: [],
+                normalMaps: [],
+                displacementMaps: [],
+                specularMaps: []
+            }
     ) {
         const {
             ambientColor,

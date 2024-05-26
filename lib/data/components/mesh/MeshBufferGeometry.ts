@@ -1,10 +1,10 @@
-import {GLBufferAttribute} from "../../buffers/GLBufferAttribute";
-import {Vector3} from "../../math/index";
-import {AccessorComponentType, MeshMaterialAttribute, MeshPrimitiveAttribute} from "../../types/gltftypes";
-import {Accessor} from "../../buffers/Accessor";
-import {Float32ArrayConverter, Uint16ArrayConverter} from "../../buffers/typedarrayconverters";
-import {BasicMaterial, PhongMaterial} from "../materials";
-import {WebGLType} from "@/lib/cores";
+import { GLBufferAttribute } from "../../buffers/GLBufferAttribute";
+import { Vector3 } from "../../math/index";
+import { AccessorComponentType, MeshMaterialAttribute, MeshPrimitiveAttribute } from "../../types/gltftypes";
+import { Accessor } from "../../buffers/Accessor";
+import { Float32ArrayConverter, Uint16ArrayConverter } from "../../buffers/typedarrayconverters";
+import { BasicMaterial, PhongMaterial } from "../materials";
+import { WebGLType } from "@/lib/cores";
 
 export type MaterialOptions = {
     basicMaterial?: BasicMaterial,
@@ -90,14 +90,14 @@ export class MeshBufferGeometry {
             throw new Error("Indices or indices accessor is required");
         }
 
-        const completeAttributes: GeometryAttributes = {...attributes}
+        const completeAttributes: GeometryAttributes = { ...attributes }
 
         if (materials.phongMaterial) {
             const phongMaterial = materials.phongMaterial;
 
             if (phongMaterial.displacementMap) {
                 const displacementUVAttribute = new GLBufferAttribute(
-                    phongMaterial.displacementMap.textureData.textCoords,
+                    phongMaterial.displacementMap.textureData.texCoords,
                     2,
                     new Uint16ArrayConverter()
                 );
@@ -108,7 +108,7 @@ export class MeshBufferGeometry {
             // TODO: Add more material attributes if needed
             if (phongMaterial.diffuseMap) {
                 const diffuseUVAttribute = new GLBufferAttribute(
-                    phongMaterial.diffuseMap.textCoords,
+                    phongMaterial.diffuseMap.texCoords,
                     2,
                     new Uint16ArrayConverter()
                 );
@@ -118,7 +118,7 @@ export class MeshBufferGeometry {
 
             if (phongMaterial.specularMap) {
                 const specularUVAttribute = new GLBufferAttribute(
-                    phongMaterial.specularMap.textCoords,
+                    phongMaterial.specularMap.texCoords,
                     2,
                     new Uint16ArrayConverter()
                 );
@@ -128,7 +128,7 @@ export class MeshBufferGeometry {
 
             if (phongMaterial.normalMap) {
                 const normalUVAttribute = new GLBufferAttribute(
-                    phongMaterial.normalMap.textCoords,
+                    phongMaterial.normalMap.texCoords,
                     2,
                     new Uint16ArrayConverter()
                 );
@@ -528,12 +528,12 @@ export class MeshBufferGeometry {
     }
 
     calculateTangentBitangent(
-      accessorTangent?: Accessor,
-      accessorBitangent?: Accessor,
-      forcenewAttribute = false
+        accessorTangent?: Accessor,
+        accessorBitangent?: Accessor,
+        forcenewAttribute = false
     ): void {
         const position = this.getAttribute(MeshPrimitiveAttribute.POSITION);
-        if (!position){
+        if (!position) {
             throw new Error("Position attribute is required to calculate tangent and bitangent");
         }
 
@@ -541,17 +541,17 @@ export class MeshBufferGeometry {
         if (!texcoord) return; // no normalMap = no normalTexture = no need to calculate TBN
 
         let tangent, bitangent, normal;
-        if (accessorTangent){
+        if (accessorTangent) {
             tangent = this.getAttribute(MeshPrimitiveAttribute.VERTEX_NORMAL);
         }
-        if (accessorBitangent){
+        if (accessorBitangent) {
             bitangent = this.getAttribute(MeshPrimitiveAttribute.VERTEX_NORMAL);
         }
 
         // keep the normal attribute if it exists
         const old_normal = this.getAttribute(MeshPrimitiveAttribute.FACE_NORMAL);
         const accessorNormal = old_normal?.accessor;
-        if (!accessorNormal){
+        if (!accessorNormal) {
             throw new Error("Normal attribute is required to calculate tangent and bitangent");
         }
 
@@ -566,14 +566,14 @@ export class MeshBufferGeometry {
         let uv2 = new Vector3();
         let uv3 = new Vector3();
 
-        for (let i = 0 ; i < position.length; i+=3) {
-            v1 = new Vector3(position.data[i], position.data[i+1], position.data[i+2]);
-            v2 = new Vector3(position.data[i+3], position.data[i+4], position.data[i+5]);
-            v3 = new Vector3(position.data[i+6], position.data[i+7], position.data[i+8]);
+        for (let i = 0; i < position.length; i += 3) {
+            v1 = new Vector3(position.data[i], position.data[i + 1], position.data[i + 2]);
+            v2 = new Vector3(position.data[i + 3], position.data[i + 4], position.data[i + 5]);
+            v3 = new Vector3(position.data[i + 6], position.data[i + 7], position.data[i + 8]);
 
-            uv1 = new Vector3(texcoord.textCoords[i], texcoord.textCoords[i+1], 0);
-            uv2 = new Vector3(texcoord.textCoords[i+2], texcoord.textCoords[i+3], 0);
-            uv3 = new Vector3(texcoord.textCoords[i+4], texcoord.textCoords[i+5], 0);
+            uv1 = new Vector3(texcoord.texCoords[i], texcoord.texCoords[i + 1], 0);
+            uv2 = new Vector3(texcoord.texCoords[i + 2], texcoord.texCoords[i + 3], 0);
+            uv3 = new Vector3(texcoord.texCoords[i + 4], texcoord.texCoords[i + 5], 0);
 
             let e1 = Vector3.sub(v2, v1);
             let e2 = Vector3.sub(v3, v1);
@@ -591,8 +591,8 @@ export class MeshBufferGeometry {
             B.Z = f * (dUV2.X * e1.Z - dUV1.X * e2.Z);
 
             for (let j = 0; j < 3; j++) {
-                tangent.set(i+j, Float32Array.from([T.X, T.Y, T.Z]));
-                bitangent.set(i+j, Float32Array.from([B.X, B.Y, B.Z]));
+                tangent.set(i + j, Float32Array.from([T.X, T.Y, T.Z]));
+                bitangent.set(i + j, Float32Array.from([B.X, B.Y, B.Z]));
             }
         }
 

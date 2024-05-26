@@ -209,22 +209,22 @@ export class GLTFState {
         if (material instanceof PhongMaterial) {
             for (const map of material.diffuseMaps) {
                 this.addTexture(map.texture);
-                this.addAccessor(map.textCoords);
+                this.addAccessor(map.texCoords);
             }
 
             for (const map of material.normalMaps) {
                 this.addTexture(map.texture);
-                this.addAccessor(map.textCoords);
+                this.addAccessor(map.texCoords);
             }
 
             for (const map of material.specularMaps) {
                 this.addTexture(map.texture);
-                this.addAccessor(map.textCoords);
+                this.addAccessor(map.texCoords);
             }
 
             for (const map of material.displacementMaps) {
                 this.addTexture(map.textureData.texture);
-                this.addAccessor(map.textureData.textCoords);
+                this.addAccessor(map.textureData.texCoords);
             }
         }
 
@@ -468,7 +468,7 @@ export class GLTFState {
                 const displacementMaps = material.displacementMaps;
 
                 for (let j = 0; j < displacementMaps.length; j++) {
-                    if (displacementMaps[j].textureData.textCoords == accessor) {
+                    if (displacementMaps[j].textureData.texCoords == accessor) {
                         remove = false;
                         break;
                     }

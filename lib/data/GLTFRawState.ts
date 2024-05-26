@@ -7,7 +7,7 @@ import { GLTFBuffer } from "./buffers/GLTFBuffer";
 import { Camera } from "./components/cameras/Camera";
 import { Mesh } from "./components/mesh/Mesh";
 import { AccessorType, AnimationClipType, BufferType, BufferViewType, CameraType, LightType, MaterialType, MeshType, SamplerType, SceneNodeType, SceneType, TextureImageType, TextureType } from "./types/gltftypes";
-import { ShaderMaterial } from "./components/materials";
+import { PhongMaterial, ShaderMaterial } from "./components/materials";
 import { CameraUtil } from "./components/cameras/CameraUtil";
 import { MaterialUtil } from "./components/materials/MaterialUtil";
 import { AnimationClipUtil, AnimationPath } from "./components/animations";
@@ -16,6 +16,7 @@ import { LightUtil } from "./components/lights/LightUtil";
 import { Sampler } from "./components/materials/textures/Sampler";
 import { TextureImage } from "./components/materials/textures/TextureImage";
 import { Texture } from "./components/materials/textures/Texture";
+import PhongFragment from "./components/materials/shaders/PhongFragment";
 
 export class GLTFRawState {
     private _buffers: BufferType[] = [];
@@ -126,6 +127,35 @@ export class GLTFRawState {
     }
 
     static fromGLTFState(state: GLTFState): GLTFRawState {
+        // check all material texcoords, possible dynamically changed texcoords accessor without glstate notice
+        for (const material of state.materials) {
+            if (material instanceof PhongMaterial) {
+                for (const map of material.diffuseMaps) {
+                    if (state.accessors.indexOf(map.texCoords) === -1) {
+                        state.addAccessor(map.texCoords);
+                    }
+                }
+
+                for (const map of material.specularMaps) {
+                    if (state.accessors.indexOf(map.texCoords) === -1) {
+                        state.addAccessor(map.texCoords);
+                    }
+                }
+
+                for (const map of material.normalMaps) {
+                    if (state.accessors.indexOf(map.texCoords) === -1) {
+                        state.addAccessor(map.texCoords);
+                    }
+                }
+
+                for (const map of material.displacementMaps) {
+                    if (state.accessors.indexOf(map.textureData.texCoords) === -1) {
+                        state.addAccessor(map.textureData.texCoords);
+                    }
+                }
+            }
+        }
+
         const bufferMap = new Map<GLTFBuffer, number>();
         const bufferViewMap = new Map<BufferView, number>();
         const accessorMap = new Map<Accessor, number>();
@@ -184,7 +214,7 @@ export class GLTFRawState {
         });
 
         const materialRaws = state.materials.map((material, idx) => {
-            const raw = material.toRaw({ textureMap, accessorMap});
+            const raw = material.toRaw({ textureMap, accessorMap });
             const index = idx;
             materialMap.set(material, index);
             return raw;
@@ -226,7 +256,7 @@ export class GLTFRawState {
         });
 
         const animationRaws = state.animations.map(animation => AnimationClipUtil.toRaw(animation, nodeMap));
-        
+
         const scene = state.scene;
 
         return new GLTFRawState(
@@ -272,18 +302,18 @@ export class GLTFRawState {
         const animations = this._animations.map(animation => AnimationClipUtil.fromRaw(animation, nodes));
 
         return new GLTFState(
-            buffers, 
-            bufferViews, 
-            accessors, 
+            buffers,
+            bufferViews,
+            accessors,
             samplers,
             images,
             textures,
-            materials, 
-            meshes, 
+            materials,
+            meshes,
             cameras,
             lights,
-            nodes, 
-            scenes, 
+            nodes,
+            scenes,
             animations,
             this._scene
         );
