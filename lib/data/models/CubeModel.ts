@@ -16,10 +16,6 @@ import { GLTFBuffer } from "../buffers/GLTFBuffer"
 import { BufferView } from "../buffers/BufferView"
 import { Float32ArrayConverter, Uint16ArrayConverter } from "../buffers/typedarrayconverters"
 
-import container from "../components/materials/textureImages/container.png"
-import f_texture from "../components/materials/textureImages/f-texture.png"
-import metal from "../components/materials/textureImages/metal.jpg"
-
 export class CubeModel extends Model {
     private _box?: SceneNode;
 
@@ -58,7 +54,11 @@ export class CubeModel extends Model {
     }
 
     private getDiffuseTexturesDatas(): TextureData[] {
-        const urls = [container.src, f_texture.src, metal.src];
+        const urls = [
+            "http://localhost:3000/textures/container.png", 
+            "http://localhost:3000/textures/f-texture.png", 
+            "http://localhost:3000/textures/metal.jpg"
+        ];
 
         const sampler = new Sampler(
             MagFilter.Linear,
@@ -98,7 +98,11 @@ export class CubeModel extends Model {
     }
 
     private getSpecularTexturesDatas(): TextureData[] {
-        const urls = [container.src, f_texture.src, metal.src];
+        const urls = [
+            "http://localhost:3000/textures/container.png", 
+            "http://localhost:3000/textures/f-texture.png", 
+            "http://localhost:3000/textures/metal.jpg"
+        ];
 
         const sampler = new Sampler(
             MagFilter.Linear,

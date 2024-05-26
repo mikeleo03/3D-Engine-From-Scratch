@@ -7,7 +7,6 @@ import { Color } from "@/lib/cores/Color";
 import { JojoModel } from "@/lib/data/models/articulated/JojoModel";
 import { HollowLeonModel } from "@/lib/data/models/hollow/HollowLeonModel";
 import { LeonModel } from "@/lib/data/models/articulated/LeonModel";
-import { MaggieModel } from "@/lib/data/models/articulated/MaggieModel";
 import { CubeModel } from "@/lib/data/models/CubeModel";
 import { GLRenderer } from "@/lib/rendering/GLRenderer";
 import { useEffect, useRef } from "react";
