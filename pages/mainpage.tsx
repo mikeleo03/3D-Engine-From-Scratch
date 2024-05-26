@@ -772,21 +772,38 @@ export default function Home() {
             return;
         }
 
-        for (const node of cameraNodesRef.current) {
-            gltfState.CurrentScene && gltfState.removeNodeFromScene(node, gltfState.CurrentScene);
-        }
-        
-        for (const node of secondCameraNodesRef.current) {
+        const cameraNodes = cameraNodesRef.current;
+        const secondCameraNodes = secondCameraNodesRef.current;
+        const lightNodes = lightNodesRef.current;
+
+        for (const node of cameraNodes) {
             gltfState.CurrentScene && gltfState.removeNodeFromScene(node, gltfState.CurrentScene);
         }
 
-        for (const lightNode of lightNodesRef.current) {
+        for (const node of secondCameraNodes) {
+            gltfState.CurrentScene && gltfState.removeNodeFromScene(node, gltfState.CurrentScene);
+        }
+
+        for (const lightNode of lightNodes) {
             gltfState.CurrentScene && gltfState.removeNodeFromScene(lightNode, gltfState.CurrentScene);
         }
 
         const gltf = gltfParser.write(gltfState);
 
         FileUtil.downloadFile(gltf);
+
+        // Re-add the camera, second camera, and light nodes back to the scene
+        for (const node of cameraNodes) {
+            gltfState.CurrentScene && gltfState.addNodeToScene(node, gltfState.CurrentScene);
+        }
+
+        for (const node of secondCameraNodes) {
+            gltfState.CurrentScene && gltfState.addNodeToScene(node, gltfState.CurrentScene);
+        }
+
+        for (const lightNode of lightNodes) {
+            gltfState.CurrentScene && gltfState.addNodeToScene(lightNode, gltfState.CurrentScene);
+        }
     }
 
 
