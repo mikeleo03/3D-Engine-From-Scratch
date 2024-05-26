@@ -105,7 +105,7 @@ export default function TestPage() {
       const maggie = new MaggieModel();
 
       // change model here
-      const model = cube;
+      const model = baseCube;
 
       const glRenderer = new GLRenderer(glContainer);
 
@@ -133,7 +133,7 @@ export default function TestPage() {
       renderManager.loop()
 
       // baseCube.download();
-      cube.download();
+      // cube.download();
       // jojo.download();
       // leon.download();
       // maggie.download();

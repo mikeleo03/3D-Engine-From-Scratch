@@ -185,23 +185,15 @@ export class CubeModel extends Model {
         const cubeMaterial = new BasicMaterial(new Color(52, 25, 0), { name: "cube" });
         
         const diffuseDatas = this.getDiffuseTexturesDatas();
-        const diffuseData = diffuseDatas[0];
-
         const specularDatas = this.getSpecularTexturesDatas();
-        const specularData = specularDatas[0];
-
         const displacementDatas = this.getDisplacementTextureDatas();
-        const displacementData = displacementDatas[0];
 
         const phongCubeMaterial = new PhongMaterial({ 
             name: "cube-phong", 
-            ambientColor: new Color(0, 0, 0), 
-            diffuseColor: new Color(0, 0, 0), 
+            ambientColor: new Color(52, 25, 0),
+            diffuseColor: new Color(204, 102, 0), 
             specularColor: new Color(255, 255, 255), 
             shininess: 60,
-            diffuseMap: diffuseData,
-            specularMap: specularData,
-            displacementMap: displacementData,
             diffuseMaps: diffuseDatas,
             normalMaps: [],
             displacementMaps: displacementDatas,
