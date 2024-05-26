@@ -23,9 +23,9 @@ Pengguna dapat menekan tombol *load* dan memilih salah satu model yang ada di da
 
 [TODO: gambar model yang diload]
 
-Secara *default*, objek utama yang ditampilkan akan dijadikan objek yang sedang dipilih. Transformasi objek yang sedang dipilih dapat diubah melalui *right-sidebar*. Pengguna dapat memilih objek lain dengan menekan nama objek yang ada di *component tree*. Pengguna juga dapat meng-*expand* struktur objek dengan menekan tombol panah di sebelah kiri nama objek pada *component tree* tersebut.
+Secara *default*, objek utama yang ditampilkan akan dijadikan objek yang sedang dipilih. Transformasi objek yang sedang dipilih dapat diubah melalui *right-sidebar*. Pengguna dapat memilih objek lain dengan menekan nama objek yang ada di *component tree*. Pengguna juga dapat meng-*expand* struktur objek dengan menekan tombol panah di sebelah kiri nama objek pada *component tree* tersebut. (**Digunakan model MarthenModel.gltf** untuk memperlihatkan _component tree_ yang lebih jelas karena CubeModel.gltf bukanlah _articulated model_)
 
-[TODO: gambar component tree]
+![image](https://github.com/GAIB20/tugas-besar-grafkom-2-sabeb/assets/89301265/c89cecd5-426a-4325-a885-547815f3d72d)
 
 Kamera pada kedua canvas secara *default* mengarah ke objek yang sedang dipilih. Namun, ketika dilakukan translasi pada objek yang sedang dipilih, kamera tidak mengikuti objek tersebut. Pengguna dapat membuat kamera untuk kembali focus pada objek yang sedang dipilih dengan menekan kembali objek tersebut pada *component tree*. Untuk mengembalikan kamera ke posisi semula, pengguna dapat menekan tombol reset kamera yang berada di *right-sidebar*.
 
@@ -37,7 +37,7 @@ Pengguna tidak dapat mengubah transformasi objek kamera secara manual. Untuk men
 
 Mode kamera secara *default* adalah *perspective*. Pengguna dapat mengubah mode kamera menjadi *orthographic* atau *oblique* dengan *dropdown* yang ada di *right-sidebar*. Pengguna juga dapat mengubah zoom kamera di sana. Khusus untuk kamera *oblique*, terdapat parameter tambahan berupa sudut *oblique* yang dapat diubah oleh pengguna.
 
-[TODO: gambar dropdown kamera oblique]
+![image](https://github.com/GAIB20/tugas-besar-grafkom-2-sabeb/assets/89301265/fee8581b-e211-498b-8666-b7de3f16814a)
 
 Secara *default*, aplikasi menggunakan *basic shader* untuk menampilkan objek sehingga tidak ada efek cahaya yang terlihat. Pengguna dapat mengubah shader yang digunakan dengan mengubah *toggle* pada segmen *shader* di *right-sidebar*. Ketika *phong shader* dinyalakan, aplikasi akan menampilkan objek dengan efek cahaya yang lebih realistis.
 
