@@ -162,7 +162,8 @@ export enum MeshPrimitiveAttribute {
 
 export enum MeshMaterialAttribute {
     DISPLACEMENT_UV = "displacementUV",
-    DIFFUSE_UV = "diffuseUV"
+    DIFFUSE_UV = "diffuseUV",
+    SPECULAR_UV = "specularUV"
 }
 
 export type MeshPrimitiveType = {
