@@ -1,4 +1,8 @@
-import { MeshBufferAttribute } from "../data/buffers/MeshBufferAttribute";
+"use client";
+
+import { GLBufferAttribute } from "../data/buffers/GLBufferAttribute";
+import { Texture } from "../data/components/materials/textures/Texture";
+import { Color } from "./Color";
 
 export enum ShaderType {
     VERTEX = WebGLRenderingContext.VERTEX_SHADER,
@@ -69,12 +73,45 @@ export function getByteCountForWebGLType(type: number): number {
     }
 }
 
-export type AttributeSingleDataType = MeshBufferAttribute | Float32Array | number[];
+export const WrapMode = Object.freeze({
+    ClampToEdge         : WebGLRenderingContext.CLAMP_TO_EDGE,
+    Repeat              : WebGLRenderingContext.REPEAT,
+    MirroredRepeat      : WebGLRenderingContext.MIRRORED_REPEAT,
+})
+export const MagFilter = Object.freeze({
+    Nearest             : WebGLRenderingContext.NEAREST,
+    Linear              : WebGLRenderingContext.LINEAR,
+})
+export const MinFilter = Object.freeze({
+    Nearest             : WebGLRenderingContext.NEAREST,
+    Linear              : WebGLRenderingContext.LINEAR,
+    NearestMipmapNearest: WebGLRenderingContext.NEAREST_MIPMAP_NEAREST,
+    NearestMipmapLinear : WebGLRenderingContext.NEAREST_MIPMAP_LINEAR,
+    LinearMipmapNearest : WebGLRenderingContext.LINEAR_MIPMAP_NEAREST,
+    LinearMipmapLinear  : WebGLRenderingContext.LINEAR_MIPMAP_LINEAR,
+})
+
+export const ImageFormat = Object.freeze({
+    RGBA                : WebGLRenderingContext.RGBA,
+    RGB                 : WebGLRenderingContext.RGB,
+    LuminanceAlpha      : WebGLRenderingContext.LUMINANCE_ALPHA,
+    Luminance           : WebGLRenderingContext.LUMINANCE,
+})
+export const ImageType = Object.freeze({
+    UnsignedByte        : WebGLRenderingContext.UNSIGNED_BYTE,
+    UnsignedShort4444   : WebGLRenderingContext.UNSIGNED_SHORT_4_4_4_4,
+    UnsignedShort5551   : WebGLRenderingContext.UNSIGNED_SHORT_5_5_5_1,
+    UnsignedShort565    : WebGLRenderingContext.UNSIGNED_SHORT_5_6_5,
+})
+
+export type AttributeSingleDataType = GLBufferAttribute | Float32Array | number[];
 export type AttributeDataType = [AttributeSingleDataType] | number[];
 export type AttributeSetters = (...v: AttributeDataType) => void;
 export type AttributeMapSetters = { [key: string]: AttributeSetters };
 
-export type UniformSetters = (...v: number[]) => void;  // TODO: fix this type if needed
+export type UniformSingleDataType =  number[] | Float32Array | number | Color | Texture;
+export type UniformDataType = [UniformSingleDataType] | number[];
+export type UniformSetters = (v: UniformSingleDataType) => void;
 export type UniformMapSetters = { [key: string]: UniformSetters };
 
 export type ProgramInfo = {
@@ -83,7 +120,7 @@ export type ProgramInfo = {
     attributeSetters: AttributeMapSetters,
 };
 
-export const UniformSetterWebGLType = {
+export const UniformSetterWebGLType: { [key: number]: string } = {
     [WebGLRenderingContext.FLOAT]: "1f",
     [WebGLRenderingContext.FLOAT_VEC2]: "2f",
     [WebGLRenderingContext.FLOAT_VEC3]: "3f",

@@ -1,9 +1,11 @@
 import { GLTFState } from "../data/GLTFState";
+import { SceneNode } from "../data/SceneNode";
+import { NodeComponent } from "../data/components/NodeComponent";
 import { GLRenderer } from "./GLRenderer";
 
 export class RenderManager {
-    private static readonly DEFAULT_FPS = 60;
-    
+    private static readonly DEFAULT_FPS = 30;
+
     private _gltfState: GLTFState;
     private _glRenderer: GLRenderer;
 
@@ -11,34 +13,46 @@ export class RenderManager {
     private _interval: number = 0;
     private _lastTime: number = 0;
     private _loopId: number = 0;
+    private _customCamera: SceneNode | null = null;
 
     constructor(gltfState: GLTFState, glRenderer: GLRenderer) {
         this._gltfState = gltfState
         this._glRenderer = glRenderer
     }
 
+    set customCamera(cameraNode: SceneNode) {
+        this._customCamera = cameraNode;
+    }
+
+    set enablePhongShading(enable: boolean) {
+        this._glRenderer.enablePhongShading = enable;
+    }
+
+    getCustomeCamera(): SceneNode | null{
+        return this._customCamera;
+    }
+
+    removeCustomCamera() {
+        this._customCamera = null;
+    }
+
     render() {
         const scene = this._gltfState.CurrentScene;
+        const cameraNode = this._customCamera || scene?.getActiveCameraNode();
+        const lightNode = scene?.getActiveLightNode();
 
-        if (!scene) {
+        if (!scene || !cameraNode || !lightNode) {
             return;
         }
 
-        // TODO: handle for multiple roots and cameras if needed
-        const camera = this._gltfState.getCurrentCamera();
-
-        if (!camera) {
-            return;
-        }
-
-        this._glRenderer.render(scene, camera);
+        this._glRenderer.render(scene, cameraNode, lightNode);
     }
 
     loop(fps: number = RenderManager.DEFAULT_FPS) {
         if (this._isRunning) {
             this.stop();
         }
-        
+
         this._isRunning = true;
         this._interval = 1000 / fps;
 

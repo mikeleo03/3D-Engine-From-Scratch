@@ -67,6 +67,30 @@ export class Vector3 {
         return new Vector3(x, y, z);
     }
 
+    static up(): Vector3 {
+        return new Vector3(0, 1, 0);
+    }
+
+    static forward(): Vector3 {
+        return new Vector3(0, 0, 1);
+    }
+
+    static right(): Vector3 {
+        return new Vector3(1, 0, 0);
+    }
+
+    static mulElements(v1: Vector3, v2: Vector3): Vector3 {
+        return new Vector3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+    }
+    
+    get data(): number[] {
+        return [this.x, this.y, this.z];
+    }
+
+    get buffer (): Float32Array {
+        return new Float32Array([this.x, this.y, this.z]);
+    }
+
     add(v: Vector3, inplace: Boolean = false): Vector3 {
         if (inplace) {
             this.x += v.x;
@@ -100,6 +124,48 @@ export class Vector3 {
         return new Vector3(this.x * s, this.y * s, this.z * s);
     }
 
+    mulX(s: number, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.x *= s;
+            return this;
+        }
+
+        return new Vector3(this.x * s, this.y, this.z);
+    }
+
+    mulY(s: number, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.y *= s;
+            return this;
+        }
+
+        return new Vector3(this.x, this.y * s, this.z);
+    }
+
+    mulZ(s: number, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.z *= s;
+            return this;
+        }
+
+        return new Vector3(this.x, this.y, this.z * s);
+    }
+
+    distance() {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+    
+    mulElements(v: Vector3, inplace: Boolean = false): Vector3 {
+        if (inplace) {
+            this.x *= v.x;
+            this.y *= v.y;
+            this.z *= v.z;
+            return this;
+        }
+
+        return new Vector3(this.x * v.x, this.y * v.y, this.z * v.z);
+    }
+
     div(s: number, inplace: Boolean = false): Vector3 {
         if (s === 0) {
             throw new Error("Division by zero");
@@ -124,7 +190,7 @@ export class Vector3 {
 
         if (inplace) {
             if (len > 0) {
-                this.div(len);
+                this.div(len, true);
             }
             return this;
         }
@@ -132,7 +198,7 @@ export class Vector3 {
         const newVector = this.clone();
 
         if (len > 0) {
-            newVector.div(len);
+            newVector.div(len, true);
         }
 
         return newVector;
@@ -159,5 +225,13 @@ export class Vector3 {
 
     toArray(): [number, number, number] {
         return [this.x, this.y, this.z];
+    }
+
+    toRaw() : number[] {
+        return this.toArray();
+    }
+
+    static fromRaw(arr: number[]) : Vector3 {
+        return new Vector3(...arr);
     }
 }

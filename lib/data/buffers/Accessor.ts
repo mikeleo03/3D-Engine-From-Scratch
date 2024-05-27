@@ -1,19 +1,27 @@
-import { getByteCountForWebGLType } from "@/lib/cores/gltypes";
-import { AccessorType } from "../types/gltftypes";
+import { WebGLType, getByteCountForWebGLType } from "@/lib/cores/gltypes";
+import { AccessorComponentType, AccessorType, getAccessorComponentType, getByteCountForComponentType } from "../types/gltftypes";
 import { BufferView } from "./BufferView";
 import { TypedArrayConverter } from "./typedarrayconverters";
-import { get } from "http";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 export class Accessor {
     private _bufferView: BufferView;
     private _byteOffset: number;
-    private _componentType: number;
-    private _count: number;
-    private _type: string;
+    private _componentType: ValueOf<typeof WebGLType>;  // type of component in the elements
+    private _count: number;  // Number elements in the buffer (ex: number of vertices in a mesh)
+    private _type: AccessorComponentType;  // element type
     private _max: number[];
     private _min: number[];
     
-    constructor(bufferView: BufferView, byteOffset: number, componentType: number, count: number, type: string, max: number[], min: number[]) {
+    constructor(
+        bufferView: BufferView, 
+        byteOffset: number, 
+        componentType: ValueOf<typeof WebGLType>, 
+        count: number, 
+        type: AccessorComponentType, 
+        max: number[], 
+        min: number[]
+    ) {
         this._bufferView = bufferView;
         this._byteOffset = byteOffset;
         this._componentType = componentType;
@@ -51,7 +59,7 @@ export class Accessor {
         return this._min;
     }
 
-    setData(data: Uint8Array, countOffset: number = 0): void {
+    setData(data: Uint8Array, elementOffset: number = 0): void {
 
         const singleByteCount = this.getSingleByteCount();
         
@@ -60,29 +68,29 @@ export class Accessor {
         }
 
         const count = data.length / singleByteCount;
-        
-        if (countOffset < 0) {
+        const singleElementByte = this.getSingleElementByteCount();
+        const byteCount = this.getByteCount();
+
+        if (elementOffset < 0) {
             throw new Error(`Offset must be greater than or equal to zero.`);
         }
 
-        if (count + countOffset > this._count) {
+        if (count + (elementOffset * singleElementByte / byteCount) > this._count) {
             throw new Error(`Data size is too large for current accessor count`);
         }
 
-        if (data.length < (count + countOffset) * getByteCountForWebGLType(this._componentType)) {
-            throw new Error(`Data size is too small for current accessor count`);
-        }
-        
-
-        this.bufferView.setData(data, this._byteOffset + countOffset * getByteCountForWebGLType(this._componentType));
+        this.bufferView.setData(
+            data, 
+            this._byteOffset + elementOffset * singleElementByte
+        );
     }
 
-    getData(converter?: TypedArrayConverter): ArrayLike<number> {
+    getData(converter?: TypedArrayConverter, elementOffset: number = 0): ArrayLike<number> {
         // Note: this will create new array every time it's called
-        const data = new Uint8Array(
-            this._bufferView.buffer.data, 
-            this._byteOffset, 
-            this._count * getByteCountForWebGLType(this._componentType)
+        const offset = this._byteOffset + elementOffset * this.getSingleElementByteCount();
+        const data = this._bufferView.data.slice(
+            offset, 
+            offset + this._count * this.getSingleByteCount()
         );
 
         if (!converter) {
@@ -93,10 +101,14 @@ export class Accessor {
     }
 
     getByteCount(): number {
-        return this._count * getByteCountForWebGLType(this._componentType);
+        return this._count * this.getSingleByteCount();
     }
 
     getSingleByteCount(): number {
+        return getByteCountForComponentType(this._componentType, this._type);
+    }
+
+    getSingleElementByteCount(): number {
         return getByteCountForWebGLType(this._componentType);
     }
 
@@ -106,15 +118,15 @@ export class Accessor {
             raw.byteOffset,
             raw.componentType,
             raw.count,
-            raw.type,
+            getAccessorComponentType(raw.type),
             raw.max,
             raw.min
         );
     }
 
-    toRaw(bufferIndex: number): AccessorType {
+    toRaw(bufferViewIndex: number): AccessorType {
         return {
-            bufferView: bufferIndex,
+            bufferView: bufferViewIndex,
             byteOffset: this._byteOffset,
             componentType: this._componentType,
             count: this._count,

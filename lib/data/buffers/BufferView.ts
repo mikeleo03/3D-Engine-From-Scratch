@@ -1,13 +1,14 @@
-import { BufferViewType } from "../types/gltftypes";
+import { ValueOf } from "next/dist/shared/lib/constants";
+import { BufferViewTarget, BufferViewType } from "../types/gltftypes";
 import { GLTFBuffer } from "./GLTFBuffer";
 
 export class BufferView implements ArrayBufferView {
     private _buffer: GLTFBuffer;
     private _byteOffset: number;
     private _byteLength: number;
-    private _target: number;
+    private _target: ValueOf<typeof BufferViewTarget>;
 
-    constructor(buffer: GLTFBuffer, byteOffset: number, byteLength: number, target: number) {
+    constructor(buffer: GLTFBuffer, byteOffset: number, byteLength: number, target: ValueOf<typeof BufferViewTarget>) {
         this._buffer = buffer;
         this._byteOffset = byteOffset;
         this._byteLength = byteLength;
@@ -23,8 +24,8 @@ export class BufferView implements ArrayBufferView {
     get target() { return this._target; }
 
     get data(): Uint8Array { 
-        // Note: this will create new array every time it's called
-        return new Uint8Array(this._buffer.data, this._byteOffset, this._byteLength); 
+        // Note: this will create new array every time it's called 
+        return this._buffer.data.slice(this._byteOffset, this._byteOffset + this._byteLength);
     }
 
     setData(data: Uint8Array, byteOffset: number = 0): void {
